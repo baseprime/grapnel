@@ -1,0 +1,44 @@
+{
+  "name": "grapnel",
+  "version": "0.7.4",
+  "description": "The first (and smallest!) JavaScript Router with PushState, Middleware, and Named Parameter support",
+  "main": "dist/grapnel.js",
+  "unpkg": "dist/grapnel.js",
+  "scripts": {
+    "serve-tests": "pushd ./test; python -m SimpleHTTPServer 8997; popd",
+    "prettier": "./node_modules/prettier/bin-prettier.js --config .prettierrc ./dist/**/*.js ./test/main.js --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/baseprime/grapnel.git"
+  },
+  "keywords": [
+    "grapnel",
+    "route",
+    "routing",
+    "router",
+    "hash",
+    "anchor",
+    "express",
+    "server",
+    "tiny",
+    "require",
+    "named parameters",
+    "middleware",
+    "backbone",
+    "routie",
+    "pushState",
+    "api"
+  ],
+  "author": "Greg Sabia Tucker <greg@narrowlabs.com>",
+  "link": "http://basepri.me",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/baseprime/grapnel/issues"
+  },
+  "homepage": "http://grapnel.js.org",
+  "devDependencies": {
+    "prettier": "^1.15.3"
+  },
+  "dependencies": {}
+}

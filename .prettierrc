@@ -1,0 +1,10 @@
+{
+    "parser": "babel",
+    "printWidth": 200,
+    "trailingComma": "es5",
+    "bracketSpacing": true,
+    "tabWidth": 4,
+    "semi": false,
+    "singleQuote": true,
+    "useTabs": false
+  }
