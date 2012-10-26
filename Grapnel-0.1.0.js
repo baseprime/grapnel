@@ -1,6 +1,6 @@
 
-/**
- * @package Grapnel.js - http://
+/***
+ * @package Grapnel.js - https://github.com/gregsabia/Grapnel-js 
  * @author Greg Sabia
  * @support http://gregsabia.com
  * 
