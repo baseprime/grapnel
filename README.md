@@ -15,8 +15,6 @@ myhook.add('eat', function(value){
 });
 ```
 
-#### URL:
-
 A URL with a hashtag formatted below:
 
 ```bash
