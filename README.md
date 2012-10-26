@@ -6,11 +6,11 @@ A lightweight library to allow hooks to be added to hashtags.
 ## An example:
 
 ```javascript
-    var myhook = new Grapnel(':');
-    
-    myhook.add('eat', function(action){
-        console.log('Someone just ate a %s.', this.value);
-    });
+var myhook = new Grapnel(':');
+
+myhook.add('eat', function(action){
+    console.log('Someone just ate a %s.', this.value);
+});
 ```
 
 #### URL:
