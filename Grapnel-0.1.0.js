@@ -1,5 +1,5 @@
 
-/***
+/****
  * @package Grapnel.js
  * A lightweight JavaScript library for adding action hooks in URL hashtags/anchors.
  * https://github.com/gregsabia/Grapnel-js 
@@ -24,7 +24,7 @@ var Grapnel = function(hook){
     this.listeners = [];
     // Add Listener
     this.addListener = function(event, handler){
-        this.listeners.push({ event : event, handler : handler });
+        return this.listeners.push({ event : event, handler : handler });
     }
     // Fire a listener
     this._trigger = function(event, data){
@@ -33,6 +33,8 @@ var Grapnel = function(hook){
                 this.listeners[i].handler.call(this, data);
             }
         }
+
+        return this;
     }
     // Get anchor
     this.getAnchor = function(){
@@ -49,8 +51,8 @@ var Grapnel = function(hook){
         var anchor = anchor || '!';
         // Append anchor to location
         document.location = url_anchor.split('#')[0] + '#' + anchor;
-        // Fire event
-        this._trigger('anchor_change', anchor);
+
+        return this;
     }
     // Reset anchor
     this.clearAnchor = function(){
@@ -71,28 +73,40 @@ var Grapnel = function(hook){
             return a;
         }
     }
-    // New actions
+    /**
+     * Add an action and handler
+     * 
+     * @param String
+     * @param Function
+    */
     this.add = function(action, handler){
         this.actions.push({ action : action, handler : handler });
-        return this.run();
+        return this._run();
     }
     // Initialize
     this.getAnchor();
     this.parseHook();
     // Run hook action
-    this.run = function(){
+    this._run = function(){
         // We've matched an anchor action
         for(i in this.actions){
-            if(this.actions[i].action == this.anchor) this.actions[i].handler.call(this, this.value);
+            if(this.actions[i].action == this.anchor) this.actions[i].handler.call(this, this.value, this.anchor);
         }
 
         return this;
     }
-    // Hash change event
+    /**
+     * Hash change event
+     * TODO: increase browser compatibility. "window.onhashchange" can be supplemented in older browsers with setInterval()
+     * 
+     * @param String
+     * @param Function
+    */
     window.onhashchange = function(){
         self.getAnchor();
         self.parseHook();
-        self.run();
+        self._run();
+        self._trigger('anchor_change', self.anchor);
     }
 
     return this;
