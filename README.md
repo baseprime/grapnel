@@ -1,7 +1,7 @@
 Grapnel.js
 ==========
 
-A lightweight library to allow hooks to be added to hashtags in a URL.
+A lightweight JavaScript library for adding action hooks in URL hashtags/anchors.
 
 ## An example:
 
