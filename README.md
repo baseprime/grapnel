@@ -39,3 +39,13 @@ myhook.add('tacos', function(value){
     console.log('Someone thinks %s are %s.', this.anchor, this.value);
 });
 ```
+
+```bash
+http://domain.com/page#tacosaregood
+```
+
+Would log in console
+
+```bash
+Someone thinks tacos are good.
+```
