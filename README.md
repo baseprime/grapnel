@@ -1,14 +1,16 @@
 Grapnel-js
 ==========
 
-A lightweight library to allow hooks to be added to hashtags.
+A lightweight library to allow hooks to be added to hashtags in a URL.
 
 ## An example:
+
+#### Basic usage
 
 ```javascript
 var myhook = new Grapnel(':');
 
-myhook.add('eat', function(action){
+myhook.add('eat', function(value){
     console.log('Someone just ate a %s.', this.value);
 });
 ```
@@ -25,4 +27,15 @@ Would log in console
 
 ```bash
 Someone just ate a taco.
+```
+
+### RegEx
+
+```javascript
+var expression = /are/g;
+var myhook = new Grapnel(expression);
+
+myhook.add('tacos', function(value){
+    console.log('Someone thinks %s are %s.', this.anchor, this.value);
+});
 ```
