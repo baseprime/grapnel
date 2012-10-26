@@ -98,9 +98,6 @@ var Grapnel = function(hook){
     /**
      * Hash change event
      * TODO: increase browser compatibility. "window.onhashchange" can be supplemented in older browsers with setInterval()
-     * 
-     * @param String
-     * @param Function
     */
     window.onhashchange = function(){
         self.getAnchor();
