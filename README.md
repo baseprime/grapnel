@@ -3,7 +3,7 @@ Grapnel.js
 
 A lightweight JavaScript library for adding action hooks in URL hashtags/anchors.
 
-## An example:
+## Grapnel.js is:
 
 #### Basic usage
 
@@ -27,7 +27,7 @@ Would log in console
 Someone just ate a taco.
 ```
 
-### RegEx
+#### RegEx
 
 ```javascript
 var expression = /are/g;
@@ -47,7 +47,7 @@ Would log in console
 ```bash
 Someone thinks tacos are good.
 ```
-
+&nbsp;
 
 ***
 
