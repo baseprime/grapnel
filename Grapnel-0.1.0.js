@@ -7,7 +7,7 @@
  * @author Greg Sabia
  * @support http://gregsabia.com
  * 
- * Event listeners: ['anchor_change', 'hook_found']
+ * Event listeners: ['hashchange', 'hookfound']
 */
 
 var Grapnel = function(hook){
@@ -22,8 +22,13 @@ var Grapnel = function(hook){
     this.actions = [];
     // Listeners
     this.listeners = [];
-    // Add Listener
-    this.addListener = function(event, handler){
+    /**
+     * Add an event listener
+     * 
+     * @param {String} event
+     * @param {Function} callback
+    */
+    this.on = function(event, handler){
         return this.listeners.push({ event : event, handler : handler });
     }
     // Fire a listener
@@ -66,7 +71,7 @@ var Grapnel = function(hook){
             this.value = a.split(this.hook)[1];
             this.anchor = a.split(this.hook)[0];
             // Fire event
-            this._trigger('hook_found', [this.value, this.anchor]);
+            this._trigger('hookfound', [this.value, this.anchor]);
 
             return this.anchor;
         }else{
@@ -76,8 +81,8 @@ var Grapnel = function(hook){
     /**
      * Add an action and handler
      * 
-     * @param String
-     * @param Function
+     * @param {String} action name
+     * @param {Function} callback
     */
     this.add = function(action, handler){
         this.actions.push({ action : action, handler : handler });
@@ -95,15 +100,20 @@ var Grapnel = function(hook){
 
         return this;
     }
+    // Default anchor change event
+    this.on('hashchange', function(){
+        this.getAnchor();
+        this.parseHook();
+        this._run();
+    });
+    // Check current hash change event
+    if(typeof window.onhashchange == 'function') this.on('hashchange', window.onhashchange);
     /**
      * Hash change event
      * TODO: increase browser compatibility. "window.onhashchange" can be supplemented in older browsers with setInterval()
     */
     window.onhashchange = function(){
-        self.getAnchor();
-        self.parseHook();
-        self._run();
-        self._trigger('anchor_change', self.anchor);
+        self._trigger('hashchange', self.anchor);
     }
 
     return this;
