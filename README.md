@@ -3,7 +3,7 @@ Grapnel.js
 
 A lightweight JavaScript library for adding action hooks in URL hashtags/anchors.
 
-## Grapnel.js is:
+## An example:
 
 #### Basic usage
 
@@ -61,7 +61,7 @@ var hook = new Grapnel();
 ```
 
 ## Methods
-* `add` Adds a new action listener
+##### `add` Adds a new action listener
 ```javascript
 hook.add('find', function(){
     // this.value, this.action, this.hook
@@ -71,21 +71,21 @@ hook.add('find', function(){
 });
 ```
 
-* `on` Adds a new event listener
+##### `on` Adds a new event listener
 ```javascript
 hook.on('hookfound', function(){
     console.log('Found hook: %s', this.hook);
 });
 ```
-* `setAnchor` Sets a new absolute anchor
-* `getAnchor` Get absolute anchor
-* `clearAnchor` Clears the anchor (replaces URL with #! appended to it)
+##### `setAnchor` Sets a new absolute anchor
+##### `getAnchor` Get absolute anchor
+##### `clearAnchor` Clears the anchor (replaces URL with #! appended to it)
 
 ## Events
 
-* `hookfound` A matched hook is found
-* `hashchange` Anchor hashtag is changed
+##### `hookfound` A matched hook is found
+##### `hashchange` Anchor hashtag is changed
 
 ## Todo
 
-* Add support for older browsers not supporting `window.onhashchange` (IE lte 7.0)
+##### Add support for older browsers not supporting `window.onhashchange` (IE lte 7.0)
