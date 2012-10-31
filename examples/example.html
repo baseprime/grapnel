@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This is a static page</title>
+<script type="text/javascript" src="../js/Grapnel-0.1.0.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type="text/javascript">
+var hook = new Grapnel();
+
+$(function(){
+    hook.add('show', function(value){
+        $('li').show().not('.' + value).hide();
+    });
+});
+</script>
+<style>
+.red { color: #dc0000; }
+.cyan { color: #34beed; }
+</style>
+</head>
+<body>
+<h1>Widgets</h1>
+<a href="#show:red">Show Red Widgets</a> | <a href="#show:cyan">Show Cyan Widgets</a> | <a href="#" onclick="$('li').show();">Show All</a>
+<ul>
+    <li class="red">Red Widget #1</li>
+    <li class="red">Red Widget #2</li>
+    <li class="cyan">Cyan Widget #1</li>
+    <li class="red">Red Widget #3</li>
+    <li class="cyan">Cyan Widget #2</li>
+    <li class="red">Red Widget #4</li>
+</ul>
+</body>
+</html>
