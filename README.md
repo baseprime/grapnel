@@ -91,7 +91,7 @@ var hook = new Grapnel();
 ##### `add` Adds a new action listener
 ```javascript
 /**
- * @param {String|Array} action
+ * @param {String} action
  * @param {Function} callback
 */
 hook.add('find', function(){
@@ -106,7 +106,7 @@ hook.add('find', function(){
 ##### `on` Adds a new event listener
 ```javascript
 /**
- * @param {String} event
+ * @param {String|Array} event
  * @param {Function} callback
 */
 hook.on('match', function(value, action){
