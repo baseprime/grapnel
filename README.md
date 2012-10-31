@@ -1,43 +1,43 @@
 Grapnel.js
 ==========
 
-A lightweight JavaScript library for adding action hooks in URL hashtags/anchors.
+A lightweight JavaScript library making it easy to run events based on a specific URL hashtag.
 
 ## An example:
 
 #### Basic usage
 
 ```javascript
-var myhook = new Grapnel(':');
+var hook = new Grapnel(':');
 
-myhook.add('eat', function(value){
-    console.log('Someone just ate a %s.', this.value);
+hook.add('show', function(value){
+    console.log('Showing: %s', this.value);
 });
 ```
 
-A URL with a hashtag formatted below:
-
+The URL
 ```bash
-http://domain.com/page#eat:taco
+http://mysite.com/products#show:widgets
 ```
 
 Would log in console
 
 ```bash
-Someone just ate a taco.
+Showing: widgets
 ```
 
 #### RegEx
 
 ```javascript
 var expression = /are/g;
-var myhook = new Grapnel(expression);
+var hook = new Grapnel(expression);
 
-myhook.add('tacos', function(value){
+hook.add('tacos', function(value){
     console.log('Someone thinks %s are %s.', this.anchor, this.value);
 });
 ```
 
+The URL
 ```bash
 http://domain.com/page#tacosaregood
 ```
@@ -47,6 +47,33 @@ Would log in console
 ```bash
 Someone thinks tacos are good.
 ```
+
+#### Simple JavaScript Router using jQuery
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>This is a static page</title>
+<script type="text/javascript" src="/path/to/Grapnel.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type="text/javascript">
+var router = new Grapnel('/');
+
+router.add('products', function(){
+    var page = this.value + '.html';
+    // GET widgets.html
+    $('body').load(page);
+});
+</script>
+</head>
+<body>
+<h1>This is a static page</h1>
+<p><a href="#products/widgets">Click Here to view my widgets</a></p>
+</body>
+</html>
+```
+
 &nbsp;
 
 ***
@@ -63,8 +90,13 @@ var hook = new Grapnel();
 ## Methods
 ##### `add` Adds a new action listener
 ```javascript
+/**
+ * @param {String|Array} action
+ * @param {Function} callback
+*/
 hook.add('find', function(){
     // this.value, this.action, this.hook
+    // this.matches();
     // this.setAnchor('something');
     // this.clearAnchor();
     console.log('Finding %s', this.value);
@@ -73,17 +105,22 @@ hook.add('find', function(){
 
 ##### `on` Adds a new event listener
 ```javascript
-hook.on('hookfound', function(){
-    console.log('Found hook: %s', this.hook);
+/**
+ * @param {String} event
+ * @param {Function} callback
+*/
+hook.on('match', function(value, action){
+    console.log('Grapnel.js works! (Hook: "%s", Action: "%s", Value: "%s")', this.hook, action, value);
 });
 ```
+##### `matches` Return array of matching actions
 ##### `setAnchor` Sets a new absolute anchor
 ##### `getAnchor` Get absolute anchor
 ##### `clearAnchor` Clears the anchor (replaces URL with #! appended to it)
 
 ## Events
 
-##### `hookfound` A matched hook is found
+##### `match` A matched hook is found
 ##### `hashchange` Anchor hashtag is changed
 
 ## Todo
