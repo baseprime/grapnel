@@ -7,17 +7,16 @@
  * @author Greg Sabia
  * @support http://gregsabia.com
  * 
- * Event listeners: ['hashchange', 'hookfound']
+ * Event listeners: ['ready', 'match', 'hashchange']
 */
 
 var Grapnel = function(hook){
     var self = this;
-    // Anchoring
-    this.anchor = false;
+    this.action = null;
     // Hook (default: ":")
     this.hook = hook || ':';
-    // Value (default: false)
-    this.value = false;
+    // Value (default: null)
+    this.value = null;
     // Actions
     this.actions = [];
     // Listeners
@@ -25,38 +24,35 @@ var Grapnel = function(hook){
     /**
      * Add an event listener
      * 
-     * @param {String} event
+     * @param {String|Array} event
      * @param {Function} callback
     */
     this.on = function(event, handler){
-        return this.listeners.push({ event : event, handler : handler });
+        var events = (typeof event == 'string') ? event.split() : event;
+        // Add listeners
+        events.map(function(event){
+            self.listeners.push({ event : event, handler : handler });
+        });
+
+        return this._run();
     }
     // Fire a listener
-    this._trigger = function(event, data){
-        for(i in this.listeners){
-            if(this.listeners[i].event == event){
-                this.listeners[i].handler.call(this, data);
-            }
-        }
+    this._trigger = function(event){
+        var params = Array.prototype.slice.call(arguments, 1);
+
+        this.listeners.map(function(listener){
+            if(listener.event == event) listener.handler.apply(self, params);
+        });
 
         return this;
     }
     // Get anchor
     this.getAnchor = function(){
-        var url_anchor = document.location.toString();
-        if(url_anchor.match('#')){
-            return this.anchor = url_anchor.split('#')[1];
-        }else{
-            return false;
-        }
+        return (window.location.hash) ? window.location.hash.split('#')[1] : '';
     }
     // Change anchor
     this.setAnchor = function(anchor){
-        var url_anchor = document.location.toString();
-        var anchor = anchor || '!';
-        // Append anchor to location
-        document.location = url_anchor.split('#')[0] + '#' + anchor;
-
+        window.location.hash = (!anchor) ? '' : anchor;
         return this;
     }
     // Reset anchor
@@ -64,19 +60,19 @@ var Grapnel = function(hook){
         return this.setAnchor(false);
     }
     // Parse hook
-    this.parseHook = function(a){
-        var a = a || this.anchor;
+    this.parse = function(){
+        var action, value;
 
-        if(this.anchor && a.match(this.hook)){
-            this.value = a.split(this.hook)[1];
-            this.anchor = a.split(this.hook)[0];
-            // Fire event
-            this._trigger('hookfound', [this.value, this.anchor]);
-
-            return this.anchor;
-        }else{
-            return a;
+        if(this.getAnchor().match(this.hook)){
+            // Found a hook!
+            value = this.getAnchor().split(this.hook)[1];
+            action = this.getAnchor().split(this.hook)[0];
         }
+
+        return {
+            value : value,
+            action : action
+        };
     }
     /**
      * Add an action and handler
@@ -84,28 +80,37 @@ var Grapnel = function(hook){
      * @param {String} action name
      * @param {Function} callback
     */
-    this.add = function(action, handler){
-        this.actions.push({ action : action, handler : handler });
+    this.add = function(name, handler){
+        this.actions.push({ name : name, handler : handler });
         return this._run();
     }
-    // Initialize
-    this.getAnchor();
-    this.parseHook();
+    // Return matched actions
+    this.matches = function(){
+        var matches = [];
+
+        this.actions.map(function(action){
+            if(action.name == self.action) matches.push(action);
+        });
+
+        return matches;
+    }
     // Run hook action
     this._run = function(){
-        // We've matched an anchor action
-        for(i in this.actions){
-            if(this.actions[i].action == this.anchor) this.actions[i].handler.call(this, this.value, this.anchor);
-        }
+        // Parse Hashtag in URL
+        this.action = this.parse().action;
+        this.value = this.parse().value;
+        // If a match is found, trigger event
+        if(this.matches().length > 0) this._trigger('match', this.value, this.action);
+        // Run handlers matching current anchor
+        this.matches().map(function(action){
+            action.handler.call(self, self.value, self.action);
+        });
 
         return this;
     }
     // Default anchor change event
-    this.on('hashchange', function(){
-        this.getAnchor();
-        this.parseHook();
-        this._run();
-    });
+    this.on(['ready', 'hashchange'], this._run);
+
     // Check current hash change event
     if(typeof window.onhashchange == 'function') this.on('hashchange', window.onhashchange);
     /**
@@ -113,8 +118,10 @@ var Grapnel = function(hook){
      * TODO: increase browser compatibility. "window.onhashchange" can be supplemented in older browsers with setInterval()
     */
     window.onhashchange = function(){
-        self._trigger('hashchange', self.anchor);
+        self._trigger('hashchange', self.getAnchor());
     }
+    // Initialize
+    this._trigger('ready', this);
 
     return this;
 }
