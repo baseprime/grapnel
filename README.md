@@ -124,7 +124,7 @@ hook.on('match', function(value, action){
 ##### `hashchange` Anchor hashtag is changed
 
 ## License
-##### MIT License
+##### [MIT License](http://opensource.org/licenses/MIT)
 
 ## Todo
 
