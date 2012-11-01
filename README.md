@@ -123,6 +123,9 @@ hook.on('match', function(value, action){
 ##### `match` A matched hook is found
 ##### `hashchange` Anchor hashtag is changed
 
+## License
+##### MIT License
+
 ## Todo
 
 ##### Add support for older browsers not supporting `window.onhashchange` (IE lte 7.0)
