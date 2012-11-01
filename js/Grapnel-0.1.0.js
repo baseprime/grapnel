@@ -1,11 +1,11 @@
 
 /****
  * @package Grapnel.js
- * A lightweight JavaScript library for adding action hooks in URL hashtags/anchors.
  * https://github.com/gregsabia/Grapnel-js 
  * 
  * @author Greg Sabia
  * @support http://gregsabia.com
+ * @license MIT License, see LICENSE.txt or http://opensource.org/licenses/MIT
  * 
  * Event listeners: ['ready', 'match', 'hashchange']
 */
