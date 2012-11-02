@@ -33,7 +33,7 @@ var expression = /are/g;
 var hook = new Grapnel(expression);
 
 hook.add('tacos', function(value){
-    console.log('Someone thinks %s are %s.', this.anchor, this.value);
+    console.log('Someone thinks %s are %s.', this.action, this.value);
 });
 ```
 
