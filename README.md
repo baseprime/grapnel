@@ -132,8 +132,9 @@ hook.on('match', function(value, action){
 
 ## Changelog
 
-## 0.1.1
+##### 0.1.1
 * Compatibility: Map Array workaround for compatibility issues with archaic browsers
+* Added `this.version` property
 
-## 0.1.0
+##### 0.1.0
 * Initial release
