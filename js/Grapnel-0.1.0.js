@@ -21,6 +21,8 @@ var Grapnel = function(hook){
     this.actions = [];
     // Listeners
     this.listeners = [];
+    // Version
+    this.version = '0.1.0';
     /**
      * Add an event listener
      * 
