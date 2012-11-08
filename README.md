@@ -129,3 +129,11 @@ hook.on('match', function(value, action){
 ## Todo
 
 ##### Add support for older browsers not supporting `window.onhashchange` (IE lte 7.0)
+
+## Changelog
+
+## 0.1.1
+* Compatibility: Map Array workaround for compatibility issues with archaic browsers
+
+## 0.1.0
+* Initial release
