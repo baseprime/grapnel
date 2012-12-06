@@ -1,13 +1,13 @@
 
 /****
- * @package Grapnel.js
- * https://github.com/gregsabia/Grapnel-js 
+ * Grapnel.js
+ * https://github.com/gregsabia/Grapnel.js 
  * 
  * @author Greg Sabia
- * @support http://gregsabia.com
- * @license MIT License, see LICENSE.txt or http://opensource.org/licenses/MIT
+ * @link http://gregsabia.com
+ * @version 0.1.1
  * 
- * Event listeners: ['ready', 'match', 'hashchange']
+ * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
 
 var Grapnel = function(hook){
