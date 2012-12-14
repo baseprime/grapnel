@@ -74,6 +74,8 @@ var Grapnel = function(hook){
             // Test matches against current action
             if(regex || name === self.action){
                 // Match found
+                self._trigger('match', self.value, self.action);
+                // Callback
                 handler.call(self, self.value, self.action);
                 // Push self to actions
                 self.actionsMatching.push({ name : name, handler : handler });
@@ -151,8 +153,6 @@ var Grapnel = function(hook){
         this.value = this.parse().value;
         // Reset actions
         this.actionsMatching = [];
-        // If a match is found, trigger event
-        if(this.matches().length > 0) this._trigger('match', this.value, this.action);
     });
     // Check current hash change event
     if(typeof window.onhashchange === 'function') this.on('hashchange', window.onhashchange);
