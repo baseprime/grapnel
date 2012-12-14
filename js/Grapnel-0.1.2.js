@@ -75,10 +75,10 @@ var Grapnel = function(hook){
             if(regex || name === self.action){
                 // Match found
                 self._trigger('match', self.value, self.action);
-                // Callback
-                handler.call(self, self.value, self.action);
                 // Push self to actions
                 self.actionsMatching.push({ name : name, handler : handler });
+                // Callback
+                handler.call(self, self.value, self.action);
             }
             // Return self to force context
             return self;
