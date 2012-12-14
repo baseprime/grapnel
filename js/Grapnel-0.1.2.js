@@ -63,7 +63,7 @@ var Grapnel = function(hook){
     /**
      * Add an action and handler
      * 
-     * @param {String} action name
+     * @param {String|RegExp} action name
      * @param {Function} callback
      * @return self
     */

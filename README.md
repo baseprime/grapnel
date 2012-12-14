@@ -28,11 +28,13 @@ Showing: widgets
 
 #### RegEx
 
+Grapnel.js allows RegEx when defining a hook or a new action:
+
 ```javascript
 var expression = /are/g;
 var hook = new Grapnel(expression);
 
-hook.add('tacos', function(value){
+hook.add(/tacos/gi, function(value){
     console.log('Someone thinks %s are %s.', this.action, this.value);
 });
 ```
@@ -91,7 +93,7 @@ var hook = new Grapnel();
 ##### `add` Adds a new action listener
 ```javascript
 /**
- * @param {String} action
+ * @param {String|RegExp} action
  * @param {Function} callback
 */
 hook.add('find', function(){
@@ -131,6 +133,11 @@ hook.on('match', function(value, action){
 ##### Add support for older browsers not supporting `window.onhashchange` (IE lte 7.0)
 
 ## Changelog
+
+##### 0.1.2
+* Increased compatibility
+* Fixed bug where events would run twice if there were more than one matches
+* Added RegEx support for actions
 
 ##### 0.1.1
 * Compatibility: Map Array workaround for compatibility issues with archaic browsers
