@@ -75,7 +75,7 @@ var Grapnel = function(hook){
             if(regex || name === self.action){
                 // Match found
                 self._trigger('match', self.value, self.action);
-                // Push self to actions
+                // Push object to actions array
                 self.actionsMatching.push({ name : name, handler : handler });
                 // Callback
                 handler.call(self, self.value, self.action);
@@ -83,7 +83,7 @@ var Grapnel = function(hook){
             // Return self to force context
             return self;
         }
-        // Invoke itself and add listeners
+        // Invoke and add listeners
         return invoke().on(['ready', 'hashchange'], invoke);
     }
     /**
@@ -96,7 +96,7 @@ var Grapnel = function(hook){
         var params = Array.prototype.slice.call(arguments, 1);
         // Call matching events
         this.mapArray(this.listeners, function(listener){
-            // Apply special state (ready) to future events
+            // Apply callback
             if(listener.event == event) listener.handler.apply(self, params);
         });
 
@@ -146,7 +146,7 @@ var Grapnel = function(hook){
 
         return matches;
     }
-    // Run hook action
+    // Run hook action when state changes
     this.on(['ready', 'hashchange'], function(){
         // Parse Hashtag in URL
         this.action = this.parse().action;
