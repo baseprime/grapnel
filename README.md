@@ -31,7 +31,7 @@ Showing: widgets
 Grapnel.js allows RegEx when defining a hook or a new action:
 
 ```javascript
-var expression = /are/g;
+var expression = /are/gi;
 var hook = new Grapnel(expression);
 
 hook.add(/tacos/gi, function(value){
