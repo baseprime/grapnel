@@ -1,4 +1,3 @@
-
 /****
  * Grapnel.js
  * https://github.com/gregsabia/Grapnel.js 
@@ -31,6 +30,7 @@ var Grapnel = function(hook){
      * 
      * @param {Array} to iterate
      * @param {Function} callback
+     * @return {Array}
     */
     this.mapArray = function(a, callback){
         if(typeof Array.prototype.map === 'function') return Array.prototype.map.call(a, callback);
