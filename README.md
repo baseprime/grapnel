@@ -115,7 +115,7 @@ hook.on('match', function(value, action){
     console.log('Grapnel.js works! (Hook: "%s", Action: "%s", Value: "%s")', this.hook, action, value);
 });
 ```
-##### `matches` Return array of matching actions
+##### `matches` Return array of matching action listeners
 ##### `setAnchor` Sets a new absolute anchor
 ##### `getAnchor` Get absolute anchor
 ##### `clearAnchor` Clears the anchor (replaces URL with #! appended to it)
@@ -133,6 +133,10 @@ hook.on('match', function(value, action){
 ##### Add support for older browsers not supporting `window.onhashchange` (IE lte 7.0)
 
 ## Changelog
+
+##### 0.1.3
+* Compatibility: Internal `forEach` workaround for compatibility issues
+* Removed version from library filename
 
 ##### 0.1.2
 * Increased compatibility
