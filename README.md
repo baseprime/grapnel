@@ -118,12 +118,12 @@ hook.on('match', function(value, action){
 ##### `matches` Return array of matching action listeners
 ##### `setAnchor` Sets a new absolute anchor
 ##### `getAnchor` Get absolute anchor
-##### `clearAnchor` Clears the anchor (replaces URL with #! appended to it)
+##### `clearAnchor` Clears the anchor
 
 ## Events
 
-##### `match` A matched hook is found
-##### `hashchange` Anchor hashtag is changed
+##### `match` Fires when an action is found
+##### `hashchange` Fires when hashtag is changed
 
 ## License
 ##### [MIT License](http://opensource.org/licenses/MIT)
