@@ -24,46 +24,7 @@ var Grapnel = function(hook){
     // Listeners
     this.listeners = [];
     // Version
-<<<<<<< HEAD:js/Grapnel-0.1.2.js
-    this.version = '0.1.2';
-    /**
-     * Map Array workaround for compatibility issues with archaic browsers
-     * 
-     * @param {Array} to iterate
-     * @param {Function} callback
-     * @return {Array}
-    */
-    this.mapArray = function(a, callback){
-        if(typeof Array.prototype.map === 'function') return Array.prototype.map.call(a, callback);
-        // Replicate map()
-        return function(c, next){
-            var other = new Array(this.length);
-            for(var i=0, n=this.length; i<n; i++){
-                if(i in this) other[i] = c.call(next, this[i], i, this);
-            }
-
-            return other;
-        }.call(a, callback);
-    }
-    /**
-     * Add an event listener
-     * 
-     * @param {String|Array} event
-     * @param {Function} callback
-     * @return self
-    */
-    this.on = function(event, handler){
-        var events = (typeof event === 'string') ? event.split() : event;
-        // Add listeners
-        this.mapArray(events, function(event){
-            self.listeners.push({ event : event, handler : handler });
-        });
-
-        return this;
-    }
-=======
     this.version = '0.1.3';
->>>>>>> `ForEach` workaround for compatibility issues; Removed version from library filename:js/Grapnel.js
     /**
      * Add an action and handler
      * 
