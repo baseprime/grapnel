@@ -11,18 +11,19 @@
 
 var Grapnel = function(hook){
     "use strict";
-    // Scope reference
-    var self = this;
+    var self = this, // Scope reference
+        util = {
+            actions : [],
+            listeners : []
+        };
     // Current action if matched (default: null)
     this.action = null;
     // Hook (default: ":")
     this.hook = hook || ':';
     // Current value if matched (default: null)
     this.value = null;
-    // Actions
-    this.actionsMatching = [];
-    // Listeners
-    this.listeners = [];
+    // Anchor
+    this.anchor = { default : window.location.hash };
     // Version
     this.version = '0.1.3';
     /**
@@ -39,9 +40,9 @@ var Grapnel = function(hook){
             // Test matches against current action
             if(regex || name === self.action){
                 // Match found
-                self._trigger('match', self.value, self.action);
+                util.trigger('match', self.value, self.action);
                 // Push object to actions array
-                self.actionsMatching.push({ name : name, handler : handler });
+                util.actions.push({ name : name, handler : handler });
                 // Callback
                 handler.call(self, self.value, self.action);
             }
@@ -54,18 +55,19 @@ var Grapnel = function(hook){
     /**
      * Fire an event listener
      * 
+     * @private
      * @param {String} event
      * @return self
     */
-    this._trigger = function(event){
+    util.trigger = function(event){
         var params = Array.prototype.slice.call(arguments, 1);
         // Call matching events
-        this.forEach(this.listeners, function(listener){
+        util.forEach(util.listeners, function(listener){
             // Apply callback
             if(listener.event == event) listener.handler.apply(self, params);
         });
 
-        return this;
+        return self;
     }
     /**
      * Add an event listener
@@ -77,8 +79,8 @@ var Grapnel = function(hook){
     this.on = function(event, handler){
         var events = (typeof event === 'string') ? event.split() : event;
         // Add listeners
-        this.forEach(events, function(event){
-            self.listeners.push({ event : event, handler : handler });
+        util.forEach(events, function(event){
+            util.listeners.push({ event : event, handler : handler });
         });
 
         return this;
@@ -86,10 +88,11 @@ var Grapnel = function(hook){
     /**
      * Map Array workaround for compatibility issues with archaic browsers
      * 
+     * @private
      * @param {Array} to iterate
      * @param {Function} callback
     */
-    this.map = this.mapArray = function(a, callback){
+    util.map = function(a, callback){
         if(typeof Array.prototype.map === 'function') return Array.prototype.map.call(a, callback);
         // Replicate map()
         return function(c, next){
@@ -104,10 +107,11 @@ var Grapnel = function(hook){
     /**
      * ForEach workaround
      * 
+     * @private
      * @param {Array} to iterate
      * @param {Function} callback
     */
-    this.forEach = function(a, callback){
+    util.forEach = function(a, callback){
         if(typeof Array.prototype.forEach === 'function') return Array.prototype.forEach.call(a, callback);
         // Replicate forEach()
         return function(c, next){
@@ -117,26 +121,26 @@ var Grapnel = function(hook){
         }.call(a, callback);
     }
     // Get anchor
-    this.getAnchor = function(){
+    this.anchor.get = function(){
         return (window.location.hash) ? window.location.hash.split('#')[1] : '';
     }
     // Change anchor
-    this.setAnchor = function(anchor){
+    this.anchor.set = function(anchor){
         window.location.hash = (!anchor) ? '' : anchor;
-        return this;
+        return self;
     }
     // Reset anchor
-    this.clearAnchor = function(){
-        return this.setAnchor(false);
+    this.anchor.clear = function(){
+        return this.set(false);
     }
     // Parse hook
     this.parse = function(){
         var action, value;
 
-        if(this.getAnchor().match(this.hook)){
+        if(this.anchor.get().match(this.hook)){
             // Found a hook!
-            value = this.getAnchor().split(this.hook)[1];
-            action = this.getAnchor().split(this.hook)[0];
+            value = this.anchor.get().split(this.hook)[1];
+            action = this.anchor.get().split(this.hook)[0];
         }
 
         return {
@@ -148,7 +152,7 @@ var Grapnel = function(hook){
     this.matches = function(){
         var matches = [];
 
-        this.forEach(this.actionsMatching, function(action){
+        util.forEach(util.actions, function(action){
             // If action is instance of RegEx, match the action
             var regex = (action.name instanceof RegExp && self.action.match(action.name));
             // Test matches against current action
@@ -166,7 +170,7 @@ var Grapnel = function(hook){
         this.action = this.parse().action;
         this.value = this.parse().value;
         // Reset actions
-        this.actionsMatching = [];
+        util.actions = [];
     });
     // Check current hash change event
     if(typeof window.onhashchange === 'function') this.on('hashchange', window.onhashchange);
@@ -175,8 +179,8 @@ var Grapnel = function(hook){
      * TODO: increase browser compatibility. "window.onhashchange" can be supplemented in older browsers with setInterval()
     */
     window.onhashchange = function(){
-        self._trigger('hashchange');
+        util.trigger('hashchange');
     }
 
-    return this._trigger('initialized');
+    return util.trigger('initialized');
 }
