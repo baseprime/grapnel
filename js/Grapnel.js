@@ -4,7 +4,7 @@
  * 
  * @author Greg Sabia
  * @link http://gregsabia.com
- * @version 0.1.2
+ * @version 0.1.3
  * 
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -24,6 +24,7 @@ var Grapnel = function(hook){
     // Listeners
     this.listeners = [];
     // Version
+<<<<<<< HEAD:js/Grapnel-0.1.2.js
     this.version = '0.1.2';
     /**
      * Map Array workaround for compatibility issues with archaic browsers
@@ -60,6 +61,9 @@ var Grapnel = function(hook){
 
         return this;
     }
+=======
+    this.version = '0.1.3';
+>>>>>>> `ForEach` workaround for compatibility issues; Removed version from library filename:js/Grapnel.js
     /**
      * Add an action and handler
      * 
@@ -84,7 +88,7 @@ var Grapnel = function(hook){
             return self;
         }
         // Invoke and add listeners
-        return invoke().on(['ready', 'hashchange'], invoke);
+        return invoke().on(['initialized', 'hashchange'], invoke);
     }
     /**
      * Fire an event listener
@@ -95,12 +99,61 @@ var Grapnel = function(hook){
     this._trigger = function(event){
         var params = Array.prototype.slice.call(arguments, 1);
         // Call matching events
-        this.mapArray(this.listeners, function(listener){
+        this.forEach(this.listeners, function(listener){
             // Apply callback
             if(listener.event == event) listener.handler.apply(self, params);
         });
 
         return this;
+    }
+    /**
+     * Add an event listener
+     * 
+     * @param {String|Array} event
+     * @param {Function} callback
+     * @return self
+    */
+    this.on = function(event, handler){
+        var events = (typeof event === 'string') ? event.split() : event;
+        // Add listeners
+        this.forEach(events, function(event){
+            self.listeners.push({ event : event, handler : handler });
+        });
+
+        return this;
+    }
+    /**
+     * Map Array workaround for compatibility issues with archaic browsers
+     * 
+     * @param {Array} to iterate
+     * @param {Function} callback
+    */
+    this.map = this.mapArray = function(a, callback){
+        if(typeof Array.prototype.map === 'function') return Array.prototype.map.call(a, callback);
+        // Replicate map()
+        return function(c, next){
+            var other = new Array(this.length);
+            for(var i=0, n=this.length; i<n; i++){
+                if(i in this) other[i] = c.call(next, this[i], i, this);
+            }
+
+            return other;
+        }.call(a, callback);
+    }
+    /**
+     * ForEach workaround
+     * 
+     * @param {Array} to iterate
+     * @param {Function} callback
+    */
+    this.forEach = function(a, callback){
+        if(typeof Array.prototype.forEach === 'function') return Array.prototype.forEach.call(a, callback);
+        // Replicate forEach()
+        return function(c, next){
+            for(var i=0, n = this.length; i<n; ++i){
+                c.call(next, this[i], i, this);
+            }
+        }.call(a, callback);
     }
     // Get anchor
     this.getAnchor = function(){
@@ -134,7 +187,7 @@ var Grapnel = function(hook){
     this.matches = function(){
         var matches = [];
 
-        this.mapArray(this.actionsMatching, function(action){
+        this.forEach(this.actionsMatching, function(action){
             // If action is instance of RegEx, match the action
             var regex = (action.name instanceof RegExp && self.action.match(action.name));
             // Test matches against current action
@@ -147,7 +200,7 @@ var Grapnel = function(hook){
         return matches;
     }
     // Run hook action when state changes
-    this.on(['ready', 'hashchange'], function(){
+    this.on(['initialized', 'hashchange'], function(){
         // Parse Hashtag in URL
         this.action = this.parse().action;
         this.value = this.parse().value;
@@ -164,5 +217,5 @@ var Grapnel = function(hook){
         self._trigger('hashchange');
     }
 
-    return this._trigger('ready');
+    return this._trigger('initialized');
 }
