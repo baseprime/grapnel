@@ -96,11 +96,11 @@ var hook = new Grapnel();
  * @param {String|RegExp} action
  * @param {Function} callback
 */
-hook.add('find', function(){
+hook.add('find', function(value, action){
     // this.value, this.action, this.hook
     // this.matches();
-    // this.setAnchor('something');
-    // this.clearAnchor();
+    // this.anchor.set('something');
+    // this.anchor.clear();
     console.log('Finding %s', this.value);
 });
 ```
@@ -116,9 +116,11 @@ hook.on('match', function(value, action){
 });
 ```
 ##### `matches` Return array of matching action listeners
-##### `setAnchor` Sets a new absolute anchor
-##### `getAnchor` Get absolute anchor
-##### `clearAnchor` Clears the anchor
+##### `anchor`
+* `default` Static anchor during initialization
+* `set` Sets a new absolute anchor
+* `get` Get absolute anchor
+* `clear` Clears the anchor
 
 ## Events
 
@@ -135,7 +137,9 @@ hook.on('match', function(value, action){
 ## Changelog
 
 ##### 0.1.3
-* Compatibility: Internal `forEach` workaround for compatibility issues
+* Privatized utility methods: `map` and `trigger`
+* Moved `anchor` into its own object
+* Internal `forEach` workaround for compatibility issues
 * Removed version from library filename
 
 ##### 0.1.2
