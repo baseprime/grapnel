@@ -4,12 +4,12 @@
  * 
  * @author Greg Sabia
  * @link http://gregsabia.com
- * @version 0.1.3
+ * @version 0.2.1
  * 
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
 
-var Grapnel = function(hook){
+function Grapnel(hook){
     "use strict";
     var self = this, // Scope reference
         util = {
@@ -22,10 +22,12 @@ var Grapnel = function(hook){
     this.hook = hook || ':';
     // Current value if matched (default: null)
     this.value = null;
+    // Named parameters
+    this.params = [];
     // Anchor
     this.anchor = { default : window.location.hash };
     // Version
-    this.version = '0.1.3';
+    this.version = '0.2.1';
     /**
      * Add an action and handler
      * 
@@ -36,15 +38,15 @@ var Grapnel = function(hook){
     this.add = function(name, handler){
         var invoke = function(){
             // If action is instance of RegEx, match the action
-            var regex = (self.action && name instanceof RegExp && self.action.match(name));
+            var regex = (self.action && name instanceof RegExp) ? self.anchor.get().match(name) : false;
             // Test matches against current action
-            if(regex || name === self.action){
+            if(regex || name === self.action || self.anchor.get() == name){
                 // Match found
-                util.trigger('match', self.value, self.action);
+                util.trigger('match', self.value, self.params, self.action);
                 // Push object to actions array
                 util.actions.push({ name : name, handler : handler });
                 // Callback
-                handler.call(self, self.value, self.action);
+                handler.call(self, self.value, self.params);
             }
             // Return self to force context
             return self;
@@ -120,6 +122,34 @@ var Grapnel = function(hook){
             }
         }.call(a, callback);
     }
+    /**
+     * Create a matchable RegExp Route
+     *
+     * @private
+     * @param {String} Path of route
+     * @param {Array} Array of keys to fill
+     * @param {Bool} Case sensitive comparison
+     * @param {Bool} Strict mode
+    */
+    util.routeRegExp = function(path, keys, sensitive, strict){
+        if(path instanceof RegExp) return path;
+        if(path instanceof Array) path = '(' + path.join('|') + ')';
+        // Build route RegExp
+        path = path.concat(strict ? '' : '/?')
+            .replace(/\/\(/g, '(?:/')
+            .replace(/\+/g, '__plus__')
+            .replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function(_, slash, format, key, capture, optional){
+                keys.push({ name : key, optional : !!optional });
+                slash = slash || '';
+                
+                return '' + (optional ? '' : slash) + '(?:' + (optional ? slash : '') + (format || '') + (capture || (format && '([^/.]+?)' || '([^/]+?)')) + ')' + (optional || '');
+            })
+            .replace(/([\/.])/g, '\\$1')
+            .replace(/__plus__/g, '(.+)')
+            .replace(/\*/g, '(.*)');
+
+        return new RegExp('^' + path + '$', sensitive ? '' : 'i');
+    }
     // Get anchor
     this.anchor.get = function(){
         return (window.location.hash) ? window.location.hash.split('#')[1] : '';
@@ -133,19 +163,27 @@ var Grapnel = function(hook){
     this.anchor.clear = function(){
         return this.set(false);
     }
-    // Parse hook
+    // Parse
     this.parse = function(){
-        var action, value;
-
+        var anchor = this.anchor.get(),
+            pieces = anchor.split(this.hook),
+            glue = anchor.match(this.hook),
+            action = pieces[0], // First index is the action
+            params = [],
+            value;
+        
         if(this.anchor.get().match(this.hook)){
-            // Found a hook!
-            value = this.anchor.get().split(this.hook)[1];
-            action = this.anchor.get().split(this.hook)[0];
+            params = pieces.slice(1);
+            value = params.join(glue[0]);
         }
+
+        // Trigger successfully parsed URL
+        util.trigger('parse', pieces);
 
         return {
             value : value,
-            action : action
+            action : action,
+            params : params
         };
     }
     // Return matched actions
@@ -164,11 +202,40 @@ var Grapnel = function(hook){
 
         return matches;
     }
+    // Enable routing
+    this.router = function(){
+        // Set Grapnel hook as a forward slash
+        this.hook = /\//gi;
+        // Add GET method callable through API
+        this.get = function(path, handler){
+            var keys = [];
+            var regex = new util.routeRegExp(path, keys);
+            // Add listener
+            this.add(regex, function(){
+                var req = { params : {} };
+                // Build parameters
+                util.forEach(keys, function(key, i){
+                    req.params[key.name] = (self.params && self.params[i]) ? self.params[i] : undefined;
+                });
+                // Call handler
+                // Notice how a handler for a route passes `params` as the second argument, instead of `self.value`
+                handler.call(self, req);
+            });
+
+            return self;
+        }
+        // There can be only one
+        delete this.router;
+
+        return util.trigger('initialized');
+    }
     // Run hook action when state changes
     this.on(['initialized', 'hashchange'], function(){
+        var parsed = this.parse();
         // Parse Hashtag in URL
-        this.action = this.parse().action;
-        this.value = this.parse().value;
+        this.action = parsed.action;
+        this.value = parsed.value;
+        this.params = parsed.params;
         // Reset actions
         util.actions = [];
     });

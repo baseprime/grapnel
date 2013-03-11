@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>This is a static page</title>
+<title>Grapnel - Example</title>
 <script type="text/javascript" src="../js/Grapnel.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script type="text/javascript">
 var hook = new Grapnel();
 
 $(function(){
-    hook.add('show', function(value){
+    hook.add('show', function(value, params){
         $('li').show().not('.' + value).hide();
     });
 });

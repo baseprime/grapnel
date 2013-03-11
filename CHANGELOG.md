@@ -1,0 +1,23 @@
+## Changelog
+
+##### 0.2.1
+* Added routing capabilities
+* Cleaned up documentation
+
+##### 0.1.3
+* Privatized utility methods: `map` and `trigger`
+* Moved `anchor` into its own object
+* Internal `forEach` workaround for compatibility issues
+* Removed version from library filename
+
+##### 0.1.2
+* Increased compatibility
+* Fixed bug where events would run twice if there were more than one matches
+* Added RegEx support for actions
+
+##### 0.1.1
+* Compatibility: Map Array workaround for compatibility issues with archaic browsers
+* Added `this.version` property
+
+##### 0.1.0
+* Initial release
