@@ -155,7 +155,7 @@ hook.on('match', function(value, params){
 * `clear` Clears the anchor
 
 ## Events
-##### `match` Fires before an action is found
+##### `match` Fires before matched route/action handler is called
 ##### `hashchange` Fires when hashtag is changed
 ##### `parse` Fires when a URL is parsed
 
