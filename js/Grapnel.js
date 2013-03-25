@@ -25,7 +25,7 @@ function Grapnel(hook){
     // Named parameters
     this.params = [];
     // Anchor
-    this.anchor = { default : window.location.hash };
+    this.anchor = { defaultHash : window.location.hash };
     // Version
     this.version = '0.2.1';
     /**
