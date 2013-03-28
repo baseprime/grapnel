@@ -127,8 +127,7 @@ router.get('store/:category/:id?', function(req){
  * @param {String|RegExp} action
  * @param {Function} callback
 */
-hook.add('find', function(value, action){
-    // this.value, this.action, this.hook
+hook.add('find', function(value, action, regexMatches){
     // this.matches();
     // this.anchor.set('something');
     // this.anchor.clear();

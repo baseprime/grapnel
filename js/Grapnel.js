@@ -42,11 +42,11 @@ function Grapnel(hook){
             // Test matches against current action
             if(regex || name === self.action || self.anchor.get() == name){
                 // Match found
-                util.trigger('match', self.value, self.params, self.action);
+                util.trigger('match', self.value, self.params, self.action, regex);
                 // Push object to actions array
                 util.actions.push({ name : name, handler : handler });
                 // Callback
-                handler.call(self, self.value, self.params);
+                handler.call(self, self.value, self.params, regex);
             }
             // Return self to force context
             return self;
@@ -211,11 +211,13 @@ function Grapnel(hook){
             var keys = [];
             var regex = new util.routeRegExp(path, keys);
             // Add listener
-            this.add(regex, function(){
-                var req = { params : {} };
+            this.add(regex, function(_v, _p, matches){
+                var req = { params : {}, keys : keys, matches : matches.slice(1) };
                 // Build parameters
-                util.forEach(keys, function(key, i){
-                    req.params[key.name] = (self.params && self.params[i]) ? self.params[i] : undefined;
+                util.forEach(req.matches, function(value, i){
+                    var key = (keys[i] && keys[i].name) ? keys[i].name : i;
+                    // Parameter key will be its key or the iteration index. This is useful if a wildcard (*) is matched
+                    req.params[key] = (value) ? decodeURIComponent(value) : undefined;
                 });
                 // Call handler
                 // Notice how a handler for a route passes `params` as the second argument, instead of `self.value`
