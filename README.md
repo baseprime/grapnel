@@ -12,9 +12,8 @@ var router = new Grapnel().router();
 
 router.get('products/:id?', function(req){
     var id = req.params.id;
-
-    console.log(id);
     // GET http://mysite.com/#products/134
+    console.log(id);
     // => 134
 });
 ```
@@ -25,8 +24,8 @@ router.get('products/:id?', function(req){
 var hook = new Grapnel(':');
 
 hook.add('show', function(value){
-    console.log('Showing: %s', this.value);
     // GET http://mysite.com/products#show:widgets
+    console.log('Showing: %s', this.value);
     // => "Showing: widgets"
 });
 ```
@@ -40,8 +39,8 @@ var expression = /are/gi;
 var hook = new Grapnel(expression);
 
 hook.add(/tacos/gi, function(value){
-    console.log('Someone thinks %s are %s.', this.action, this.value);
     // GET http://mysite.com/page#tacosaregood
+    console.log('Someone thinks %s are %s.', this.action, this.value);
     // => "Someone thinks tacos are good."
 });
 ```
@@ -82,7 +81,7 @@ router.get('products/:id?', function(req){
 });
 
 router.get('*', function(){
-    // The ampersand matches all routes
+    // The wildcard matches all routes
 });
 ```
 
