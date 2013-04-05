@@ -71,7 +71,7 @@ router.get('products/:page?', function(req){
 </html>
 ```
 
-#### RegEx style routes
+#### Named Parameters/RegEx style routes
 Grapnel.js supports regex style routes. The properties are mapped to the parameters in the request.
 ```javascript
 router.get('products/:id?', function(req){
