@@ -80,8 +80,9 @@ router.get('products/:id?', function(req){
     // => 134
 });
 
-router.get('*', function(){
-    // The wildcard matches all routes
+router.get('products/*', function(req){
+    // The wildcard/asterisk will match anything after that point in the URL
+    // Parameters are provided req.params using req.params[n], where n is the nth capture
 });
 ```
 
