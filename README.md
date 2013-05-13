@@ -148,7 +148,7 @@ hook.on('match', function(value, params){
 ##### `matches` Return array of matching action listeners
 ##### `parse` Reparse URL
 ##### `anchor`
-* `default` Static anchor during initialization
+* `defaultHash` Static anchor during initialization
 * `set` Sets a new absolute anchor
 * `get` Get absolute anchor
 * `clear` Clears the anchor
