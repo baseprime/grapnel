@@ -159,49 +159,6 @@
         this.anchor.clear = function(){
             return this.set(false);
         }
-        // Parse
-        this.parse = function(){
-            var anchor = this.anchor.get(),
-                pieces = anchor.split(this.hook),
-                glue = anchor.match(this.hook),
-                action = pieces[0], // First index is the action
-                params = [],
-                value;
-            
-            if(this.anchor.get().match(this.hook)){
-                params = pieces.slice(1);
-                value = params.join(glue[0]);
-            }
-
-            // Trigger successfully parsed URL
-            this._trigger('parse', pieces);
-
-            return {
-                value : value,
-                action : action,
-                params : params
-            };
-        }
-        // Return matched actions
-        this.matches = function(){
-            var matches = [];
-
-            this._forEach(this._actions, function(action){
-                // If action is instance of RegEx, match the action
-                var regex = (action.name instanceof RegExp && self.action.match(action.name));
-                // Test matches against current action
-                if(regex || action.name === self.action){
-                    // Match found
-                    matches.push(action);
-                }
-            });
-
-            return matches;
-        }
-        // Call Grapnel().router constructor for backwards compatibility
-        this.router = function(){
-            return Grapnel.Router();
-        }
         // Run hook action when state changes
         this.on(['initialized', 'hashchange'], function(){
             var parsed = this.parse();
@@ -223,6 +180,49 @@
         }
 
         return this._trigger('initialized');
+    }
+    // Parse URL
+    Grapnel.prototype.parse = function(){
+        var anchor = this.anchor.get(),
+            pieces = anchor.split(this.hook),
+            glue = anchor.match(this.hook),
+            action = pieces[0], // First index is the action
+            params = [],
+            value;
+        
+        if(this.anchor.get().match(this.hook)){
+            params = pieces.slice(1);
+            value = params.join(glue[0]);
+        }
+
+        // Trigger successfully parsed URL
+        this._trigger('parse', pieces);
+
+        return {
+            value : value,
+            action : action,
+            params : params
+        };
+    }
+    // Return matched actions
+    Grapnel.prototype.matches = function(){
+        var matches = [];
+
+        this._forEach(this._actions, function(action){
+            // If action is instance of RegEx, match the action
+            var regex = (action.name instanceof RegExp && self.action.match(action.name));
+            // Test matches against current action
+            if(regex || action.name === self.action){
+                // Match found
+                matches.push(action);
+            }
+        });
+
+        return matches;
+    }
+    // Call Grapnel().router constructor for backwards compatibility
+    Grapnel.prototype.router = function(){
+        return Grapnel.Router();
     }
     // Simple Routing
     Grapnel.Router = function(){
