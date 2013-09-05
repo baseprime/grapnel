@@ -8,7 +8,7 @@ Simple, lightweight JavaScript Router with hash-based event handling
 #### Routing and Basic Usage
 
 ```javascript
-var router = new Grapnel().router();
+var router = Grapnel.Router();
 
 router.get('products/:id?', function(req){
     var id = req.params.id;
@@ -59,7 +59,7 @@ hook.add(/tacos/gi, function(value){
 <script type="text/javascript" src="path/to/Grapnel.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script type="text/javascript">
-var router = new Grapnel().router();
+var router = new Grapnel.Router();
 // Create route
 router.get('products/:page?', function(req){
     var page = req.params.page + '.html';
@@ -103,7 +103,7 @@ This is the basic configuration for Grapnel.js which allows for basic hash key/v
 ## Routing
 Grapnel.js allows URL hash routing. This also enables `get` method
 ```javascript
-var router = new Grapnel().router();
+var router = new Grapnel.Router();
 ```
 
 ## Methods
