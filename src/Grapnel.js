@@ -2,7 +2,7 @@
  * Grapnel.js
  * https://github.com/gregsabia/Grapnel.js 
  * 
- * @author Greg Sabia
+ * @author Greg Sabia Tucker
  * @link http://gregsabia.com
  * @version 0.3.1
  * 
