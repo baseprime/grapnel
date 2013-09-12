@@ -2,7 +2,7 @@
 
 ##### 0.3.1
 * Added support for AMD modules
-* Publicized util object
+* Publicized `util` object
 
 ##### 0.2.1
 * Added routing capabilities
