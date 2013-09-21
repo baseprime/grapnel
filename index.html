@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Grapnel.js by gregsabia</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Grapnel.js</h1>
+        <p>Simple, lightweight JavaScript Router with hash-based event handling</p>
+
+        <p class="view"><a href="https://github.com/gregsabia/Grapnel.js">View the Project on GitHub <small>gregsabia/Grapnel.js</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/gregsabia/Grapnel.js/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/gregsabia/Grapnel.js/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/gregsabia/Grapnel.js">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="grapneljs" class="anchor" href="#grapneljs"><span class="octicon octicon-link"></span></a>Grapnel.js</h1>
+
+<p>Simple, lightweight JavaScript Router with hash-based event handling</p>
+
+<h2>
+<a name="an-example" class="anchor" href="#an-example"><span class="octicon octicon-link"></span></a>An example:</h2>
+
+<h4>
+<a name="routing-and-basic-usage" class="anchor" href="#routing-and-basic-usage"><span class="octicon octicon-link"></span></a>Routing and Basic Usage</h4>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">Grapnel</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'products/:id?'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+    <span class="c1">// GET http://mysite.com/#products/134</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+    <span class="c1">// =&gt; 134</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="keyvalue-url-hooks" class="anchor" href="#keyvalue-url-hooks"><span class="octicon octicon-link"></span></a>Key/Value URL Hooks</h4>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">hook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">(</span><span class="s1">':'</span><span class="p">);</span>
+
+<span class="nx">hook</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'show'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+    <span class="c1">// GET http://mysite.com/products#show:widgets</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Showing: %s'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+    <span class="c1">// =&gt; "Showing: widgets"</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="regex" class="anchor" href="#regex"><span class="octicon octicon-link"></span></a>RegEx</h4>
+
+<p>Grapnel.js allows RegEx when defining a route, a hook, or a new action:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">expression</span> <span class="o">=</span> <span class="sr">/are/gi</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">hook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">(</span><span class="nx">expression</span><span class="p">);</span>
+
+<span class="nx">hook</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="sr">/tacos/gi</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+    <span class="c1">// GET http://mysite.com/page#tacosaregood</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Someone thinks %s are %s.'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+    <span class="c1">// =&gt; "Someone thinks tacos are good."</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="simple-javascript-router-using-jquery" class="anchor" href="#simple-javascript-router-using-jquery"><span class="octicon octicon-link"></span></a>Simple JavaScript Router using jQuery</h4>
+
+<div class="highlight highlight-html"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+<span class="nt">&lt;title&gt;</span>Grapnel.js - Simple Router<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+<span class="nt">&lt;h1&gt;</span>This is a static page<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;p&gt;&lt;a</span> <span class="na">href=</span><span class="s">"#products/widgets"</span><span class="nt">&gt;</span>Click Here to view my widgets<span class="nt">&lt;/a&gt;&lt;/p&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"path/to/Grapnel.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+<span class="c1">// Create route</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'products/:page?'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">page</span> <span class="o">+</span> <span class="s1">'.html'</span><span class="p">;</span>
+    <span class="c1">// GET widgets.html</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s1">'body'</span><span class="p">).</span><span class="nx">load</span><span class="p">(</span><span class="nx">page</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+
+<h4>
+<a name="named-parametersregex-style-routes" class="anchor" href="#named-parametersregex-style-routes"><span class="octicon octicon-link"></span></a>Named Parameters/RegEx style routes</h4>
+
+<p>Grapnel.js supports regex style routes. The properties are mapped to the parameters in the request.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'products/:id?'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
+    <span class="c1">// GET /file.html#products/134</span>
+    <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span>
+    <span class="c1">// =&gt; 134</span>
+<span class="p">});</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'products/*'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
+    <span class="c1">// The wildcard/asterisk will match anything after that point in the URL</span>
+    <span class="c1">// Parameters are provided req.params using req.params[n], where n is the nth capture</span>
+<span class="p">});</span>
+</pre></div>
+
+<p> </p>
+
+<hr><h1>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h1>
+
+<h2>
+<a name="instantiation" class="anchor" href="#instantiation"><span class="octicon octicon-link"></span></a>Instantiation</h2>
+
+<p>Initializing Grapnel.js is easy. To create an instance:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="c1">// First argument can be a String or RegEx (Default: ":")</span>
+<span class="kd">var</span> <span class="nx">hook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">();</span>
+</pre></div>
+
+<p>This is the basic configuration for Grapnel.js which allows for basic hash key/value event handling. Routing can be enabled by calling the <code>router()</code> method when creating an instance.</p>
+
+<h2>
+<a name="routing" class="anchor" href="#routing"><span class="octicon octicon-link"></span></a>Routing</h2>
+
+<p>Grapnel.js allows URL hash routing. This also enables <code>get</code> method</p>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+</pre></div>
+
+<h2>
+<a name="methods" class="anchor" href="#methods"><span class="octicon octicon-link"></span></a>Methods</h2>
+
+<h5>
+<a name="get-adds-a-new-route-listener" class="anchor" href="#get-adds-a-new-route-listener"><span class="octicon octicon-link"></span></a><code>get</code> Adds a new route listener</h5>
+
+<div class="highlight highlight-javascript"><pre><span class="cm">/**</span>
+<span class="cm"> * @param {String|RegExp} path</span>
+<span class="cm"> * @param {Function} callback</span>
+<span class="cm">*/</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'store/:category/:id?'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">category</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">category</span><span class="p">,</span>
+        <span class="nx">id</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Product #%s in %s'</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">category</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+<h5>
+<a name="add-adds-a-new-basic-keyvalue-action-listener" class="anchor" href="#add-adds-a-new-basic-keyvalue-action-listener"><span class="octicon octicon-link"></span></a><code>add</code> Adds a new basic key/value action listener</h5>
+
+<div class="highlight highlight-javascript"><pre><span class="cm">/**</span>
+<span class="cm"> * @param {String|RegExp} action</span>
+<span class="cm"> * @param {Function} callback</span>
+<span class="cm">*/</span>
+<span class="nx">hook</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'find'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">action</span><span class="p">,</span> <span class="nx">regexMatches</span><span class="p">){</span>
+    <span class="c1">// this.matches();</span>
+    <span class="c1">// this.anchor.set('something');</span>
+    <span class="c1">// this.anchor.clear();</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Finding %s'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+<h5>
+<a name="on-adds-a-new-event-listener" class="anchor" href="#on-adds-a-new-event-listener"><span class="octicon octicon-link"></span></a><code>on</code> Adds a new event listener</h5>
+
+<div class="highlight highlight-javascript"><pre><span class="cm">/**</span>
+<span class="cm"> * @param {String|Array} event</span>
+<span class="cm"> * @param {Function} callback</span>
+<span class="cm">*/</span>
+<span class="nx">hook</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'match'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">params</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Grapnel.js works!'</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+<h5>
+<a name="matches-return-array-of-matching-action-listeners" class="anchor" href="#matches-return-array-of-matching-action-listeners"><span class="octicon octicon-link"></span></a><code>matches</code> Return array of matching action listeners</h5>
+
+<h5>
+<a name="parse-reparse-url" class="anchor" href="#parse-reparse-url"><span class="octicon octicon-link"></span></a><code>parse</code> Reparse URL</h5>
+
+<h5>
+<a name="anchor" class="anchor" href="#anchor"><span class="octicon octicon-link"></span></a><code>anchor</code>
+</h5>
+
+<ul>
+<li>
+<code>defaultHash</code> Static anchor during initialization</li>
+<li>
+<code>set</code> Sets a new absolute anchor</li>
+<li>
+<code>get</code> Get absolute anchor</li>
+<li>
+<code>clear</code> Clears the anchor</li>
+</ul><h2>
+<a name="events" class="anchor" href="#events"><span class="octicon octicon-link"></span></a>Events</h2>
+
+<h5>
+<a name="match-fires-before-matched-routeaction-handler-is-called" class="anchor" href="#match-fires-before-matched-routeaction-handler-is-called"><span class="octicon octicon-link"></span></a><code>match</code> Fires before matched route/action handler is called</h5>
+
+<h5>
+<a name="hashchange-fires-when-hashtag-is-changed" class="anchor" href="#hashchange-fires-when-hashtag-is-changed"><span class="octicon octicon-link"></span></a><code>hashchange</code> Fires when hashtag is changed</h5>
+
+<h5>
+<a name="parse-fires-when-a-url-is-parsed" class="anchor" href="#parse-fires-when-a-url-is-parsed"><span class="octicon octicon-link"></span></a><code>parse</code> Fires when a URL is parsed</h5>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<h5>
+<a name="mit-license" class="anchor" href="#mit-license"><span class="octicon octicon-link"></span></a><a href="http://opensource.org/licenses/MIT">MIT License</a>
+</h5>
+
+<h2>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>Todo</h2>
+
+<h5>
+<a name="add-support-for-older-browsers-not-supporting-windowonhashchange-ie-lte-70" class="anchor" href="#add-support-for-older-browsers-not-supporting-windowonhashchange-ie-lte-70"><span class="octicon octicon-link"></span></a>Add support for older browsers not supporting <code>window.onhashchange</code> (IE lte 7.0)</h5>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/gregsabia">gregsabia</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
