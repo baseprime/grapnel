@@ -107,7 +107,7 @@ var router = new Grapnel.Router();
 ```
 
 ## Methods
-##### `get` Adds a new route listener
+##### `get` Adds a new route listener (Enabled when `new Grapnel.Router()` is called)
 ```javascript
 /**
  * @param {String|RegExp} path
