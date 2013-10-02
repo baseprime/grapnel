@@ -45,14 +45,14 @@
                 if(regex || name === self.action || self.anchor.get() == name){
                     // Match found
                     var event = { name : name, value : self.anchor.get(), handler : handler, params : self.params, regex : regex, previousState : self.state }
-                    // Trigger event
+                    // Trigger main event
                     self._trigger('change', event);
                     // Push object to actions array
                     self._actions.push({ name : name, handler : handler });
                     // State
                     self.state = event;
                     // Callback
-                    handler.call(self, self.value, self.params, regex);
+                    handler.call(self, self.value, self.params, event);
                 }
                 // Return self to force context
                 return self;
@@ -75,22 +75,6 @@
             });
 
             return self;
-        }
-        /**
-         * Add an event listener
-         * 
-         * @param {String|Array} event
-         * @param {Function} callback
-         * @return self
-        */
-        this.on = function(event, handler){
-            var events = (typeof event === 'string') ? event.split() : event;
-            // Add listeners
-            this._forEach(events, function(event){
-                self._events.push({ event : event, handler : handler });
-            });
-
-            return this;
         }
         /**
          * Map Array workaround for compatibility issues with archaic browsers
@@ -187,7 +171,28 @@
 
         return this._trigger('initialized');
     }
-    // Parse URL
+    /**
+     * Add an event listener
+     * 
+     * @param {String|Array} event
+     * @param {Function} callback
+     * @return self
+    */
+    Grapnel.prototype.on = Grapnel.prototype.bind = function(event, handler){
+        var events = (typeof event === 'string') ? event.split() : event,
+            self = this;
+        // Add listeners
+        this._forEach(events, function(event){
+            self._events.push({ event : event, handler : handler });
+        });
+
+        return this;
+    }
+    /**
+     * Parse URL
+     * 
+     * @return self
+    */
     Grapnel.prototype.parse = function(){
         var anchor = this.anchor.get(),
             pieces = anchor.split(this.hook),
@@ -212,7 +217,11 @@
             params : params
         };
     }
-    // Return matched actions
+    /**
+     * Return matching actions
+     * 
+     * @return self
+    */
     Grapnel.prototype.matches = function(){
         var matches = [];
 
@@ -228,11 +237,20 @@
 
         return matches;
     }
-    // Call Grapnel().router constructor for backwards compatibility
+    /**
+     * Call Grapnel().router constructor for backwards compatibility
+     * 
+     * @return self
+    */
     Grapnel.prototype.router = function(){
         return Grapnel.Router();
     }
-    // Simple Routing
+    /**
+     * Router - Enables get() method
+     * Parses matches in the URL and builds a list of parameters
+     * 
+     * @return Grapnel.Router()
+    */
     Grapnel.Router = function(){
         // Create a new instance
         var router = new Grapnel(/\//gi);
@@ -241,8 +259,8 @@
             var keys = [];
             var regex = new this._routeRegExp(path, keys);
             // Add listener
-            router.add(regex, function(_v, _p, matches){
-                var req = { params : {}, keys : keys, matches : matches.slice(1) };
+            router.add(regex, function(_v, _p, event){
+                var req = { params : {}, keys : keys, matches : event.regex.slice(1) };
                 // Build parameters
                 router._forEach(req.matches, function(value, i){
                     var key = (keys[i] && keys[i].name) ? keys[i].name : i;

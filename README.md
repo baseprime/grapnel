@@ -23,7 +23,7 @@ router.get('products/:id?', function(req){
 ```javascript
 var hook = new Grapnel(':');
 
-hook.add('show', function(value){
+hook.add('show', function(value, params, event){
     // GET http://mysite.com/products#show:widgets
     console.log('Showing: %s', this.value);
     // => "Showing: widgets"
@@ -38,7 +38,7 @@ Grapnel.js allows RegEx when defining a route, a hook, or a new action:
 var expression = /are/gi;
 var hook = new Grapnel(expression);
 
-hook.add(/tacos/gi, function(value){
+hook.add(/tacos/gi, function(value, params, event){
     // GET http://mysite.com/page#tacosaregood
     console.log('Someone thinks %s are %s.', this.action, this.value);
     // => "Someone thinks tacos are good."
@@ -107,7 +107,7 @@ var router = new Grapnel.Router();
 ```
 
 ## Methods
-##### `get` Adds a new route listener (Enabled when `new Grapnel.Router()` is called)
+##### `get` Adds a new route listener
 ```javascript
 /**
  * @param {String|RegExp} path
@@ -127,7 +127,7 @@ router.get('store/:category/:id?', function(req){
  * @param {String|RegExp} action
  * @param {Function} callback
 */
-hook.add('find', function(value, action, regexMatches){
+hook.add('find', function(value, action, event){
     // this.matches();
     // this.anchor.set('something');
     // this.anchor.clear();
@@ -154,7 +154,7 @@ hook.on('change', function(event){
 * `clear` Clears the anchor
 
 ## Events
-##### `change` Fires when state changes, before matched route/action handler is called
+##### `change` Fires when state changes, before a new matched route/action handler is called
 ##### `hashchange` Fires when hashtag is changed
 ##### `parse` Fires when a URL is parsed
 
