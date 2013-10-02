@@ -15,7 +15,7 @@
         "use strict";
         var self = this; // Scope reference
         this._actions = []; // Queued Actions
-        this._listeners = []; // Event Listeners
+        this._events = []; // Event Listeners
         // Current action if matched (default: null)
         this.action = null;
         // Hook (default: ":")
@@ -26,6 +26,8 @@
         this.params = [];
         // Anchor
         this.anchor = { defaultHash : window.location.hash };
+        // Event state
+        this.state = null;
         // Version
         this.version = '0.3.1';
         /**
@@ -42,9 +44,13 @@
                 // Test matches against current action
                 if(regex || name === self.action || self.anchor.get() == name){
                     // Match found
-                    self._trigger('match', self.value, self.params, self.action, regex);
+                    var event = { name : name, value : self.anchor.get(), handler : handler, params : self.params, regex : regex, previousState : self.state }
+                    // Trigger event
+                    self._trigger('change', event);
                     // Push object to actions array
                     self._actions.push({ name : name, handler : handler });
+                    // State
+                    self.state = event;
                     // Callback
                     handler.call(self, self.value, self.params, regex);
                 }
@@ -63,7 +69,7 @@
         this._trigger = function(event){
             var params = Array.prototype.slice.call(arguments, 1);
             // Call matching events
-            self._forEach(self._listeners, function(listener){
+            self._forEach(self._events, function(listener){
                 // Apply callback
                 if(listener.event == event) listener.handler.apply(self, params);
             });
@@ -81,7 +87,7 @@
             var events = (typeof event === 'string') ? event.split() : event;
             // Add listeners
             this._forEach(events, function(event){
-                self._listeners.push({ event : event, handler : handler });
+                self._events.push({ event : event, handler : handler });
             });
 
             return this;
@@ -195,8 +201,10 @@
             value = params.join(glue[0]);
         }
 
+        // Event
+        var event = { pieces : pieces }
         // Trigger successfully parsed URL
-        this._trigger('parse', pieces);
+        this._trigger('parse', event);
 
         return {
             value : value,

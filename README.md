@@ -141,7 +141,7 @@ hook.add('find', function(value, action, regexMatches){
  * @param {String|Array} event
  * @param {Function} callback
 */
-hook.on('match', function(value, params){
+hook.on('change', function(event){
     console.log('Grapnel.js works!');
 });
 ```
@@ -154,7 +154,7 @@ hook.on('match', function(value, params){
 * `clear` Clears the anchor
 
 ## Events
-##### `match` Fires before matched route/action handler is called
+##### `change` Fires when state changes, before matched route/action handler is called
 ##### `hashchange` Fires when hashtag is changed
 ##### `parse` Fires when a URL is parsed
 
