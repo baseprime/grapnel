@@ -49,7 +49,7 @@
 
 <div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">hook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">(</span><span class="s1">':'</span><span class="p">);</span>
 
-<span class="nx">hook</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'show'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+<span class="nx">hook</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'show'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">event</span><span class="p">){</span>
     <span class="c1">// GET http://mysite.com/products#show:widgets</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Showing: %s'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
     <span class="c1">// =&gt; "Showing: widgets"</span>
@@ -64,7 +64,7 @@
 <div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">expression</span> <span class="o">=</span> <span class="sr">/are/gi</span><span class="p">;</span>
 <span class="kd">var</span> <span class="nx">hook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">(</span><span class="nx">expression</span><span class="p">);</span>
 
-<span class="nx">hook</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="sr">/tacos/gi</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+<span class="nx">hook</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="sr">/tacos/gi</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">event</span><span class="p">){</span>
     <span class="c1">// GET http://mysite.com/page#tacosaregood</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Someone thinks %s are %s.'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">action</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
     <span class="c1">// =&gt; "Someone thinks tacos are good."</span>
@@ -163,7 +163,7 @@
 <span class="cm"> * @param {String|RegExp} action</span>
 <span class="cm"> * @param {Function} callback</span>
 <span class="cm">*/</span>
-<span class="nx">hook</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'find'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">action</span><span class="p">,</span> <span class="nx">regexMatches</span><span class="p">){</span>
+<span class="nx">hook</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'find'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">action</span><span class="p">,</span> <span class="nx">event</span><span class="p">){</span>
     <span class="c1">// this.matches();</span>
     <span class="c1">// this.anchor.set('something');</span>
     <span class="c1">// this.anchor.clear();</span>
@@ -178,7 +178,7 @@
 <span class="cm"> * @param {String|Array} event</span>
 <span class="cm"> * @param {Function} callback</span>
 <span class="cm">*/</span>
-<span class="nx">hook</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'match'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">params</span><span class="p">){</span>
+<span class="nx">hook</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'change'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">){</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Grapnel.js works!'</span><span class="p">);</span>
 <span class="p">});</span>
 </pre></div>
@@ -206,7 +206,7 @@
 <a name="events" class="anchor" href="#events"><span class="octicon octicon-link"></span></a>Events</h2>
 
 <h5>
-<a name="match-fires-before-matched-routeaction-handler-is-called" class="anchor" href="#match-fires-before-matched-routeaction-handler-is-called"><span class="octicon octicon-link"></span></a><code>match</code> Fires before matched route/action handler is called</h5>
+<a name="change-fires-when-state-changes-before-a-new-matched-routeaction-handler-is-called" class="anchor" href="#change-fires-when-state-changes-before-a-new-matched-routeaction-handler-is-called"><span class="octicon octicon-link"></span></a><code>change</code> Fires when state changes, before a new matched route/action handler is called</h5>
 
 <h5>
 <a name="hashchange-fires-when-hashtag-is-changed" class="anchor" href="#hashchange-fires-when-hashtag-is-changed"><span class="octicon octicon-link"></span></a><code>hashchange</code> Fires when hashtag is changed</h5>
