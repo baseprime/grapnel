@@ -269,7 +269,7 @@
                 });
                 // Call handler
                 // Notice how a handler for a route passes `params` as the second argument, instead of `self.value`
-                handler.call(router, req);
+                handler.call(router, req, event);
             });
 
             return router;
