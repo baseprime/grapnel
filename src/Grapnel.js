@@ -223,7 +223,8 @@
      * @return self
     */
     Grapnel.prototype.matches = function(){
-        var matches = [];
+        var matches = [],
+            self = this;
 
         this._forEach(this._actions, function(action){
             // If action is instance of RegEx, match the action
