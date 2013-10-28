@@ -64,6 +64,7 @@
          * Fire an event listener
          * 
          * @param {String} event
+         * @param {Mixed} [attributes] Parameters that will be applied to event listener
          * @return self
         */
         this._trigger = function(event){
@@ -110,7 +111,7 @@
             }.call(a, callback);
         }
         /**
-         * Create a matchable RegExp Route
+         * Create a RegExp Route
          *
          * @param {String} Path of route
          * @param {Array} Array of keys to fill
@@ -191,7 +192,7 @@
     /**
      * Parse URL
      * 
-     * @return self
+     * @return {Object} Parsed URL
     */
     Grapnel.prototype.parse = function(){
         var anchor = this.anchor.get(),
@@ -220,7 +221,7 @@
     /**
      * Return matching actions
      * 
-     * @return self
+     * @return {Array} Matching actions
     */
     Grapnel.prototype.matches = function(){
         var matches = [],
@@ -241,7 +242,7 @@
     /**
      * Call Grapnel().router constructor for backwards compatibility
      * 
-     * @return self
+     * @return {self} Router
     */
     Grapnel.prototype.router = function(){
         return Grapnel.Router();
@@ -250,7 +251,7 @@
      * Router - Enables get() method
      * Parses matches in the URL and builds a list of parameters
      * 
-     * @return Grapnel.Router()
+     * @return {self} Router
     */
     Grapnel.Router = function(){
         // Create a new instance
