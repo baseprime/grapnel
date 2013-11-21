@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+var package = require('../package.json')
+var COMMENT_HEADER = "/****\n" +
+    "* Grapnel\n" +
+    "*\n" +
+    "* @author Greg Sabia Tucker <greg@narrowlabs.com>\n" +
+    "* @link https://github.com/baseprime/grapnel\n" +
+    "* @version " + package.version + "\n" +
+    "*\n" +
+    "* Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT\n" +
+    "*/\n\n"
+
+process.stdout.write(COMMENT_HEADER)

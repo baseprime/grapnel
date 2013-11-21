@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+APP_ROOT="$(dirname $(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ))"
+SOURCE_FILE="$APP_ROOT/src/grapnel.js"
+DEST_DIR="dist"
+DEST_FILE="$DEST_DIR/grapnel.js"
+DEST_FILE_MINI="$DEST_DIR/grapnel.min.js"
+
+rm -r $APP_ROOT/$DEST_DIR
+mkdir $APP_ROOT/$DEST_DIR
+
+# Original Source
+$APP_ROOT/bin/cat-header >> $DEST_FILE
+cat $SOURCE_FILE >> $DEST_FILE
+# Minified version
+$APP_ROOT/bin/cat-header >> $DEST_FILE_MINI
+$APP_ROOT/node_modules/uglify-js/bin/uglifyjs $SOURCE_FILE >> $DEST_FILE_MINI

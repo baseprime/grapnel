@@ -1,16 +1,5 @@
-/****
-* Grapnel
-*
-* @author Greg Sabia Tucker <greg@narrowlabs.com>
-* @link https://github.com/baseprime/grapnel
-* @version 0.7.5
-*
-* Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
-*/
-
 
 !function(root) {
-    var VERSION = '0.7.4'
     var IS_MODULE = 'object' === typeof exports
 
     function Grapnel(options) {
@@ -33,7 +22,6 @@
         }
     }
 
-    Grapnel.prototype.version = VERSION
     Grapnel.prototype.events = {}
     Grapnel.prototype.state = null
 

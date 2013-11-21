@@ -14,9 +14,9 @@ Grapnel
 ```bash
 npm install grapnel
 ```
-**Or by using bower:**
-```bash
-bower install grapnel
+**CDN**
+```html
+<script src="https://unpkg.com/grapnel" type="text/javascript"></script>
 ```
 **Server only:** (with HTTP methods added, [more info](https://github.com/baseprime/grapnel/tree/server-router))
 ```bash
