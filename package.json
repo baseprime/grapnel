@@ -1,10 +1,10 @@
 {
   "name": "grapnel",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "The first (and smallest!) JavaScript Router with PushState, Middleware, and Named Parameter support",
   "main": "dist/grapnel.js",
-  "unpkg": "dist/grapnel.js",
   "scripts": {
+    "build": "npm run prettier && bin/build",
     "serve-tests": "pushd ./test; python -m SimpleHTTPServer 8997; popd",
     "prettier": "./node_modules/prettier/bin-prettier.js --config .prettierrc ./dist/**/*.js ./test/main.js --write"
   },
@@ -38,7 +38,8 @@
   },
   "homepage": "http://grapnel.js.org",
   "devDependencies": {
-    "prettier": "^1.15.3"
+    "prettier": "^1.15.3",
+    "uglify-js": "^3.11.5"
   },
   "dependencies": {}
 }
