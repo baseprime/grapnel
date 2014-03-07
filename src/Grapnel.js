@@ -281,6 +281,9 @@
     }
     // Window or module?
     if('function' === typeof root.define){
+        // Set root
+        root.Grapnel = Grapnel;
+        // Define module
         root.define(function(require){
             return Grapnel;
         });
