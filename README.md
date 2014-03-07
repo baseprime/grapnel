@@ -113,7 +113,7 @@ var router = new Grapnel.Router();
  * @param {String|RegExp} path
  * @param {Function} callback
 */
-router.get('store/:category/:id?', function(req){
+router.get('store/:category/:id?', function(req, event){
     var category = req.params.category,
         id = req.params.id;
 
