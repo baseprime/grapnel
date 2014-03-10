@@ -1,11 +1,11 @@
 /****
  * Grapnel.js
- * https://github.com/gregsabia/Grapnel.js 
- * 
+ * https://github.com/gregsabia/Grapnel.js
+ *
  * @author Greg Sabia Tucker
  * @link http://gregsabia.com
  * @version 0.3.1
- * 
+ *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
 
@@ -32,7 +32,7 @@
         this.version = '0.3.1';
         /**
          * Add an action and handler
-         * 
+         *
          * @param {String|RegExp} action name
          * @param {Function} callback
          * @return self
@@ -62,7 +62,7 @@
         }
         /**
          * Fire an event listener
-         * 
+         *
          * @param {String} event
          * @param {Mixed} [attributes] Parameters that will be applied to event listener
          * @return self
@@ -78,26 +78,8 @@
             return self;
         }
         /**
-         * Map Array workaround for compatibility issues with archaic browsers
-         * 
-         * @param {Array} to iterate
-         * @param {Function} callback
-        */
-        this._map = function(a, callback){
-            if(typeof Array.prototype.map === 'function') return Array.prototype.map.call(a, callback);
-            // Replicate map()
-            return function(c, next){
-                var other = new Array(this.length);
-                for(var i=0, n=this.length; i<n; i++){
-                    if(i in this) other[i] = c.call(next, this[i], i, this);
-                }
-
-                return other;
-            }.call(a, callback);
-        }
-        /**
-         * ForEach workaround
-         * 
+         * ForEach workaround for compatibility issues with archaic browsers
+         *
          * @param {Array} to iterate
          * @param {Function} callback
         */
@@ -105,7 +87,7 @@
             if(typeof Array.prototype.forEach === 'function') return Array.prototype.forEach.call(a, callback);
             // Replicate forEach()
             return function(c, next){
-                for(var i=0, n = this.length; i<n; ++i){
+                for(var i=0, n=this.length; i<n; ++i){
                     c.call(next, this[i], i, this);
                 }
             }.call(a, callback);
@@ -128,7 +110,7 @@
                 .replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function(_, slash, format, key, capture, optional){
                     keys.push({ name : key, optional : !!optional });
                     slash = slash || '';
-                    
+
                     return '' + (optional ? '' : slash) + '(?:' + (optional ? slash : '') + (format || '') + (capture || (format && '([^/.]+?)' || '([^/]+?)')) + ')' + (optional || '');
                 })
                 .replace(/([\/.])/g, '\\$1')
@@ -174,7 +156,7 @@
     }
     /**
      * Add an event listener
-     * 
+     *
      * @param {String|Array} event
      * @param {Function} callback
      * @return self
@@ -191,7 +173,7 @@
     }
     /**
      * Parse URL
-     * 
+     *
      * @return {Object} Parsed URL
     */
     Grapnel.prototype.parse = function(){
@@ -201,7 +183,7 @@
             action = pieces[0], // First index is the action
             params = [],
             value;
-        
+
         if(this.anchor.get().match(this.hook)){
             params = pieces.slice(1);
             value = params.join(glue[0]);
@@ -220,7 +202,7 @@
     }
     /**
      * Return matching actions
-     * 
+     *
      * @return {Array} Matching actions
     */
     Grapnel.prototype.matches = function(){
@@ -241,7 +223,7 @@
     }
     /**
      * Call Grapnel().router constructor for backwards compatibility
-     * 
+     *
      * @return {self} Router
     */
     Grapnel.prototype.router = function(){
@@ -250,7 +232,7 @@
     /**
      * Router - Enables get() method
      * Parses matches in the URL and builds a list of parameters
-     * 
+     *
      * @return {self} Router
     */
     Grapnel.Router = function(){
@@ -294,4 +276,3 @@
     }
 
 }).call({}, window);
-
