@@ -1,6 +1,6 @@
 /****
  * Grapnel.js
- * https://github.com/gregsabia/Grapnel.js
+ * https://github.com/EngineeringMode/Grapnel.js
  *
  * @author Greg Sabia Tucker
  * @link http://gregsabia.com
