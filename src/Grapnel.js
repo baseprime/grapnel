@@ -3,7 +3,7 @@
  * https://github.com/EngineeringMode/Grapnel.js
  *
  * @author Greg Sabia Tucker
- * @link http://gregsabia.com
+ * @link http://artificer.io
  * @version 0.3.1
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
