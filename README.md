@@ -56,7 +56,7 @@ hook.add(/tacos/gi, function(value, params, event){
 <body>
 <h1>This is a static page</h1>
 <p><a href="#products/widgets">Click Here to view my widgets</a></p>
-<script type="text/javascript" src="path/to/Grapnel.js"></script>
+<script type="text/javascript" src="path/to/grapnel.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script type="text/javascript">
 var router = new Grapnel.Router();
@@ -163,4 +163,3 @@ hook.on('change', function(event){
 
 ## Todo
 ##### Add support for older browsers not supporting `window.onhashchange` (IE lte 7.0)
-
