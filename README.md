@@ -18,18 +18,6 @@ router.get('products/:id?', function(req){
 });
 ```
 
-## Basic URL Hook
-
-```javascript
-var hook = new Grapnel(':');
-
-hook.add('show', function(value, params, event){
-    // GET http://mysite.com/products#show:widgets
-    console.log('Showing: %s', this.value);
-    // => "Showing: widgets"
-});
-```
-
 ## Named Parameters
 Grapnel.js supports regex style routes similar to Sinatra or Express. The properties are mapped to the parameters in the request.
 ```javascript
@@ -42,6 +30,18 @@ router.get('products/:id?', function(req){
 router.get('products/*', function(req){
     // The wildcard/asterisk will match anything after that point in the URL
     // Parameters are provided req.params using req.params[n], where n is the nth capture
+});
+```
+
+## Basic URL Hook
+
+```javascript
+var hook = new Grapnel(':');
+
+hook.add('show', function(value, params, event){
+    // GET http://mysite.com/products#show:widgets
+    console.log('Showing: %s', this.value);
+    // => "Showing: widgets"
 });
 ```
 
