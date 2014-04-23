@@ -1,14 +1,14 @@
 Grapnel.js
 ==========
 
-Simple, lightweight JavaScript Router with hash-based event handling
+Simple, lightweight JavaScript Router
 
-## An example:
+## Features &amp; Basic Usage
 
-#### Routing and Basic Usage
+#### Router
 
 ```javascript
-var router = Grapnel.Router();
+var router = new Grapnel.Router();
 
 router.get('products/:id?', function(req){
     var id = req.params.id;
@@ -18,7 +18,7 @@ router.get('products/:id?', function(req){
 });
 ```
 
-#### Key/Value URL Hooks
+#### Basic URL Hook
 
 ```javascript
 var hook = new Grapnel(':');
@@ -27,6 +27,21 @@ hook.add('show', function(value, params, event){
     // GET http://mysite.com/products#show:widgets
     console.log('Showing: %s', this.value);
     // => "Showing: widgets"
+});
+```
+
+#### Named Parameters
+Grapnel.js supports regex style routes similar to Sinatra or Express. The properties are mapped to the parameters in the request.
+```javascript
+router.get('products/:id?', function(req){
+    // GET /file.html#products/134
+    req.params.id
+    // => 134
+});
+
+router.get('products/*', function(req){
+    // The wildcard/asterisk will match anything after that point in the URL
+    // Parameters are provided req.params using req.params[n], where n is the nth capture
 });
 ```
 
@@ -45,55 +60,13 @@ hook.add(/tacos/gi, function(value, params, event){
 });
 ```
 
-#### Simple JavaScript Router using jQuery
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-<title>Grapnel.js - Simple Router</title>
-</head>
-<body>
-<h1>This is a static page</h1>
-<p><a href="#products/widgets">Click Here to view my widgets</a></p>
-<script type="text/javascript" src="path/to/grapnel.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-<script type="text/javascript">
-var router = new Grapnel.Router();
-// Create route
-router.get('products/:page?', function(req){
-    var page = req.params.page + '.html';
-    // GET widgets.html
-    $('body').load(page);
-});
-</script>
-</body>
-</html>
-```
-
-#### Named Parameters/RegEx style routes
-Grapnel.js supports regex style routes. The properties are mapped to the parameters in the request.
-```javascript
-router.get('products/:id?', function(req){
-    // GET /file.html#products/134
-    req.params.id
-    // => 134
-});
-
-router.get('products/*', function(req){
-    // The wildcard/asterisk will match anything after that point in the URL
-    // Parameters are provided req.params using req.params[n], where n is the nth capture
-});
-```
-
 &nbsp;
 
 ***
 
 # Documentation
 
-## Instantiation
-Initializing Grapnel.js is easy. To create an instance:
+## Creating an instance
 ```javascript
 // First argument can be a String or RegEx (Default: ":")
 var hook = new Grapnel();
@@ -121,7 +94,7 @@ router.get('store/:category/:id?', function(req, event){
 });
 ```
 
-##### `add` Adds a new basic key/value action listener
+##### `add` Adds a new basic key/value hook
 ```javascript
 /**
  * @param {String|RegExp} action
@@ -161,5 +134,3 @@ hook.on('change', function(event){
 ## License
 ##### [MIT License](http://opensource.org/licenses/MIT)
 
-## Todo
-##### Add support for older browsers not supporting `window.onhashchange` (IE lte 7.0)
