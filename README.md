@@ -118,6 +118,7 @@ hook.on('change', function(event){
     console.log('Grapnel.js works!');
 });
 ```
+##### `bind` An alias of `on`
 ##### `matches` Return array of matching action listeners
 ##### `parse` Reparse URL
 ##### `anchor`
