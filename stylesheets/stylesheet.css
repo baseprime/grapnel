@@ -269,19 +269,36 @@ Full-Width Styles
   margin: 0 auto;
 }
 
-#forkme_banner {
+.header-link {
   display: block;
   position: absolute;
   top:0;
   right: 10px;
   z-index: 10;
-  padding: 10px 50px 10px 10px;
+  padding: 10px 10px 10px 10px;
+  background-color: #0090ff;
   color: #fff;
-  background: url('../images/blacktocat.png') #0090ff no-repeat 95% 50%;
   font-weight: 700;
   box-shadow: 0 0 10px rgba(0,0,0,.5);
   border-bottom-left-radius: 2px;
   border-bottom-right-radius: 2px;
+}
+
+.header-link:hover {
+  text-decoration: none;
+}
+
+.header-link span {
+  font-size: 20px;
+  display: inline-block;
+}
+
+ul.nav li a {
+  font-size: 20px;
+}
+
+ul.nav li a:active {
+  outline : 0;
 }
 
 #header_wrap {
@@ -317,10 +334,9 @@ Full-Width Styles
   position: absolute;
   width: 210px;
   z-index: 10;
-  bottom: -40px;
-  right: 0;
-  height: 70px;
-  background: url('../images/icon_download.png') no-repeat 0% 90%;
+  bottom: -60px;
+  right: 10px;
+  text-align: right;
 }
 
 .zip_download_link {
