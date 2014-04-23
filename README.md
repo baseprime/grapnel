@@ -66,12 +66,12 @@ hook.add(/tacos/gi, function(value, params, event){
 
 # Documentation
 
-## Creating an instance
+## Basic Configuration
 ```javascript
-// First argument can be a String or RegEx (Default: ":")
+// First argument can be a String or RegEx (Defaults to: ":")
 var hook = new Grapnel();
 ```
-This is the basic configuration for Grapnel.js which allows for basic hash key/value event handling. Routing can be enabled by calling the `router()` method when creating an instance.
+This is the basic configuration for Grapnel.js which allows for basic hash key/value event handling. Routing can be enabled by calling `new Grapnel.Router()`
 
 ## Routing
 Grapnel.js allows URL hash routing. This also enables `get` method
