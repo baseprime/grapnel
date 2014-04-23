@@ -40,7 +40,7 @@
         <section id="main_content" class="inner">
 
           <ul class="nav nav-tabs">
-            <li class="active" data-active="usage"><a href="#usage">Basic Usage</a></li>
+            <li class="active" data-active="usage"><a href="#usage">Features &amp; Basic Usage</a></li>
             <li data-active="documentation"><a href="#docs">Documentation</a></li>
           </ul>
 
@@ -60,18 +60,6 @@
 </pre></div>
 
         <h2>
-        <a name="basic-url-hook" class="anchor" href="#basic-url-hook"><span class="octicon octicon-link"></span></a>Basic URL Hook</h2>
-
-<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">hook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">(</span><span class="s1">':'</span><span class="p">);</span>
-
-<span class="nx">hook</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'show'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">event</span><span class="p">){</span>
-    <span class="c1">// GET http://mysite.com/products#show:widgets</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Showing: %s'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
-    <span class="c1">// =&gt; "Showing: widgets"</span>
-<span class="p">});</span>
-</pre></div>
-
-        <h2>
         <a name="named-parameters" class="anchor" href="#named-parameters"><span class="octicon octicon-link"></span></a>Named Parameters</h2>
 
         <p>Grapnel.js supports regex style routes similar to Sinatra or Express. The properties are mapped to the parameters in the request.</p>
@@ -85,6 +73,18 @@
 <span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'products/*'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
     <span class="c1">// The wildcard/asterisk will match anything after that point in the URL</span>
     <span class="c1">// Parameters are provided req.params using req.params[n], where n is the nth capture</span>
+<span class="p">});</span>
+</pre></div>
+
+        <h2>
+        <a name="basic-url-hook" class="anchor" href="#basic-url-hook"><span class="octicon octicon-link"></span></a>Basic URL Hook</h2>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">hook</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">(</span><span class="s1">':'</span><span class="p">);</span>
+
+<span class="nx">hook</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'show'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">event</span><span class="p">){</span>
+    <span class="c1">// GET http://mysite.com/products#show:widgets</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Showing: %s'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+    <span class="c1">// =&gt; "Showing: widgets"</span>
 <span class="p">});</span>
 </pre></div>
 
