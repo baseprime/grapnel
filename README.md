@@ -3,9 +3,9 @@ Grapnel.js
 
 Simple, lightweight JavaScript Router
 
-## Features &amp; Basic Usage
+# Features &amp; Basic Usage
 
-#### Router
+## Router
 
 ```javascript
 var router = new Grapnel.Router();
@@ -18,7 +18,7 @@ router.get('products/:id?', function(req){
 });
 ```
 
-#### Basic URL Hook
+## Basic URL Hook
 
 ```javascript
 var hook = new Grapnel(':');
@@ -30,7 +30,7 @@ hook.add('show', function(value, params, event){
 });
 ```
 
-#### Named Parameters
+## Named Parameters
 Grapnel.js supports regex style routes similar to Sinatra or Express. The properties are mapped to the parameters in the request.
 ```javascript
 router.get('products/:id?', function(req){
@@ -45,7 +45,7 @@ router.get('products/*', function(req){
 });
 ```
 
-#### RegEx
+## RegExp Support
 
 Grapnel.js allows RegEx when defining a route, a hook, or a new action:
 
