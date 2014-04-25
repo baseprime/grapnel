@@ -333,11 +333,17 @@ ul.nav li a:active {
 
 #downloads {
   position: absolute;
-  width: 210px;
+  width: 310px;
   z-index: 10;
   bottom: -60px;
   right: 10px;
   text-align: right;
+}
+
+#downloads iframe {
+  position: relative;
+  top: 11px;
+  right: 0;
 }
 
 .zip_download_link {
