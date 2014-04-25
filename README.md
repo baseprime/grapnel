@@ -57,7 +57,7 @@ var router = new Grapnel();
 
 router.on('hashchange', function(event){
     // GET /file.html#products
-    console.log('Anchor changed to %s, this.anchor.get());
+    console.log('Anchor changed to %s', this.anchor.get());
     // => Anchor changed to products
 });
 ```
@@ -73,7 +73,7 @@ var router = new Grapnel();
 router.get(expression, function(req, event){
     // GET http://mysite.com/page#food/tacos/good
     console.log('I think tacos are %s.', req.params[0]);
-    // => "Someone thinks tacos are good."
+    // => "He thinks tacos are good."
 });
 ```
 
@@ -116,14 +116,13 @@ require(['lib/grapnel'], function(Grapnel){
 ```javascript
 var router = new Grapnel.Router();
 ```
-Or:
+Or you can declare your routes with a literal object:
 
 ```javascript
 Grapnel.listen({
     'products/:id' : function(req){
         // Handler
     }
-}
 });
 ```
 
