@@ -1,14 +1,14 @@
 Grapnel.js
 ==========
 
-Simple, lightweight JavaScript Router
+A Tiny (1.1kb!) JavaScript Router With Lots of Features
 
 # Features &amp; Basic Usage
 
 ## Router
 
 ```javascript
-var router = new Grapnel.Router();
+var router = new Grapnel();
 
 router.get('products/:id?', function(req){
     var id = req.params.id;
@@ -33,30 +33,76 @@ router.get('products/*', function(req){
 });
 ```
 
-## Basic URL Hook
+## Using Multiple Routes
 
 ```javascript
-var hook = new Grapnel(':');
+var routes = {
+    'products' : function(req){
+        // GET /file.html#products
+    },
+    'products/:category/:id?' : function(req){
+        // GET /file.html#products/widgets/35
+        req.params.category
+        // => widgets
+    }
+}
 
-hook.add('show', function(value, params, event){
-    // GET http://mysite.com/products#show:widgets
-    console.log('Showing: %s', this.value);
-    // => "Showing: widgets"
+Grapnel.listen(routes);
+```
+
+## Event Handling
+
+```javascript
+var router = new Grapnel();
+
+router.on('hashchange', function(event){
+    // GET /file.html#products
+    console.log('Anchor changed to %s, this.anchor.get());
+    // => Anchor changed to products
 });
 ```
 
 ## RegExp Support
 
-Grapnel.js allows RegEx when defining a route, a hook, or a new action:
+Grapnel.js allows RegEx when defining a route:
 
 ```javascript
-var expression = /are/gi;
-var hook = new Grapnel(expression);
+var expression = /^food\/tacos\/(.*)$/i;
+var router = new Grapnel();
 
-hook.add(/tacos/gi, function(value, params, event){
-    // GET http://mysite.com/page#tacosaregood
-    console.log('Someone thinks %s are %s.', this.action, this.value);
+router.get(expression, function(req, event){
+    // GET http://mysite.com/page#food/tacos/good
+    console.log('I think tacos are %s.', req.params[0]);
     // => "Someone thinks tacos are good."
+});
+```
+
+## Route Context
+
+You can even add context to a route:
+
+```javascript
+var router = new Grapnel();
+var foodRoute = router.context('food');
+
+foodRoute(':foodname', function(req, event){
+    // GET /file.html#food/tacos
+    req.params.foodname
+    // => This taco thing is getting out of hand.
+});
+```
+
+## RequireJS/AMD and CommonJS Compatibility
+
+```javascript
+require(['lib/grapnel'], function(Grapnel){
+
+    var router = new Grapnel();
+
+    router.bind('hashchange', function(){
+        console.log('It works!');
+    });
+
 });
 ```
 
@@ -68,15 +114,17 @@ hook.add(/tacos/gi, function(value, params, event){
 
 ## Basic Configuration
 ```javascript
-// First argument can be a String or RegEx (Defaults to: ":")
-var hook = new Grapnel();
-```
-This is the basic configuration for Grapnel.js which allows for basic hash key/value event handling. Routing can be enabled by calling `new Grapnel.Router()`
-
-## Routing
-Grapnel.js allows URL hash routing. This also enables `get` method
-```javascript
 var router = new Grapnel.Router();
+```
+Or:
+
+```javascript
+Grapnel.listen({
+    'products/:id' : function(req){
+        // Handler
+    }
+}
+});
 ```
 
 ## Methods
@@ -94,43 +142,36 @@ router.get('store/:category/:id?', function(req, event){
 });
 ```
 
-##### `add` Adds a new basic key/value hook
-```javascript
-/**
- * @param {String|RegExp} action
- * @param {Function} callback
-*/
-hook.add('find', function(value, action, event){
-    // this.matches();
-    // this.anchor.set('something');
-    // this.anchor.clear();
-    console.log('Finding %s', this.value);
-});
-```
-
-##### `on` Adds a new event listener
+##### `bind` Adds a new event listener
 ```javascript
 /**
  * @param {String|Array} event
  * @param {Function} callback
 */
-hook.on('change', function(event){
+router.bind('hashchange', function(event){
     console.log('Grapnel.js works!');
 });
 ```
-##### `bind` An alias of `on`
-##### `matches` Return array of matching action listeners
-##### `parse` Reparse URL
+##### `on` An alias of `bind`
+##### `add` An alias of `get`
 ##### `anchor`
 * `defaultHash` Static anchor during initialization
 * `set` Sets a new absolute anchor
 * `get` Get absolute anchor
 * `clear` Clears the anchor
+* `reset` Resets the anchor to its original state when it was loaded
 
 ## Events
-##### `change` Fires when state changes, before a new matched route/action handler is called
+##### `match` Fires when a new match is found, but before the handler is called
 ##### `hashchange` Fires when hashtag is changed
-##### `parse` Fires when a URL is parsed
+##### `initialized` Fires when object is initialized (this will likely be useless)
+
+## Stopping an Event
+```javascript
+router.on('match', function(event){
+    event.preventDefault(); // Stops propagation of the event
+});
+```
 
 ## License
 ##### [MIT License](http://opensource.org/licenses/MIT)

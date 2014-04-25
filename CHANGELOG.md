@@ -1,5 +1,12 @@
 ## Changelog
 
+##### 0.4.1
+* Removed unnecessary "key/value hooks" features, as it added to the footprint and was a infrequently-used feature
+* Added more route support
+* Added context support
+* Cleaned up events and made them faster
+* Backwards compatibility (with some minor tweaks)
+
 ##### 0.3.1
 * Added support for AMD modules
 * Publicized `util` object
