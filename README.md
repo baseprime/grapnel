@@ -33,7 +33,7 @@ router.get('products/*', function(req){
 });
 ```
 
-## Using Multiple Routes
+## Declaring Multiple Routes
 
 ```javascript
 var routes = {
