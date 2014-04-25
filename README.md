@@ -1,7 +1,7 @@
 Grapnel.js
 ==========
 
-A Tiny JavaScript Router With Lots of Features—1.1kb GZipped!
+#### A Tiny JavaScript Router With Lots of Features—1.1kb gzipped!
 
 # Features &amp; Basic Usage
 
