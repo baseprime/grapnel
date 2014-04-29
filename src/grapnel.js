@@ -16,7 +16,7 @@
 
         var self = this; // Scope reference
         this.events = {}; // Event Listeners
-        this.params = []; // Event state// Named parameters
+        this.params = []; // Named parameters
         this.state = null; // Event state
         this.version = '0.4.1'; // Version
         // Anchor
