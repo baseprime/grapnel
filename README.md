@@ -12,7 +12,7 @@ var router = new Grapnel();
 
 router.get('products/:category/:id?', function(req){
     var id = req.params.id,
-        cat = req.params.category;
+        category = req.params.category;
     // GET http://mysite.com/#products/widgets/134
     console.log(category, id);
     // => widgets 134
