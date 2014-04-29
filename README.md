@@ -10,11 +10,12 @@ Grapnel.js
 ```javascript
 var router = new Grapnel();
 
-router.get('products/:id?', function(req){
-    var id = req.params.id;
-    // GET http://mysite.com/#products/134
-    console.log(id);
-    // => 134
+router.get('products/:category/:id?', function(req){
+    var id = req.params.id,
+        cat = req.params.category;
+    // GET http://mysite.com/#products/widgets/134
+    console.log(category, id);
+    // => widgets 134
 });
 ```
 
