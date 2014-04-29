@@ -1,7 +1,7 @@
 ## Changelog
 
 ##### 0.4.1
-* Removed unnecessary "key/value hooks" features, as it added to the footprint and was a infrequently-used feature
+* Removed unnecessary "key/value hooks" features, as it added to the footprint and was an infrequently-used feature
 * Added more route support
 * Added context support
 * Cleaned up events and made them faster
