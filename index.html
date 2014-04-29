@@ -55,7 +55,7 @@
 
 <span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'products/:category/:id?'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
     <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
-        <span class="nx">cat</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">category</span><span class="p">;</span>
+        <span class="nx">category</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">category</span><span class="p">;</span>
     <span class="c1">// GET http://mysite.com/#products/widgets/134</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">category</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
     <span class="c1">// =&gt; widgets 134</span>
