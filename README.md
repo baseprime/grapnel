@@ -1,7 +1,7 @@
 Grapnel.js
 ==========
 
-#### A Tiny JavaScript Router With Lots of Features—1.1kb gzipped!
+#### The smallest (1100 bytes gzipped!) JavaScript Router with Named Parameters & Event Listening. Lots of other Features too!
 
 # Features &amp; Basic Usage
 
