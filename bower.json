@@ -6,7 +6,7 @@
     "Greg Sabia Tucker <greg@artificer.io>"
   ],
   "description": "The smallest (1100 bytes gzipped!) JavaScript Router with Named Parameters",
-  "main": "https://raw.githubusercontent.com/EngineeringMode/Grapnel.js/master/dist/grapnel.min.js",
+  "main": "dist/grapnel.min.js",
   "moduleType": [
     "amd",
     "globals"
