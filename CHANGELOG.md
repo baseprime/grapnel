@@ -1,5 +1,9 @@
 ## Changelog
 
+##### 0.4.2
+* Moved production file into `/dist` directory
+* Added to bower registry
+
 ##### 0.4.1
 * Removed unnecessary "key/value hooks" features, as it added to the footprint and was an infrequently-used feature
 * Added more route support

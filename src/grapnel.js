@@ -4,7 +4,7 @@
  *
  * @author Greg Sabia Tucker
  * @link http://artificer.io
- * @version 0.4.1
+ * @version 0.4.2
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -18,7 +18,7 @@
         this.events = {}; // Event Listeners
         this.params = []; // Named parameters
         this.state = null; // Event state
-        this.version = '0.4.1'; // Version
+        this.version = '0.4.2'; // Version
         // Anchor
         this.anchor = {
             defaultHash : window.location.hash,

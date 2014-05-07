@@ -166,7 +166,7 @@ router.bind('hashchange', function(event){
 ##### `hashchange` Fires when hashtag is changed
 ##### `initialized` Fires when object is initialized (this will likely be useless)
 
-## Stopping an Event
+## Stopping a Route Event
 ```javascript
 router.on('match', function(event){
     event.preventDefault(); // Stops propagation of the event
