@@ -113,6 +113,12 @@ require(['lib/grapnel'], function(Grapnel){
 
 # Documentation
 
+## Installation
+
+```bash
+bower install grapnel
+```
+
 ## Basic Configuration
 ```javascript
 var router = new Grapnel.Router();
