@@ -79,7 +79,7 @@
             self.trigger('hashchange');
         }
 
-        return this.trigger('initialized');
+        return this;
     }
     /**
      * Create a RegExp Route from a string
@@ -121,22 +121,32 @@
             keys = [],
             regex = Grapnel.regexRoute(route, keys);
 
-        var invoke = function(){
+        var invoke = function RouteHandler(){
             // If action is instance of RegEx, match the action
             var match = self.anchor.get().match(regex);
             // Test matches against current action
             if(match){
                 // Match found
+                var req = { params : {}, keys : keys, matches : match.slice(1) };
+                // Build parameters
+                self._forEach(req.matches, function(value, i){
+                    var key = (keys[i] && keys[i].name) ? keys[i].name : i;
+                    // Parameter key will be its key or the iteration index. This is useful if a wildcard (*) is matched
+                    req.params[key] = (value) ? decodeURIComponent(value) : undefined;
+                });
+                // Event object
                 var event = {
                     route : route,
                     value : self.anchor.get(),
-                    handler : handler,
-                    params : self.params,
+                    params : req.params,
                     regex : match,
                     propagateEvent : true,
                     previousState : self.state,
                     preventDefault : function(){
                         this.propagateEvent = false;
+                    },
+                    callback : function(){
+                        handler.call(self, req, event);
                     }
                 }
                 // Trigger main event
@@ -145,22 +155,14 @@
                 if(!event.propagateEvent) return self;
                 // Save new state
                 self.state = event;
-                // Callback
-                var req = { params : {}, keys : keys, matches : event.regex.slice(1) };
-                // Build parameters
-                self._forEach(req.matches, function(value, i){
-                    var key = (keys[i] && keys[i].name) ? keys[i].name : i;
-                    // Parameter key will be its key or the iteration index. This is useful if a wildcard (*) is matched
-                    req.params[key] = (value) ? decodeURIComponent(value) : undefined;
-                });
                 // Call handler
-                handler.call(self, req, event);
+                event.callback();
             }
             // Returns self
             return self;
         }
         // Invoke and add listeners -- this uses less code
-        return invoke().on('initialized hashchange', invoke);
+        return invoke().on('hashchange', invoke);
     }
     /**
      * Add an event listener

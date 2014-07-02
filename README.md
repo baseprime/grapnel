@@ -170,7 +170,6 @@ router.bind('hashchange', function(event){
 ## Events
 ##### `match` Fires when a new match is found, but before the handler is called
 ##### `hashchange` Fires when hashtag is changed
-##### `initialized` Fires when object is initialized (this will likely be useless)
 
 ## Stopping a Route Event
 ```javascript
