@@ -1,0 +1,9 @@
+{
+    "name": "grapnel",
+    
+    "main": "src/grapnel.js",
+    
+    "scripts": [
+        "src/grapnel.js"
+    ]
+}
