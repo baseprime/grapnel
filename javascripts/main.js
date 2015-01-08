@@ -1,21 +1,23 @@
 
 $(function(){
 
-    var router = new Grapnel.Router();
+    var router = new Grapnel({ pushState : true });
 
-    router.get('docs', function(){
+    router.get('/docs', function(){
         $('#documentation').show();
         $('#basic-usage').hide();
         $('ul.nav li').removeClass('active').parent().find('li[data-active="documentation"]').addClass('active');
     });
 
-    router.get('usage', function(){
+    router.get('/', function(){
         $('#basic-usage').show();
         $('#documentation').hide();
         $('ul.nav li').removeClass('active').parent().find('li[data-active="usage"]').addClass('active');
     });
 
-    if(!router.state){
-        router.anchor.set('usage');
-    }
+    $('a[rel]').click(function(e){
+        e.preventDefault();
+        router.navigate($(this).attr('rel'));
+    });
+
 }); 
