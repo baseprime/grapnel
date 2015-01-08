@@ -240,9 +240,7 @@ router.bind('myevent', function(event){
  * @param {String} event name (multiple events can be called when seperated by a space " ")
  * @param {Mixed} [attributes] Parameters that will be applied to event handler
 */
-router.trigger('event otherevent', function(){
-    // Handler
-});
+router.trigger('event otherevent', eventArg1, eventArg2);
 ```
 
 ##### `context` Returns a function that can be called with a specific route in context
