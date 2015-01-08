@@ -1,7 +1,7 @@
 
 $(function(){
 
-    var router = new Grapnel({ pushState : true });
+    var router = new Grapnel({ pushState : true, root : '/Grapnel.js' });
 
     router.get('/docs', function(){
         $('#documentation').show();

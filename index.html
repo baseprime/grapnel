@@ -47,217 +47,307 @@
 
           <div id="basic-usage">
 
-        <article class="markdown-body entry-content" itemprop="mainContentOfPage">
-<h2>
-<a name="user-content-router" class="anchor" href="#router"><span class="octicon octicon-link"></span></a>Router</h2>
+        <article class="markdown-body entry-content" itemprop="mainContentOfPage"><h1>
+<h1>
+<a id="user-content-grapneljs-features" class="anchor" href="#grapneljs-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h1>
 
-<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">();</span>
-
-<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'products/:category/:id?'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
-    <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
-        <span class="nx">category</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">category</span><span class="p">;</span>
-    <span class="c1">// GET http://mysite.com/#products/widgets/134</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">category</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
-    <span class="c1">// =&gt; widgets 134</span>
-<span class="p">});</span>
-</pre></div>
+<ul class="task-list">
+<li>Supports routing using <code>pushState</code> or <code>hashchange</code> concurrently</li>
+<li>Supports Named Parameters similar to Sinatra, Restify, and Express</li>
+<li>Event Handling Support</li>
+<li>RegExp Support</li>
+<li>RequreJS/AMD and CommonJS Compatibility</li>
+<li>No dependencies</li>
+</ul>
 
 <h2>
-<a name="user-content-named-parameters" class="anchor" href="#named-parameters"><span class="octicon octicon-link"></span></a>Named Parameters</h2>
+<a id="user-content-basic-router" class="anchor" href="#basic-router" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic Router</h2>
 
-<p>Grapnel.js supports regex style routes similar to Sinatra or Express. The properties are mapped to the parameters in the request.</p>
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> router <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Grapnel</span>();
 
-<div class="highlight highlight-javascript"><pre><span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'products/:id?'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
-    <span class="c1">// GET /file.html#products/134</span>
-    <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span>
-    <span class="c1">// =&gt; 134</span>
-<span class="p">});</span>
-
-<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'products/*'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
-    <span class="c1">// The wildcard/asterisk will match anything after that point in the URL</span>
-    <span class="c1">// Parameters are provided req.params using req.params[n], where n is the nth capture</span>
-<span class="p">});</span>
-</pre></div>
+router.get(<span class="pl-s1"><span class="pl-pds">'</span>products/:category/:id?<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>){
+    <span class="pl-s">var</span> id <span class="pl-k">=</span> req.params.<span class="pl-sc">id</span>,
+        category <span class="pl-k">=</span> req.params.category;
+    <span class="pl-c">// GET http://mysite.com/#products/widgets/134</span>
+    <span class="pl-en">console</span><span class="pl-s3">.log</span>(category, id);
+    <span class="pl-c">// =&gt; widgets 134</span>
+});</pre></div>
 
 <h2>
-<a name="user-content-using-multiple-routes" class="anchor" href="#using-multiple-routes"><span class="octicon octicon-link"></span></a>Declaring Multiple Routes</h2>
+<a id="user-content-advanced-routing-using-pushstate" class="anchor" href="#advanced-routing-using-pushstate" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced Routing using pushState</h2>
 
-<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">routes</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'products'</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
-        <span class="c1">// GET /file.html#products</span>
-    <span class="p">},</span>
-    <span class="s1">'products/:category/:id?'</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
-        <span class="c1">// GET /file.html#products/widgets/35</span>
-        <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">category</span>
-        <span class="c1">// =&gt; widgets</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> router <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Grapnel</span>({ pushState <span class="pl-k">:</span> <span class="pl-c1">true</span> });
 
-<span class="nx">Grapnel</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="nx">routes</span><span class="p">);</span>
-</pre></div>
+router.get(<span class="pl-s1"><span class="pl-pds">'</span>/products/:category/:id?<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>){
+    <span class="pl-s">var</span> id <span class="pl-k">=</span> req.params.<span class="pl-sc">id</span>,
+        category <span class="pl-k">=</span> req.params.category
+
+    <span class="pl-en">console</span><span class="pl-s3">.log</span>(category, id);
+});
+
+router.<span class="pl-s3">navigate</span>(<span class="pl-s1"><span class="pl-pds">'</span>/products/widgets/134<span class="pl-pds">'</span></span>);
+<span class="pl-c">// =&gt; widgets 134</span></pre></div>
 
 <h2>
-<a name="user-content-event-handling" class="anchor" href="#event-handling"><span class="octicon octicon-link"></span></a>Event Handling</h2>
+<a id="user-content-named-parameters" class="anchor" href="#named-parameters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Named Parameters</h2>
 
-<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">();</span>
+<p>Grapnel.js supports regex style routes similar to Sinatra, Restify, and Express. The properties are mapped to the parameters in the request.</p>
 
-<span class="nx">router</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'hashchange'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">){</span>
-    <span class="c1">// GET /file.html#products</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Anchor changed to %s'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">anchor</span><span class="p">.</span><span class="nx">get</span><span class="p">());</span>
-    <span class="c1">// =&gt; Anchor changed to products</span>
-<span class="p">});</span>
-</pre></div>
+<div class="highlight highlight-javascript"><pre>router.get(<span class="pl-s1"><span class="pl-pds">'</span>products/:id?<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>){
+    <span class="pl-c">// GET /file.html#products/134</span>
+    req.params.<span class="pl-sc">id</span>
+    <span class="pl-c">// =&gt; 134</span>
+});
+
+router.get(<span class="pl-s1"><span class="pl-pds">'</span>products/*<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>){
+    <span class="pl-c">// The wildcard/asterisk will match anything after that point in the URL</span>
+    <span class="pl-c">// Parameters are provided req.params using req.params[n], where n is the nth capture</span>
+});</pre></div>
 
 <h2>
-<a name="user-content-regexp-support" class="anchor" href="#regexp-support"><span class="octicon octicon-link"></span></a>RegExp Support</h2>
+<a id="user-content-declaring-multiple-routes" class="anchor" href="#declaring-multiple-routes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Declaring Multiple Routes</h2>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> routes <span class="pl-k">=</span> {
+    <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-en">products</span><span class="pl-pds">'</span></span> : <span class="pl-st">function</span>(<span class="pl-vpf">req</span>){
+        <span class="pl-c">// GET /file.html#products</span>
+    },
+    <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-en">products/:category/:id?</span><span class="pl-pds">'</span></span> : <span class="pl-st">function</span>(<span class="pl-vpf">req</span>){
+        <span class="pl-c">// GET /file.html#products/widgets/35</span>
+        req.params.category
+        <span class="pl-c">// =&gt; widgets</span>
+    }
+}
+
+Grapnel.listen(routes);</pre></div>
+
+<h2>
+<a id="user-content-event-handling" class="anchor" href="#event-handling" aria-hidden="true"><span class="octicon octicon-link"></span></a>Event Handling</h2>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> router <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Grapnel</span>({ pushState <span class="pl-k">:</span> <span class="pl-c1">true</span>, root <span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">'</span>/<span class="pl-pds">'</span></span> });
+
+router.on(<span class="pl-s1"><span class="pl-pds">'</span>navigate<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">event</span>){
+    <span class="pl-c">// GET /foo/bar</span>
+    <span class="pl-en">console</span><span class="pl-s3">.log</span>(<span class="pl-s1"><span class="pl-pds">'</span>URL changed to %s<span class="pl-pds">'</span></span>, <span class="pl-v">this</span>.fragment.get());
+    <span class="pl-c">// =&gt; URL changed to /foo/bar</span>
+});</pre></div>
+
+<h2>
+<a id="user-content-regexp-support" class="anchor" href="#regexp-support" aria-hidden="true"><span class="octicon octicon-link"></span></a>RegExp Support</h2>
 
 <p>Grapnel.js allows RegEx when defining a route:</p>
 
-<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">expression</span> <span class="o">=</span> <span class="sr">/^food\/tacos\/(.*)$/i</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">();</span>
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> expression <span class="pl-k">=</span><span class="pl-sr"> <span class="pl-pds">/</span><span class="pl-k">^</span>food<span class="pl-cce">\/</span>tacos<span class="pl-cce">\/</span>(<span class="pl-c1">.</span><span class="pl-k">*</span>)<span class="pl-k">$</span><span class="pl-pds">/</span>i</span>;
+<span class="pl-s">var</span> router <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Grapnel</span>();
 
-<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">expression</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">event</span><span class="p">){</span>
-    <span class="c1">// GET http://mysite.com/page#food/tacos/good</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'I think tacos are %s.'</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-    <span class="c1">// =&gt; "He thinks tacos are good."</span>
-<span class="p">});</span>
-</pre></div>
+router.get(expression, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">event</span>){
+    <span class="pl-c">// GET http://mysite.com/page#food/tacos/good</span>
+    <span class="pl-en">console</span><span class="pl-s3">.log</span>(<span class="pl-s1"><span class="pl-pds">'</span>I think tacos are %s.<span class="pl-pds">'</span></span>, req.params[<span class="pl-c1">0</span>]);
+    <span class="pl-c">// =&gt; "He thinks tacos are good."</span>
+});</pre></div>
 
 <h2>
-<a name="user-content-route-context" class="anchor" href="#route-context"><span class="octicon octicon-link"></span></a>Route Context</h2>
+<a id="user-content-route-context" class="anchor" href="#route-context" aria-hidden="true"><span class="octicon octicon-link"></span></a>Route Context</h2>
 
 <p>You can even add context to a route:</p>
 
-<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">foodRoute</span> <span class="o">=</span> <span class="nx">router</span><span class="p">.</span><span class="nx">context</span><span class="p">(</span><span class="s1">'food'</span><span class="p">);</span>
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> router <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Grapnel</span>({ pushState <span class="pl-k">:</span> <span class="pl-c1">true</span> });
+<span class="pl-s">var</span> foodRoute <span class="pl-k">=</span> router.context(<span class="pl-s1"><span class="pl-pds">'</span>/food<span class="pl-pds">'</span></span>);
 
-<span class="nx">foodRoute</span><span class="p">(</span><span class="s1">':foodname'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">event</span><span class="p">){</span>
-    <span class="c1">// GET /file.html#food/tacos</span>
-    <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">foodname</span>
-    <span class="c1">// =&gt; This taco thing is getting out of hand.</span>
-<span class="p">});</span>
-</pre></div>
+foodRoute(<span class="pl-s1"><span class="pl-pds">'</span>:foodname<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">event</span>){
+    <span class="pl-en">console</span><span class="pl-s3">.log</span>(req.params.foodname);
+});
+
+router.<span class="pl-s3">navigate</span>(<span class="pl-s1"><span class="pl-pds">'</span>/food/tacos<span class="pl-pds">'</span></span>);
+<span class="pl-c">// =&gt; This taco thing is getting out of hand.</span></pre></div>
 
 <h2>
-<a name="user-content-requirejsamd-and-commonjs-compatibility" class="anchor" href="#requirejsamd-and-commonjs-compatibility"><span class="octicon octicon-link"></span></a>RequireJS/AMD and CommonJS Compatibility</h2>
+<a id="user-content-requirejsamd-and-commonjs-compatibility" class="anchor" href="#requirejsamd-and-commonjs-compatibility" aria-hidden="true"><span class="octicon octicon-link"></span></a>RequireJS/AMD and CommonJS Compatibility</h2>
 
-<div class="highlight highlight-javascript"><pre><span class="nx">require</span><span class="p">([</span><span class="s1">'lib/grapnel'</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Grapnel</span><span class="p">){</span>
+<div class="highlight highlight-javascript"><pre><span class="pl-s3">require</span>([<span class="pl-s1"><span class="pl-pds">'</span>lib/grapnel<span class="pl-pds">'</span></span>], <span class="pl-st">function</span>(<span class="pl-vpf">Grapnel</span>){
 
-    <span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">();</span>
+    <span class="pl-s">var</span> router <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Grapnel</span>({ pushState <span class="pl-k">:</span> <span class="pl-c1">true</span> });
 
-    <span class="nx">router</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">'hashchange'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'It works!'</span><span class="p">);</span>
-    <span class="p">});</span>
+    router.bind(<span class="pl-s1"><span class="pl-pds">'</span>navigate<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(){
+        <span class="pl-en">console</span><span class="pl-s3">.log</span>(<span class="pl-s1"><span class="pl-pds">'</span>It works!<span class="pl-pds">'</span></span>);
+    });
 
-<span class="p">});</span>
-</pre></div>
+    router.<span class="pl-s3">navigate</span>(<span class="pl-s1"><span class="pl-pds">'</span>/<span class="pl-pds">'</span></span>);
+
+});</pre></div>
 
 <p>&nbsp;</p>
 
-</article>
-    </div>
+<hr>
 
-    <div id="documentation">
-
-    <h2>
-<a name="user-content-installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
-
-<div class="highlight highlight-bash"><pre>bower install grapnel
-</pre></div>
+<h1>
+<a id="user-content-usage--tips" class="anchor" href="#usage--tips" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage &amp; Tips</h1>
 
 <h2>
-<a name="user-content-basic-configuration" class="anchor" href="#basic-configuration"><span class="octicon octicon-link"></span></a>Basic Configuration</h2>
+<a id="user-content-installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
 
-<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Grapnel</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
-</pre></div>
+<div class="highlight highlight-bash"><pre>bower install grapnel</pre></div>
+
+<h2>
+<a id="user-content-basic-configuration" class="anchor" href="#basic-configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic Configuration</h2>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> router <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Grapnel</span>();</pre></div>
 
 <p>Or you can declare your routes with a literal object:</p>
 
-<div class="highlight highlight-javascript"><pre><span class="nx">Grapnel</span><span class="p">.</span><span class="nx">listen</span><span class="p">({</span>
-    <span class="s1">'products/:id'</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">){</span>
-        <span class="c1">// Handler</span>
-    <span class="p">}</span>
-<span class="p">});</span>
-</pre></div>
+<div class="highlight highlight-javascript"><pre>Grapnel.listen({
+    <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-en">products/:id</span><span class="pl-pds">'</span></span> : <span class="pl-st">function</span>(<span class="pl-vpf">req</span>){
+        <span class="pl-c">// Handler</span>
+    }
+});</pre></div>
+
+<p>When declaring routes with a literal object, router options can be passed as the first parameter:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> opts <span class="pl-k">=</span> { pushState <span class="pl-k">:</span> <span class="pl-c1">true</span> };
+
+Grapnel.listen(opts, routes);</pre></div>
 
 <h2>
-<a name="user-content-methods" class="anchor" href="#methods"><span class="octicon octicon-link"></span></a>Methods</h2>
+<a id="user-content-enabling-pushstate" class="anchor" href="#enabling-pushstate" aria-hidden="true"><span class="octicon octicon-link"></span></a>Enabling PushState</h2>
 
-<h5>
-<a name="user-content-get-adds-a-new-route-listener" class="anchor" href="#get-adds-a-new-route-listener"><span class="octicon octicon-link"></span></a><code>get</code> Adds a new route listener</h5>
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> router <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Grapnel</span>({ pushState <span class="pl-k">:</span> <span class="pl-c1">true</span> });</pre></div>
 
-<div class="highlight highlight-javascript"><pre><span class="cm">/**</span>
-<span class="cm"> * @param {String|RegExp} path</span>
-<span class="cm"> * @param {Function} callback</span>
-<span class="cm">*/</span>
-<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'store/:category/:id?'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">event</span><span class="p">){</span>
-    <span class="kd">var</span> <span class="nx">category</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">category</span><span class="p">,</span>
-        <span class="nx">id</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+<p>You can also specify a root URL by setting it as an option:</p>
 
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Product #%s in %s'</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">category</span><span class="p">);</span>
-<span class="p">});</span>
-</pre></div>
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> router <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Grapnel</span>({ root <span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">'</span>/public/search/<span class="pl-pds">'</span></span>, pushState <span class="pl-k">:</span> <span class="pl-c1">true</span> });</pre></div>
 
-<h5>
-<a name="user-content-bind-adds-a-new-event-listener" class="anchor" href="#bind-adds-a-new-event-listener"><span class="octicon octicon-link"></span></a><code>bind</code> Adds a new event listener</h5>
-
-<div class="highlight highlight-javascript"><pre><span class="cm">/**</span>
-<span class="cm"> * @param {String|Array} event</span>
-<span class="cm"> * @param {Function} callback</span>
-<span class="cm">*/</span>
-<span class="nx">router</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">'hashchange'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">){</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Grapnel.js works!'</span><span class="p">);</span>
-<span class="p">});</span>
-</pre></div>
-
-<h5>
-<a name="user-content-on-an-alias-of-bind" class="anchor" href="#on-an-alias-of-bind"><span class="octicon octicon-link"></span></a><code>on</code> An alias of <code>bind</code>
-</h5>
-
-<h5>
-<a name="user-content-add-an-alias-of-get" class="anchor" href="#add-an-alias-of-get"><span class="octicon octicon-link"></span></a><code>add</code> An alias of <code>get</code>
-</h5>
-
-<h5>
-<a name="user-content-anchor" class="anchor" href="#anchor"><span class="octicon octicon-link"></span></a><code>anchor</code>
-</h5>
-
-<ul>
-<li>
-<code>defaultHash</code> Static anchor during initialization</li>
-<li>
-<code>set</code> Sets a new absolute anchor</li>
-<li>
-<code>get</code> Get absolute anchor</li>
-<li>
-<code>clear</code> Clears the anchor</li>
-<li>
-<code>reset</code> Resets the anchor to its original state when it was loaded</li>
-</ul><h2>
-<a name="user-content-events" class="anchor" href="#events"><span class="octicon octicon-link"></span></a>Events</h2>
-
-<h5>
-<a name="user-content-match-fires-when-a-new-match-is-found-but-before-the-handler-is-called" class="anchor" href="#match-fires-when-a-new-match-is-found-but-before-the-handler-is-called"><span class="octicon octicon-link"></span></a><code>match</code> Fires when a new match is found, but before the handler is called</h5>
-
-<h5>
-<a name="user-content-hashchange-fires-when-hashtag-is-changed" class="anchor" href="#hashchange-fires-when-hashtag-is-changed"><span class="octicon octicon-link"></span></a><code>hashchange</code> Fires when hashtag is changed</h5>
+<p>The root may require a beginning slash and a trailing slash depending on how your application utilizes the router.</p>
 
 <h2>
-<a name="user-content-stopping-an-event" class="anchor" href="#stopping-an-event"><span class="octicon octicon-link"></span></a>Stopping an Event</h2>
+<a id="user-content-navigation" class="anchor" href="#navigation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Navigation</h2>
 
-<div class="highlight highlight-javascript"><pre><span class="nx">router</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'match'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">){</span>
-    <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span> <span class="c1">// Stops propagation of the event</span>
-<span class="p">});</span>
-</pre></div>
+<p>If pushState is enabled, you can navigate through your application with <code>router.navigate</code>:</p>
+
+<div class="highlight highlight-javascript"><pre>router.<span class="pl-s3">navigate</span>(<span class="pl-s1"><span class="pl-pds">'</span>/products/123<span class="pl-pds">'</span></span>);</pre></div>
 
 <h2>
-<a name="user-content-license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+<a id="user-content-stopping-a-route-event" class="anchor" href="#stopping-a-route-event" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stopping a Route Event</h2>
+
+<div class="highlight highlight-javascript"><pre>router.on(<span class="pl-s1"><span class="pl-pds">'</span>match<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">event</span>){
+    <span class="pl-s3">event</span>.preventDefault(); <span class="pl-c">// Stops propagation of the event</span>
+});</pre></div>
+
+<p>&nbsp;</p>
+
+</div>
+
+<div id="documentation">
+
+<h1>
+<a id="user-content-api-documentation" class="anchor" href="#api-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>API Documentation</h1>
 
 <h5>
-<a name="user-content-mit-license" class="anchor" href="#mit-license"><span class="octicon octicon-link"></span></a><a href="http://opensource.org/licenses/MIT">MIT License</a>
+<a id="user-content-get-adds-a-new-route-listener" class="anchor" href="#get-adds-a-new-route-listener" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>get</code> Adds a new route listener</h5>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-c">/**</span>
+<span class="pl-c"> * @param {String|RegExp} path</span>
+<span class="pl-c"> * @param {Function} callback</span>
+<span class="pl-c">*/</span>
+router.get(<span class="pl-s1"><span class="pl-pds">'</span>/store/:category/:id?<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">event</span>){
+    <span class="pl-s">var</span> category <span class="pl-k">=</span> req.params.category,
+        id <span class="pl-k">=</span> req.params.<span class="pl-sc">id</span>;
+
+    <span class="pl-en">console</span><span class="pl-s3">.log</span>(<span class="pl-s1"><span class="pl-pds">'</span>Product #%s in %s<span class="pl-pds">'</span></span>, id, category);
+});</pre></div>
+
+<h5>
+<a id="user-content-navigate-navigate-through-application" class="anchor" href="#navigate-navigate-through-application" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>navigate</code> Navigate through application</h5>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-c">/**</span>
+<span class="pl-c"> * @param {String} path relative to root</span>
+<span class="pl-c">*/</span>
+router.<span class="pl-s3">navigate</span>(<span class="pl-s1"><span class="pl-pds">'</span>/products/123<span class="pl-pds">'</span></span>);</pre></div>
+
+<h5>
+<a id="user-content-bind-adds-a-new-event-listener" class="anchor" href="#bind-adds-a-new-event-listener" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>bind</code> Adds a new event listener</h5>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-c">/**</span>
+<span class="pl-c"> * @param {String} event name (multiple events can be called when seperated by a space " ")</span>
+<span class="pl-c"> * @param {Function} callback</span>
+<span class="pl-c">*/</span>
+router.bind(<span class="pl-s1"><span class="pl-pds">'</span>myevent<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">event</span>){
+    <span class="pl-en">console</span><span class="pl-s3">.log</span>(<span class="pl-s1"><span class="pl-pds">'</span>Grapnel.js works!<span class="pl-pds">'</span></span>);
+});</pre></div>
+
+<h5>
+<a id="user-content-trigger-triggers-an-event" class="anchor" href="#trigger-triggers-an-event" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>trigger</code> Triggers an event</h5>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-c">/**</span>
+<span class="pl-c"> * @param {String} event name (multiple events can be called when seperated by a space " ")</span>
+<span class="pl-c"> * @param {Mixed} [attributes] Parameters that will be applied to event handler</span>
+<span class="pl-c">*/</span>
+router.trigger(<span class="pl-s1"><span class="pl-pds">'</span>event otherevent<span class="pl-pds">'</span></span>, eventArg1, eventArg2);</pre></div>
+
+<h5>
+<a id="user-content-context-returns-a-function-that-can-be-called-with-a-specific-route-in-context" class="anchor" href="#context-returns-a-function-that-can-be-called-with-a-specific-route-in-context" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>context</code> Returns a function that can be called with a specific route in context</h5>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-c">/**</span>
+<span class="pl-c"> * @param {String} Route context</span>
+<span class="pl-c"> * @return {Function} Adds route to context</span>
+<span class="pl-c">*/</span>
+<span class="pl-s">var</span> searchFn <span class="pl-k">=</span> router.context(<span class="pl-s1"><span class="pl-pds">'</span>/search<span class="pl-pds">'</span></span>);
+
+searchFn(<span class="pl-s1"><span class="pl-pds">'</span>:keyword<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">event</span>){
+    <span class="pl-en">console</span><span class="pl-s3">.log</span>(req.params.keyword);
+});
+
+router.<span class="pl-s3">navigate</span>(<span class="pl-s1"><span class="pl-pds">'</span>/search/widgets<span class="pl-pds">'</span></span>);
+<span class="pl-c">// =&gt; widgets</span></pre></div>
+
+<h5>
+<a id="user-content-on-an-alias-of-bind" class="anchor" href="#on-an-alias-of-bind" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>on</code> An alias of <code>bind</code>
 </h5>
 
-    </div>
+<h5>
+<a id="user-content-add-an-alias-of-get" class="anchor" href="#add-an-alias-of-get" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>add</code> An alias of <code>get</code>
+</h5>
+
+<h5>
+<a id="user-content-fragment-or-hash-or-anchor-aliased-to-reduce-confusion-in-different-routing-modes" class="anchor" href="#fragment-or-hash-or-anchor-aliased-to-reduce-confusion-in-different-routing-modes" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>fragment</code> or <code>hash</code> or <code>anchor</code> (aliased to reduce confusion in different routing modes)</h5>
+
+<ul class="task-list">
+<li>
+<code>set</code> Sets a new absolute URL or Hash</li>
+<li>
+<code>get</code> Get absolute URL or Hash</li>
+<li>
+<code>clear</code> Clears the URL or Hash</li>
+</ul>
+
+<h2>
+<a id="user-content-events" class="anchor" href="#events" aria-hidden="true"><span class="octicon octicon-link"></span></a>Events</h2>
+
+<h5>
+<a id="user-content-navigate-fires-when-router-navigates-through-history" class="anchor" href="#navigate-fires-when-router-navigates-through-history" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>navigate</code> Fires when router navigates through history</h5>
+
+<h5>
+<a id="user-content-match-fires-when-a-new-match-is-found-but-before-the-handler-is-called" class="anchor" href="#match-fires-when-a-new-match-is-found-but-before-the-handler-is-called" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>match</code> Fires when a new match is found, but before the handler is called</h5>
+
+<h5>
+<a id="user-content-hashchange-fires-when-hashtag-is-changed" class="anchor" href="#hashchange-fires-when-hashtag-is-changed" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>hashchange</code> Fires when hashtag is changed</h5>
+
+<h2>
+<a id="user-content-license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<h5>
+<a id="user-content-mit-license" class="anchor" href="#mit-license" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="http://opensource.org/licenses/MIT">MIT License</a>
+</h5>
+</article>
 
       </section>
     </div>
