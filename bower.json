@@ -1,11 +1,11 @@
 {
   "name": "Grapnel.js",
-  "version": "0.4.2",
+  "version": "0.5.1",
   "homepage": "https://github.com/EngineeringMode/Grapnel.js",
   "authors": [
     "Greg Sabia Tucker <greg@artificer.io>"
   ],
-  "description": "The smallest (1100 bytes gzipped!) JavaScript Router with Named Parameters",
+  "description": "The smallest (1100 bytes gzipped!) JavaScript Router with PushState & Named Parameters",
   "main": "dist/grapnel.min.js",
   "moduleType": [
     "amd",
@@ -23,7 +23,8 @@
     "named",
     "parameters",
     "backbone",
-    "routie"
+    "routie",
+    "pushState"
   ],
   "license": "MIT",
   "ignore": [

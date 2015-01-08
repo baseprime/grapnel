@@ -1,5 +1,9 @@
 ## Changelog
 
+##### 0.5.1
+* Added history pushState support
+* Deprecated router.fragment.defaultHash and router.fragment.reset()
+
 ##### 0.4.2
 * Moved production file into `/dist` directory
 * Added to bower registry

@@ -4,36 +4,54 @@
  *
  * @author Greg Sabia Tucker
  * @link http://artificer.io
- * @version 0.4.2
+ * @version 0.5.1
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
 
 (function(root){
 
-    function Grapnel(){
+    function Grapnel(opts){
         "use strict";
 
         var self = this; // Scope reference
         this.events = {}; // Event Listeners
         this.params = []; // Named parameters
         this.state = null; // Event state
-        this.version = '0.4.2'; // Version
-        // Anchor
-        this.anchor = {
-            defaultHash : window.location.hash,
+        this.options = opts || {}; // Options
+        this.options.usePushState = !!(self.options.pushState && root.history && root.history.pushState); // Enable pushState?
+        this.version = '0.5.1'; // Version
+        // Fragment/Anchor
+        this.fragment = this.anchor = this.hash = {
             get : function(){
-                return (window.location.hash) ? window.location.hash.split('#')[1] : '';
+                var frag;
+
+                if(self.options.usePushState){
+                    frag = root.location.pathname.replace(self.options.root, '');
+                }else{
+                    frag = (root.location.hash) ? root.location.hash.split('#')[1] : '';
+                }
+
+                return frag;
             },
-            set : function(anchor){
-                window.location.hash = (!anchor) ? '' : anchor;
+            set : function(frag){
+                if(self.options.usePushState){
+                    frag = (self.options.root) ? (self.options.root + frag) : frag;
+                    root.history.pushState({}, null, frag);
+                }else{
+                    root.location.hash = frag;
+                }
+
                 return self;
             },
             clear : function(){
-                return this.set(false);
-            },
-            reset : function(){
-                return this.set(this.defaultHash);
+                if(self.options.usePushState){
+                    root.history.pushState({}, null, self.options.root || '/');
+                }else{
+                    root.location.hash = '';
+                }
+
+                return self;
             }
         }
         /**
@@ -54,8 +72,8 @@
         /**
          * Fire an event listener
          *
-         * @param {String} event
-         * @param {Mixed} [attributes] Parameters that will be applied to event listener
+         * @param {String} event name (multiple events can be called when seperated by a space " ")
+         * @param {Mixed} [attributes] Parameters that will be applied to event handler
          * @return self
         */
         this.trigger = function(event){
@@ -69,14 +87,16 @@
 
             return this;
         }
-        // Check current hash change event -- if one exists already, add it to the queue
-        if(typeof window.onhashchange === 'function') this.on('hashchange', window.onhashchange);
-        /**
-         * Hash change event
-         * TODO: increase browser compatibility. "window.onhashchange" can be supplemented in older browsers with setInterval()
-        */
-        window.onhashchange = function(){
+        // Check current functionality on window events -- if one exists already, add it to the queue
+        if(typeof root.onhashchange === 'function') this.on('hashchange', root.onhashchange);
+        if(typeof root.onpopstate === 'function') this.on('navigate', root.onpopstate);
+
+        root.onhashchange = function(){
             self.trigger('hashchange');
+        }
+
+        root.onpopstate = function(e){
+            self.trigger('navigate');
         }
 
         return this;
@@ -123,7 +143,7 @@
 
         var invoke = function RouteHandler(){
             // If action is instance of RegEx, match the action
-            var match = self.anchor.get().match(regex);
+            var match = self.fragment.get().match(regex);
             // Test matches against current action
             if(match){
                 // Match found
@@ -137,7 +157,7 @@
                 // Event object
                 var event = {
                     route : route,
-                    value : self.anchor.get(),
+                    value : self.fragment.get(),
                     params : req.params,
                     regex : match,
                     propagateEvent : true,
@@ -162,12 +182,12 @@
             return self;
         }
         // Invoke and add listeners -- this uses less code
-        return invoke().on('hashchange', invoke);
+        return invoke().on((self.options.usePushState) ? 'navigate' : 'hashchange', invoke);
     }
     /**
      * Add an event listener
      *
-     * @param {String|Array} event
+     * @param {String} event name (multiple events can be called when seperated by a space " ")
      * @param {Function} callback
      * @return self
     */
@@ -208,12 +228,30 @@
         }
     }
     /**
-     * Create routes based on an object
+     * Navigate through history API
      *
-     * @param {Object} Routes
+     * @param {Object} Fragment
      * @return {self} Router
     */
-    Grapnel.listen = function(routes){
+    Grapnel.prototype.navigate = function(frag){
+        this.fragment.set(frag);
+        return this.trigger('navigate');
+    }
+    /**
+     * Create routes based on an object
+     *
+     * @param {Object} [Options, Routes]
+     * @param {Object Routes}
+     * @return {self} Router
+    */
+    Grapnel.listen = function(){
+        var opts, routes;
+        if(arguments[0] && arguments[1]){
+            opts = arguments[0];
+            routes = arguments[1];
+        }else{
+            routes = arguments[0];
+        }
         // Return a new Grapnel instance
         return (function(){
             // TODO: Accept multi-level routes
@@ -222,7 +260,7 @@
             }
 
             return this;
-        }).call(new Grapnel());
+        }).call(new Grapnel(opts || {}));
     }
     // Window or module?
     if('function' === typeof root.define){
