@@ -3,10 +3,21 @@ Grapnel.js
 
 #### The smallest (1100 bytes gzipped!) JavaScript Router with Named Parameters & pushState support.
 
-## Download
+## Download/Installation
+
+**Download Source:**
 
 - [Production](https://raw.githubusercontent.com/EngineeringMode/Grapnel.js/master/dist/grapnel.min.js)
 - [Development](https://raw.githubusercontent.com/EngineeringMode/Grapnel.js/master/src/grapnel.js)
+
+**Install with npm**
+```bash
+npm install grapnel
+```
+**Or by using bower:**
+```bash
+bower install grapnel
+```
 
 # Grapnel.js Features
 
@@ -144,17 +155,6 @@ require(['lib/grapnel'], function(Grapnel){
 ***
 
 # Usage &amp; Tips
-
-## Installation
-
-Install using NPM:
-```bash
-npm install grapnel
-```
-Install using Bower:
-```bash
-bower install grapnel
-```
 
 ## Basic Configuration
 ```javascript
