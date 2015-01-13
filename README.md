@@ -147,6 +147,11 @@ require(['lib/grapnel'], function(Grapnel){
 
 ## Installation
 
+Install using NPM:
+```bash
+npm install grapnel
+```
+Install using Bower:
 ```bash
 bower install grapnel
 ```
