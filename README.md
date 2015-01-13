@@ -3,6 +3,15 @@ Grapnel.js
 
 #### The smallest (1100 bytes gzipped!) JavaScript Router with Named Parameters & pushState support.
 
+# Grapnel.js Features
+
+- Supports routing using `pushState` or `hashchange` concurrently
+- Supports Named Parameters similar to Sinatra, Restify, and Express
+- Event Handling Support
+- RegExp Support
+- RequreJS/AMD and CommonJS Compatibility
+- No dependencies
+
 ## Download/Installation
 
 **Download Source:**
@@ -18,15 +27,6 @@ npm install grapnel
 ```bash
 bower install grapnel
 ```
-
-# Grapnel.js Features
-
-- Supports routing using `pushState` or `hashchange` concurrently
-- Supports Named Parameters similar to Sinatra, Restify, and Express
-- Event Handling Support
-- RegExp Support
-- RequreJS/AMD and CommonJS Compatibility
-- No dependencies
 
 ## Basic Router
 
