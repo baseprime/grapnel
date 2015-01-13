@@ -1,5 +1,5 @@
 {
-  "name": "grapnel.js",
+  "name": "grapnel",
   "version": "0.5.1",
   "description": "The smallest JavaScript Router with PushState & Named Parameter support",
   "main": "dist/grapnel.min.js",
