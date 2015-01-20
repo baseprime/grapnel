@@ -4,7 +4,7 @@
  *
  * @author Greg Sabia Tucker
  * @link http://artificer.io
- * @version 0.5.0
+ * @version 0.5.2
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -20,16 +20,16 @@
         this.state = null; // Event state
         this.options = opts || {}; // Options
         this.options.usePushState = !!(self.options.pushState && root.history && root.history.pushState); // Enable pushState?
-        this.version = '0.5.0'; // Version
+        this.version = '0.5.2'; // Version
         // Fragment/Anchor
-        this.fragment = this.anchor = {
+        this.fragment = this.anchor = this.hash = {
             get : function(){
                 var frag;
 
                 if(self.options.usePushState){
                     frag = root.location.pathname.replace(self.options.root, '');
                 }else{
-                    frag = (root.location.hash) ? root.location.hash.split('#')[1] : '';
+                    frag = (root.location.hash) ? root.location.hash.split((self.options.hashBang ? '#!' : '#'))[1] : '';
                 }
 
                 return frag;
@@ -39,7 +39,7 @@
                     frag = (self.options.root) ? (self.options.root + frag) : frag;
                     root.history.pushState({}, null, frag);
                 }else{
-                    root.location.hash = frag;
+                    root.location.hash = (self.options.hashBang ? '!' : '') + frag;
                 }
 
                 return self;
@@ -48,11 +48,12 @@
                 if(self.options.usePushState){
                     root.history.pushState({}, null, self.options.root || '/');
                 }else{
-                    root.location.hash = '';
+                    root.location.hash = (self.options.hashBang) ? '!' : '';
                 }
 
                 return self;
-            }
+            },
+
         }
         /**
          * ForEach workaround
@@ -72,8 +73,8 @@
         /**
          * Fire an event listener
          *
-         * @param {String} event
-         * @param {Mixed} [attributes] Parameters that will be applied to event listener
+         * @param {String} event name (multiple events can be called when seperated by a space " ")
+         * @param {Mixed} [attributes] Parameters that will be applied to event handler
          * @return self
         */
         this.trigger = function(event){
@@ -95,7 +96,7 @@
             self.trigger('hashchange');
         }
 
-        root.onpopstate = function(e){
+        root.onpopstate = function(){
             self.trigger('navigate');
         }
 
@@ -154,40 +155,57 @@
                     // Parameter key will be its key or the iteration index. This is useful if a wildcard (*) is matched
                     req.params[key] = (value) ? decodeURIComponent(value) : undefined;
                 });
-                // Event object
+                // Route events should have an object detailing the event -- route events also change the state of the router
                 var event = {
                     route : route,
                     value : self.fragment.get(),
                     params : req.params,
                     regex : match,
+                    runCallback : true,
+                    callbackRan : false,
                     propagateEvent : true,
-                    previousState : self.state,
                     preventDefault : function(){
+                        this.runCallback = false;
+                    },
+                    stopPropagation : function(){
                         this.propagateEvent = false;
                     },
+                    parent : function(){
+                        var hasParentEvents = !!(this.previousState && this.previousState.value && this.previousState.value == this.value);
+                        return (hasParentEvents) ? this.previousState : false;
+                    },
                     callback : function(){
+                        event.callbackRan = true;
+                        event.timeStamp = Date.now();
+                        // Handle event
                         handler.call(self, req, event);
                     }
                 }
                 // Trigger main event
                 self.trigger('match', event);
                 // Continue?
-                if(!event.propagateEvent) return self;
+                if(!event.runCallback) return self;
+                // Previous state becomes current state
+                event.previousState = self.state;
                 // Save new state
                 self.state = event;
+                // Prevent this handler from being called if parent handler in stack has instructed not to propagate any more events
+                if(event.parent() && event.parent().propagateEvent === false) return self;
                 // Call handler
                 event.callback();
             }
             // Returns self
             return self;
         }
-        // Invoke and add listeners -- this uses less code
-        return invoke().on((self.options.usePushState) ? 'navigate' : 'hashchange', invoke);
+        // Event name
+        var eventName = (self.options.usePushState) ? 'navigate' : 'hashchange';
+        // Invoke when route is defined, and once again when app navigates
+        return invoke().on(eventName, invoke);
     }
     /**
      * Add an event listener
      *
-     * @param {String|Array} event
+     * @param {String} event name (multiple events can be called when seperated by a space " ")
      * @param {Function} callback
      * @return self
     */
