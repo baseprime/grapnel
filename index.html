@@ -47,19 +47,31 @@
 
           <div id="basic-usage">
 
-        <article class="markdown-body entry-content" itemprop="mainContentOfPage"><h1>
-            Download/Installation</h1>
-            <ul class="task-list">
-                <li>Install using npm: <code>npm install grapnel</code></li>
-                <li>Install using bower: <code>bower install grapnel</code></li>
-                <li>Source:<ul>
-                    <li><a href="https://raw.githubusercontent.com/EngineeringMode/Grapnel.js/master/dist/grapnel.min.js" target="_blank">Production</a></li>
-                    <li><a href="https://raw.githubusercontent.com/EngineeringMode/Grapnel.js/master/src/grapnel.js" target="_blank">Development</a></li>
-                </ul></li>
-            </ul>
+<article class="markdown-body entry-content" itemprop="mainContentOfPage">
+
+<h4>
+<a id="user-content-the-smallest-1100-bytes-gzipped-javascript-router-with-named-parameters--pushstate-support" class="anchor" href="#the-smallest-1100-bytes-gzipped-javascript-router-with-named-parameters--pushstate-support" aria-hidden="true"><span class="octicon octicon-link"></span></a>The smallest (1100 bytes gzipped!) JavaScript Router with Named Parameters &amp; pushState support.</h4>
+
+<h2>
+<a id="user-content-downloadinstallation" class="anchor" href="#downloadinstallation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download/Installation</h2>
+
+<p><strong>Download Source:</strong></p>
+
+<ul class="task-list">
+<li><a href="https://raw.githubusercontent.com/EngineeringMode/Grapnel.js/master/dist/grapnel.min.js">Production</a></li>
+<li><a href="https://raw.githubusercontent.com/EngineeringMode/Grapnel.js/master/src/grapnel.js">Development</a></li>
+</ul>
+
+<p><strong>Install with npm</strong></p>
+
+<div class="highlight highlight-bash"><pre>npm install grapnel</pre></div>
+
+<p><strong>Or by using bower:</strong></p>
+
+<div class="highlight highlight-bash"><pre>bower install grapnel</pre></div>
 
 <h1>
-<a id="user-content-grapneljs-features" class="anchor" href="#grapneljs-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h1>
+<a id="user-content-grapneljs-features" class="anchor" href="#grapneljs-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Grapnel.js Features</h1>
 
 <ul class="task-list">
 <li>Supports routing using <code>pushState</code> or <code>hashchange</code> concurrently</li>
@@ -67,6 +79,7 @@
 <li>Event Handling Support</li>
 <li>RegExp Support</li>
 <li>RequreJS/AMD and CommonJS Compatibility</li>
+<li>Supports <code>#</code> or <code>#!</code> for <code>hashchange</code> routing</li>
 <li>No dependencies</li>
 </ul>
 
@@ -193,11 +206,6 @@ router.<span class="pl-s3">navigate</span>(<span class="pl-s1"><span class="pl-p
 <a id="user-content-usage--tips" class="anchor" href="#usage--tips" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage &amp; Tips</h1>
 
 <h2>
-<a id="user-content-installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
-
-<div class="highlight highlight-bash"><pre>bower install grapnel</pre></div>
-
-<h2>
 <a id="user-content-basic-configuration" class="anchor" href="#basic-configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic Configuration</h2>
 
 <div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> router <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Grapnel</span>();</pre></div>
@@ -238,18 +246,52 @@ Grapnel.listen(opts, routes);</pre></div>
 <a id="user-content-stopping-a-route-event" class="anchor" href="#stopping-a-route-event" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stopping a Route Event</h2>
 
 <div class="highlight highlight-javascript"><pre>router.on(<span class="pl-s1"><span class="pl-pds">'</span>match<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">event</span>){
-    <span class="pl-s3">event</span>.preventDefault(); <span class="pl-c">// Stops propagation of the event</span>
+    <span class="pl-s3">event</span>.preventDefault(); <span class="pl-c">// Stops event handler</span>
 });</pre></div>
+
+<h2>
+<a id="user-content-stopping-event-propagation" class="anchor" href="#stopping-event-propagation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stopping Event Propagation</h2>
+
+<div class="highlight highlight-javascript"><pre>router.get(<span class="pl-s1"><span class="pl-pds">'</span>/products/:id<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">event</span>){
+    <span class="pl-s3">event</span>.stopPropagation(); <span class="pl-c">// Stops propagation of the event</span>
+});
+
+router.get(<span class="pl-s1"><span class="pl-pds">'</span>/products/widgets<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">event</span>){
+    <span class="pl-c">// This will not be executed</span>
+});
+
+router.<span class="pl-s3">navigate</span>(<span class="pl-s1"><span class="pl-pds">'</span>/products/widgets<span class="pl-pds">'</span></span>);</pre></div>
+
+<h2>
+<a id="user-content-404-pages" class="anchor" href="#404-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>404 Pages</h2>
+
+<p>You can specify a route that only uses a wildcard <code>*</code> as your final route, then use <code>event.parent()</code> which returns <code>false</code> if the call stack doesn't have any other routes to run.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> routes <span class="pl-k">=</span> {
+    <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-en">/</span><span class="pl-pds">'</span></span> : <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">e</span>){
+        <span class="pl-c">// Handle route</span>
+    },
+    <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-en">/store/products/:id</span><span class="pl-pds">'</span></span> : <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">e</span>){
+        <span class="pl-c">// Handle route</span>
+    },
+    <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-en">/category/:id</span><span class="pl-pds">'</span></span> : <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">e</span>){
+        <span class="pl-c">// Handle route</span>
+    },
+    <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-en">/*</span><span class="pl-pds">'</span></span> : <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">e</span>){
+        <span class="pl-k">if</span>(<span class="pl-k">!</span>e.<span class="pl-sc">parent</span>()){
+            <span class="pl-c">// Handle 404</span>
+        }
+    }
+}
+
+Grapnel.listen({ pushState <span class="pl-k">:</span> <span class="pl-c1">true</span> }, routes);</pre></div>
 
 <p>&nbsp;</p>
 
 </div>
-
 <div id="documentation">
-
-<h1>
+    <h1>
 <a id="user-content-api-documentation" class="anchor" href="#api-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>API Documentation</h1>
-
 <h5>
 <a id="user-content-get-adds-a-new-route-listener" class="anchor" href="#get-adds-a-new-route-listener" aria-hidden="true"><span class="octicon octicon-link"></span></a>
 <code>get</code> Adds a new route listener</h5>
@@ -337,19 +379,29 @@ router.<span class="pl-s3">navigate</span>(<span class="pl-s1"><span class="pl-p
 </ul>
 
 <h2>
+<a id="user-content-options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h2>
+
+<ul class="task-list">
+<li>
+<code>pushState</code> Enable pushState, allowing manipulation of browser history instead of using the <code>#</code> and <code>hashchange</code> event</li>
+<li>
+<code>root</code> Root of your app, all navigation will be relative to this</li>
+<li>
+<code>hashBang</code> Enable <code>#!</code> as the anchor of a <code>hashchange</code> router instead of using just a <code>#</code>
+</li>
+</ul>
+
+<h2>
 <a id="user-content-events" class="anchor" href="#events" aria-hidden="true"><span class="octicon octicon-link"></span></a>Events</h2>
 
-<h5>
-<a id="user-content-navigate-fires-when-router-navigates-through-history" class="anchor" href="#navigate-fires-when-router-navigates-through-history" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code>navigate</code> Fires when router navigates through history</h5>
-
-<h5>
-<a id="user-content-match-fires-when-a-new-match-is-found-but-before-the-handler-is-called" class="anchor" href="#match-fires-when-a-new-match-is-found-but-before-the-handler-is-called" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code>match</code> Fires when a new match is found, but before the handler is called</h5>
-
-<h5>
-<a id="user-content-hashchange-fires-when-hashtag-is-changed" class="anchor" href="#hashchange-fires-when-hashtag-is-changed" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code>hashchange</code> Fires when hashtag is changed</h5>
+<ul class="task-list">
+<li>
+<code>navigate</code> Fires when router navigates through history</li>
+<li>
+<code>match</code> Fires when a new match is found, but before the handler is called</li>
+<li>
+<code>hashchange</code> Fires when hashtag is changed</li>
+</ul>
 
 <h2>
 <a id="user-content-license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
