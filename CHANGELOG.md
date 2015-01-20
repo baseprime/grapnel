@@ -1,5 +1,10 @@
 ## Changelog
 
+##### 0.5.2
+* Added event.stopPropagation
+* Added `#!` support
+* Added tests/gruntfile
+
 ##### 0.5.1
 * Added history pushState support
 * Deprecated router.fragment.defaultHash and router.fragment.reset()

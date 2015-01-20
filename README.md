@@ -26,6 +26,7 @@ bower install grapnel
 - Event Handling Support
 - RegExp Support
 - RequreJS/AMD and CommonJS Compatibility
+- Supports `#` or `#!` for `hashchange` routing
 - No dependencies
 
 ## Basic Router
@@ -196,8 +197,44 @@ router.navigate('/products/123');
 ## Stopping a Route Event
 ```javascript
 router.on('match', function(event){
-    event.preventDefault(); // Stops propagation of the event
+    event.preventDefault(); // Stops event handler
 });
+```
+
+## Stopping Event Propagation
+```javascript
+router.get('/products/:id', function(req, event){
+    event.stopPropagation(); // Stops propagation of the event
+});
+
+router.get('/products/widgets', function(req, event){
+    // This will not be executed
+});
+
+router.navigate('/products/widgets');
+```
+
+## 404 Pages
+You can specify a route that only uses a wildcard `*` as your final route, then use `event.parent()` which returns `false` if the call stack doesn't have any other routes to run.
+```javascript
+var routes = {
+    '/' : function(req, e){
+        // Handle route
+    },
+    '/store/products/:id' : function(req, e){
+        // Handle route
+    },
+    '/category/:id' : function(req, e){
+        // Handle route
+    },
+    '/*' : function(req, e){
+        if(!e.parent()){
+            // Handle 404
+        }
+    }
+}
+
+Grapnel.listen({ pushState : true }, routes);
 ```
 
 &nbsp;
@@ -271,10 +308,15 @@ router.navigate('/search/widgets');
 * `get` Get absolute URL or Hash
 * `clear` Clears the URL or Hash
 
+## Options
+* `pushState` Enable pushState, allowing manipulation of browser history instead of using the `#` and `hashchange` event
+* `root` Root of your app, all navigation will be relative to this
+* `hashBang` Enable `#!` as the anchor of a `hashchange` router instead of using just a `#`
+
 ## Events
-##### `navigate` Fires when router navigates through history
-##### `match` Fires when a new match is found, but before the handler is called
-##### `hashchange` Fires when hashtag is changed
+* `navigate` Fires when router navigates through history
+* `match` Fires when a new match is found, but before the handler is called
+* `hashchange` Fires when hashtag is changed
 
 ## License
 ##### [MIT License](http://opensource.org/licenses/MIT)
