@@ -146,7 +146,7 @@
             // If action is instance of RegEx, match the action
             var match = self.fragment.get().match(regex);
             // Test matches against current action
-            if(match){
+            if(match && (!self.state || self.state.propagateEvent !== false)) {
                 // Match found
                 var req = { params : {}, keys : keys, matches : match.slice(1) };
                 // Build parameters
