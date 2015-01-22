@@ -21,6 +21,21 @@
         this.options = opts || {}; // Options
         this.options.usePushState = !!(self.options.pushState && root.history && root.history.pushState); // Enable pushState?
         this.version = '0.5.2'; // Version
+        /**
+         * ForEach workaround utility
+         *
+         * @param {Array} to iterate
+         * @param {Function} callback
+        */
+        this._forEach = function(a, callback){
+            if(typeof Array.prototype.forEach === 'function') return Array.prototype.forEach.call(a, callback);
+            // Replicate forEach()
+            return function(c, next){
+                for(var i=0, n = this.length; i<n; ++i){
+                    c.call(next, this[i], i, this);
+                }
+            }.call(a, callback);
+        }
         // Fragment/Anchor
         this.fragment = this.anchor = this.hash = {
             get : function(){
@@ -52,41 +67,7 @@
                 }
 
                 return self;
-            },
-
-        }
-        /**
-         * ForEach workaround
-         *
-         * @param {Array} to iterate
-         * @param {Function} callback
-        */
-        this._forEach = function(a, callback){
-            if(typeof Array.prototype.forEach === 'function') return Array.prototype.forEach.call(a, callback);
-            // Replicate forEach()
-            return function(c, next){
-                for(var i=0, n = this.length; i<n; ++i){
-                    c.call(next, this[i], i, this);
-                }
-            }.call(a, callback);
-        }
-        /**
-         * Fire an event listener
-         *
-         * @param {String} event name (multiple events can be called when seperated by a space " ")
-         * @param {Mixed} [attributes] Parameters that will be applied to event handler
-         * @return self
-        */
-        this.trigger = function(event){
-            var params = Array.prototype.slice.call(arguments, 1);
-            // Call matching events
-            if(this.events[event]){
-                this._forEach(this.events[event], function(fn){
-                    fn.apply(self, params);
-                });
             }
-
-            return this;
         }
         // Check current functionality on window events -- if one exists already, add it to the queue
         if(typeof root.onhashchange === 'function') this.on('hashchange', root.onhashchange);
@@ -201,6 +182,24 @@
         var eventName = (self.options.usePushState) ? 'navigate' : 'hashchange';
         // Invoke when route is defined, and once again when app navigates
         return invoke().on(eventName, invoke);
+    }
+    /**
+     * Fire an event listener
+     *
+     * @param {String} event name (multiple events can be called when seperated by a space " ")
+     * @param {Mixed} [attributes] Parameters that will be applied to event handler
+     * @return self
+    */
+    Grapnel.prototype.trigger = function(event){
+        var params = Array.prototype.slice.call(arguments, 1);
+        // Call matching events
+        if(this.events[event]){
+            this._forEach(this.events[event], function(fn){
+                fn.apply(self, params);
+            });
+        }
+
+        return this;
     }
     /**
      * Add an event listener
