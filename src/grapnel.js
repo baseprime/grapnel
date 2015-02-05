@@ -4,12 +4,12 @@
  *
  * @author Greg Sabia Tucker <greg@artificer.io>
  * @link http://artificer.io
- * @version 0.5.2
+ * @version 0.5.3
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
 
-(function(root){
+;(function(root){
 
     function Grapnel(opts){
         "use strict";
@@ -20,7 +20,7 @@
         this.state = null; // Event state
         this.options = opts || {}; // Options
         this.options.usePushState = !!(self.options.pushState && root.history && root.history.pushState); // Enable pushState?
-        this.version = '0.5.2'; // Version
+        this.version = '0.5.3'; // Version
         /**
          * ForEach workaround utility
          *
@@ -69,17 +69,14 @@
                 return self;
             }
         }
-        // Check current functionality on window events -- if one exists already, add it to the queue
-        if(typeof root.onhashchange === 'function') this.on('hashchange', root.onhashchange);
-        if(typeof root.onpopstate === 'function') this.on('navigate', root.onpopstate);
-
-        root.onhashchange = function(){
+        
+        root.addEventListener('hashchange', function(){
             self.trigger('hashchange');
-        }
+        });
 
-        root.onpopstate = function(){
+        root.addEventListener('popstate', function(){
             self.trigger('navigate');
-        }
+        });
 
         return this;
     }
@@ -280,14 +277,15 @@
         }).call(new Grapnel(opts || {}));
     }
     // Window or module?
-    if('function' === typeof root.define){
-        root.define(function(require){
+    if('function' === typeof root.define && !root.define.amd.grapnel){
+        root.define(function(require, exports, module){
+            root.define.amd.grapnel = true;
             return Grapnel;
         });
-    }else if('object' === typeof exports){
-        exports.Grapnel = Grapnel;
+    }else if('object' === typeof module && 'object' === typeof module.exports){
+        module.exports = exports = Grapnel;
     }else{
         root.Grapnel = Grapnel;
     }
 
-}).call({}, window);
+}).call({}, this);
