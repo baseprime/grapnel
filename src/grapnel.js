@@ -168,7 +168,10 @@
                 // Save new state
                 self.state = event;
                 // Prevent this handler from being called if parent handler in stack has instructed not to propagate any more events
-                if(event.parent() && event.parent().propagateEvent === false) return self;
+                if(event.parent() && event.parent().propagateEvent === false){
+                    event.propagateEvent = false;
+                    return self;
+                }
                 // Call handler
                 event.callback();
             }
