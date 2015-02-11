@@ -20,4 +20,6 @@ $(function(){
         router.navigate($(this).attr('rel'));
     });
 
+    window.router = router;
+
 }); 

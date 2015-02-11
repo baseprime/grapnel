@@ -47,10 +47,11 @@
 
           <div id="basic-usage">
 
-<article class="markdown-body entry-content" itemprop="mainContentOfPage">
+<article class="markdown-body entry-content" itemprop="mainContentOfPage"><h1>
+<a id="user-content-grapneljs" class="anchor" href="#grapneljs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Grapnel.js</h1>
 
 <h4>
-<a id="user-content-the-smallest-1100-bytes-gzipped-javascript-router-with-named-parameters--pushstate-support" class="anchor" href="#the-smallest-1100-bytes-gzipped-javascript-router-with-named-parameters--pushstate-support" aria-hidden="true"><span class="octicon octicon-link"></span></a>The smallest (1100 bytes gzipped!) JavaScript Router with Named Parameters &amp; pushState support.</h4>
+<a id="user-content-the-smallest-1100-bytes-gzipped-javascript-router-with-named-parameters--pushstate-and-middleware-support" class="anchor" href="#the-smallest-1100-bytes-gzipped-javascript-router-with-named-parameters--pushstate-and-middleware-support" aria-hidden="true"><span class="octicon octicon-link"></span></a>The smallest (1100 bytes gzipped!) JavaScript Router with Named Parameters &amp; pushState, and Middleware support.</h4>
 
 <h2>
 <a id="user-content-downloadinstallation" class="anchor" href="#downloadinstallation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download/Installation</h2>
@@ -76,6 +77,7 @@
 <ul class="task-list">
 <li>Supports routing using <code>pushState</code> or <code>hashchange</code> concurrently</li>
 <li>Supports Named Parameters similar to Sinatra, Restify, and Express</li>
+<li>Middleware Support</li>
 <li>Event Handling Support</li>
 <li>RegExp Support</li>
 <li>RequreJS/AMD and CommonJS Compatibility</li>
@@ -125,6 +127,22 @@ router.<span class="pl-s3">navigate</span>(<span class="pl-s1"><span class="pl-p
 router.get(<span class="pl-s1"><span class="pl-pds">'</span>products/*<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>){
     <span class="pl-c">// The wildcard/asterisk will match anything after that point in the URL</span>
     <span class="pl-c">// Parameters are provided req.params using req.params[n], where n is the nth capture</span>
+});</pre></div>
+
+<h2>
+<a id="user-content-middleware-support" class="anchor" href="#middleware-support" aria-hidden="true"><span class="octicon octicon-link"></span></a>Middleware Support</h2>
+
+<p>Grapnel.js also supports middleware:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> <span class="pl-en">auth</span> <span class="pl-k">=</span> <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">event</span>, <span class="pl-vpf">next</span>){
+    user.auth(<span class="pl-st">function</span>(<span class="pl-vpf">err</span>){
+        req.user <span class="pl-k">=</span> <span class="pl-v">this</span>;
+        next();
+    });
+}
+
+router.get(<span class="pl-s1"><span class="pl-pds">'</span>/*<span class="pl-pds">'</span></span>, auth, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>){
+    <span class="pl-en">console</span><span class="pl-s3">.log</span>(req.user);
 });</pre></div>
 
 <h2>
@@ -236,6 +254,24 @@ Grapnel.listen(opts, routes);</pre></div>
 <p>The root may require a beginning slash and a trailing slash depending on how your application utilizes the router.</p>
 
 <h2>
+<a id="user-content-middleware" class="anchor" href="#middleware" aria-hidden="true"><span class="octicon octicon-link"></span></a>Middleware</h2>
+
+<p>Grapnel uses middleware similar to how Express uses middleware. Middleware has access to the <code>req</code> object, <code>event</code> object, and the next middleware in the call stack (commonly denoted as <code>next</code>). Middleware must call <code>next()</code> to pass control to the next middleware, otherwise the router will stop.</p>
+
+<p>For more information about how middleware works, see <a href="http://expressjs.com/guide/using-middleware.html">Using Middleware</a>.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> <span class="pl-en">user</span> <span class="pl-k">=</span> <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">event</span>, <span class="pl-vpf">next</span>){
+    user.get(<span class="pl-st">function</span>(<span class="pl-vpf">err</span>){
+        req.user <span class="pl-k">=</span> <span class="pl-v">this</span>;
+        next();
+    });
+}
+
+router.get(<span class="pl-s1"><span class="pl-pds">'</span>/user/*<span class="pl-pds">'</span></span>, user, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>){
+    <span class="pl-en">console</span><span class="pl-s3">.log</span>(req.user);
+});</pre></div>
+
+<h2>
 <a id="user-content-navigation" class="anchor" href="#navigation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Navigation</h2>
 
 <p>If pushState is enabled, you can navigate through your application with <code>router.navigate</code>:</p>
@@ -288,17 +324,21 @@ Grapnel.listen({ pushState <span class="pl-k">:</span> <span class="pl-c1">true<
 
 <p>&nbsp;</p>
 
+
 </div>
+
 <div id="documentation">
-    <h1>
+
+<h1>
 <a id="user-content-api-documentation" class="anchor" href="#api-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>API Documentation</h1>
+
 <h5>
-<a id="user-content-get-adds-a-new-route-listener" class="anchor" href="#get-adds-a-new-route-listener" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<code>get</code> Adds a new route listener</h5>
+<a id="user-content-get-adds-a-listeners-and-middleware-for-routes" class="anchor" href="#get-adds-a-listeners-and-middleware-for-routes" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<code>get</code> Adds a listeners and middleware for routes</h5>
 
 <div class="highlight highlight-javascript"><pre><span class="pl-c">/**</span>
 <span class="pl-c"> * @param {String|RegExp} path</span>
-<span class="pl-c"> * @param {Function} callback</span>
+<span class="pl-c"> * @param {Function} [[middleware], callback]</span>
 <span class="pl-c">*/</span>
 router.get(<span class="pl-s1"><span class="pl-pds">'</span>/store/:category/:id?<span class="pl-pds">'</span></span>, <span class="pl-st">function</span>(<span class="pl-vpf">req</span>, <span class="pl-vpf">event</span>){
     <span class="pl-s">var</span> category <span class="pl-k">=</span> req.params.category,
