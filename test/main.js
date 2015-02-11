@@ -172,6 +172,27 @@
             equal(window.location.hash, '#!');
         });
 
+        test('Calls routes on window navigation', function(){
+            var count = 0;
+
+            router.get('/history/back/*', function(req, event){
+                count++;
+            });
+
+            router.get('/history/forward/*', function(req, event){
+                count--;
+            });
+
+            router.navigate('/history/back/' + Math.random());
+            equal(count, 1);
+            router.navigate('/history/forward/' + Math.random());
+            equal(count, 0);
+            window.history.back();
+            equal(count, 1);
+            window.history.forward();
+            equal(count, 0);
+        });
+
         module('Middleware');
 
         test('Middleware is called', function(assert){

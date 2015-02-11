@@ -21,6 +21,7 @@
     "require",
     "named",
     "parameters",
+    "middleware",
     "backbone",
     "routie",
     "pushState"

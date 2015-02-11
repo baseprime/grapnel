@@ -74,7 +74,7 @@
         });
 
         root.addEventListener('popstate', function(){
-            self.trigger('navigate popstate');
+            self.trigger('navigate');
         });
 
         return this;

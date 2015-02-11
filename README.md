@@ -1,7 +1,7 @@
 Grapnel.js
 ==========
 
-#### The smallest (1100 bytes gzipped!) JavaScript Router with Named Parameters & pushState support.
+#### The smallest (1100 bytes gzipped!) JavaScript Router with Named Parameters & pushState, and Middleware support.
 
 ## Download/Installation
 
@@ -23,6 +23,7 @@ bower install grapnel
 
 - Supports routing using `pushState` or `hashchange` concurrently
 - Supports Named Parameters similar to Sinatra, Restify, and Express
+- Middleware Support
 - Event Handling Support
 - RegExp Support
 - RequreJS/AMD and CommonJS Compatibility
@@ -72,6 +73,23 @@ router.get('products/:id?', function(req){
 router.get('products/*', function(req){
     // The wildcard/asterisk will match anything after that point in the URL
     // Parameters are provided req.params using req.params[n], where n is the nth capture
+});
+```
+
+## Middleware Support
+
+Grapnel.js also supports middleware:
+
+```javascript
+var auth = function(req, event, next){
+    user.auth(function(err){
+        req.user = this;
+        next();
+    });
+}
+
+router.get('/*', auth, function(req){
+    console.log(req.user);
 });
 ```
 
@@ -188,6 +206,23 @@ var router = new Grapnel({ root : '/public/search/', pushState : true });
 ```
 The root may require a beginning slash and a trailing slash depending on how your application utilizes the router.
 
+## Middleware
+Grapnel uses middleware similar to how Express uses middleware. Middleware has access to the `req` object, `event` object, and the next middleware in the call stack (commonly denoted as `next`). Middleware must call `next()` to pass control to the next middleware, otherwise the router will stop.
+
+For more information about how middleware works, see [Using Middleware](http://expressjs.com/guide/using-middleware.html).
+```javascript
+var user = function(req, event, next){
+    user.get(function(err){
+        req.user = this;
+        next();
+    });
+}
+
+router.get('/user/*', user, function(req){
+    console.log(req.user);
+});
+```
+
 ## Navigation
 If pushState is enabled, you can navigate through your application with `router.navigate`:
 ```javascript
@@ -243,11 +278,11 @@ Grapnel.listen({ pushState : true }, routes);
 
 # API Documentation
 
-##### `get` Adds a new route listener
+##### `get` Adds a listeners and middleware for routes
 ```javascript
 /**
  * @param {String|RegExp} path
- * @param {Function} callback
+ * @param {Function} [[middleware], callback]
 */
 router.get('/store/:category/:id?', function(req, event){
     var category = req.params.category,

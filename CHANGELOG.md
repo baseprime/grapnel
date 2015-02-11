@@ -1,5 +1,10 @@
 ## Changelog
 
+##### 0.5.3
+* Added middleware support
+* Increased AMD compatibility
+* 
+
 ##### 0.5.2
 * Added event.stopPropagation
 * Added `#!` support
