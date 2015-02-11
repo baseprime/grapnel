@@ -3,7 +3,7 @@
 ##### 0.5.3
 * Added middleware support
 * Increased AMD compatibility
-* 
+* Fix propagation bug (#23)
 
 ##### 0.5.2
 * Added event.stopPropagation
