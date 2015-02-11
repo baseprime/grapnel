@@ -16,7 +16,6 @@
 
         var self = this; // Scope reference
         this.events = {}; // Event Listeners
-        this.params = []; // Named parameters
         this.state = null; // Event state
         this.options = opts || {}; // Options
         this.options.usePushState = !!(self.options.pushState && root.history && root.history.pushState); // Enable pushState?
@@ -75,7 +74,7 @@
         });
 
         root.addEventListener('popstate', function(){
-            self.trigger('navigate');
+            self.trigger('navigate popstate');
         });
 
         return this;
@@ -109,21 +108,22 @@
         return new RegExp('^' + path + '$', sensitive ? '' : 'i');
     }
     /**
-     * Add an action and handler
+     * Add an route and handler
      *
-     * @param {String|RegExp} action name
-     * @param {Function} callback
+     * @param {String|RegExp} route name
      * @return self
     */
-    Grapnel.prototype.get = Grapnel.prototype.add = function(route, handler){
+    Grapnel.prototype.get = Grapnel.prototype.add = function(route){
         var self = this,
             keys = [],
+            middleware = Array.prototype.slice.call(arguments, 1, -1),
+            handler = Array.prototype.slice.call(arguments, -1)[0],
             regex = Grapnel.regexRoute(route, keys);
 
         var invoke = function RouteHandler(){
-            // If action is instance of RegEx, match the action
+            // If route is instance of RegEx, match the route
             var match = self.fragment.get().match(regex);
-            // Test matches against current action
+            // Test matches against current route
             if(match){
                 // Match found
                 var req = { params : {}, keys : keys, matches : match.slice(1) };
@@ -139,9 +139,15 @@
                     value : self.fragment.get(),
                     params : req.params,
                     regex : match,
+                    stack : [],
                     runCallback : true,
                     callbackRan : false,
                     propagateEvent : true,
+                    next : function(){
+                        return this.stack.shift().call(self, req, event, function(){
+                            event.next.call(event);
+                        });
+                    },
                     preventDefault : function(){
                         this.runCallback = false;
                     },
@@ -155,10 +161,11 @@
                     callback : function(){
                         event.callbackRan = true;
                         event.timeStamp = Date.now();
-                        // Handle event
-                        handler.call(self, req, event);
+                        event.next();
                     }
                 }
+                // Middleware
+                event.stack = middleware.concat(handler);
                 // Trigger main event
                 self.trigger('match', event);
                 // Continue?

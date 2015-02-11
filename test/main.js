@@ -77,8 +77,24 @@
             multiFnCalled = true;
         });
 
+        router.get('/multi/cancel', function(req, e){
+            multiFnCalled = true;
+        });
+
+        router.get('/multi/cancel', function(req, e){
+            multiFnCalled = true;
+        });
+
         hashRouter.get('/multi/cancel', function(req, e){
             e.stopPropagation();
+        });
+
+        hashRouter.get('/multi/cancel', function(req, e){
+            hashMultiFnCalled = true;
+        });
+
+        hashRouter.get('/multi/cancel', function(req, e){
+            hashMultiFnCalled = true;
         });
 
         hashRouter.get('/multi/cancel', function(req, e){
@@ -154,6 +170,53 @@
             equal(window.location.hash, '#!test2');
             hashBangRouter.fragment.clear();
             equal(window.location.hash, '#!');
+        });
+
+        module('Middleware');
+
+        test('Middleware is called', function(assert){
+
+            var middleware = function(req, event, next){
+                req.fn1 = true;
+                next();
+            }
+
+            router.get('/middleware', middleware, function(req, event){
+                equal(req.fn1, true);
+            }).navigate('/middleware');
+        });
+
+        test('Middleware next() works correctly', function(assert){
+
+            var done = assert.async(),
+                testObj = {},
+                lastInStackCalled = false;
+
+            var fn1 = function(req, event, next){
+                testObj.fn1 = true;
+                next();
+            }
+
+            var fn2 = function(req, event, next){
+                testObj.fn2 = true;
+                next();
+            }
+
+            var fn3 = function(req, event, next){
+                testObj.fn3 = true;
+            }
+
+            router.get('/middleware/next', fn1, fn2, fn3, function(req, event){
+                lastInStackCalled = true;
+            }).navigate('/middleware/next');
+
+            setTimeout(function(){
+                equal(testObj.fn1, true);
+                equal(testObj.fn2, true);
+                equal(testObj.fn3, true);
+                equal(lastInStackCalled, false);
+                done();
+            }, 500);
         });
 
         module('Events');
