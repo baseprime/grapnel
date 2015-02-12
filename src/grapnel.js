@@ -4,7 +4,7 @@
  *
  * @author Greg Sabia Tucker <greg@artificer.io>
  * @link http://artificer.io
- * @version 0.5.3
+ * @version 0.5.4
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -19,7 +19,7 @@
         this.state = null; // Router state object
         this.options = opts || {}; // Options
         this.options.usePushState = !!(self.options.pushState && root.history && root.history.pushState); // Enable pushState?
-        this.version = '0.5.3'; // Version
+        this.version = '0.5.4'; // Version
         /**
          * ForEach workaround utility
          *
@@ -74,7 +74,10 @@
                 self.trigger('hashchange');
             });
 
-            root.addEventListener('popstate', function(){
+            root.addEventListener('popstate', function(e){
+                // Make sure popstate doesn't run on init -- this is a common issue with Safari and old versions of Chrome
+                if(self.state && self.state.previousState === null) return false;
+                
                 self.trigger('navigate');
             });
         }

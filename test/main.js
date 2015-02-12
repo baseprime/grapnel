@@ -172,25 +172,32 @@
             equal(window.location.hash, '#!');
         });
 
-        test('Calls routes on window navigation', function(){
-            var count = 0;
+        test('Calls routes in correct order on window navigation', function(assert){
+            var count = 0,
+                done = assert.async();
 
-            router.get('/history/back/*', function(req, event){
+            router.get('/history/up', function(req, event){
                 count++;
             });
 
-            router.get('/history/forward/*', function(req, event){
+            router.get('/history/down', function(req, event){
                 count--;
             });
 
-            router.navigate('/history/back/' + Math.random());
+            router.navigate('/history/up');
+            router.navigate('/history/up');
+            equal(count, 2);
+            router.navigate('/history/down');
             equal(count, 1);
-            router.navigate('/history/forward/' + Math.random());
-            equal(count, 0);
             window.history.back();
-            equal(count, 1);
-            window.history.forward();
-            equal(count, 0);
+            setTimeout(function(){
+                equal(count, 2);
+                window.history.forward();
+                setTimeout(function(){
+                    equal(count, 1);
+                    done();
+                }, 1000);
+            }, 1000);
         });
 
         module('Middleware');
