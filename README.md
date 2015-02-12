@@ -1,7 +1,7 @@
 Grapnel.js
 ==========
 
-#### The smallest (1100 bytes gzipped!) JavaScript Router with Named Parameters & pushState, and Middleware support.
+#### The smallest (1100 bytes gzipped!) Client/Server-Side JavaScript Router with Named Parameters, HTML5 pushState, and Middleware support.
 
 ## Download/Installation
 
@@ -24,6 +24,7 @@ bower install grapnel
 - Supports routing using `pushState` or `hashchange` concurrently
 - Supports Named Parameters similar to Sinatra, Restify, and Express
 - Middleware Support
+- Works on the client or server-side
 - Event Handling Support
 - RegExp Support
 - RequreJS/AMD and CommonJS Compatibility
@@ -91,6 +92,25 @@ var auth = function(req, event, next){
 router.get('/*', auth, function(req){
     console.log(req.user);
 });
+```
+
+## Works as a basic server-side router
+
+```javascript
+// Simple "Hello World!" app
+var http = require('http'),
+    Grapnel = require('grapnel'),
+    router = new Grapnel();
+
+router.get('/', function(req, event){
+    req.response.end('Hello world!')
+});
+
+http.createServer(function(req, res){
+    router.bind('match', function(event, _req){
+        _req.response = res;
+    }).navigate(req.url);
+}).listen(3000);
 ```
 
 ## Declaring Multiple Routes

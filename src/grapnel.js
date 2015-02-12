@@ -4,7 +4,7 @@
  *
  * @author Greg Sabia Tucker <greg@artificer.io>
  * @link http://artificer.io
- * @version 0.5.5
+ * @version 0.5.6
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -19,7 +19,7 @@
         this.state = null; // Router state object
         this.options = opts || {}; // Options
         this.options.usePushState = !!(self.options.pushState && root.history && root.history.pushState); // Enable pushState?
-        this.version = '0.5.5'; // Version
+        this.version = '0.5.6'; // Version
 
         if('function' === typeof root.addEventListener){
             root.addEventListener('hashchange', function(){
@@ -187,7 +187,7 @@
                 // Middleware
                 event.stack = middleware.concat(handler);
                 // Trigger main event
-                self.trigger('match', event);
+                self.trigger('match', event, req);
                 // Continue?
                 if(!event.runCallback) return self;
                 // Previous state becomes current state
@@ -206,7 +206,7 @@
             return self;
         }
         // Event name
-        var eventName = (!self.options.usePushState) ? 'hashchange' : 'navigate';
+        var eventName = (!self.options.usePushState && Object.keys(root).length > 0) ? 'hashchange' : 'navigate';
         // Invoke when route is defined, and once again when app navigates
         return invoke().on(eventName, invoke);
     }
