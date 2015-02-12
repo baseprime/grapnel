@@ -292,6 +292,40 @@ var routes = {
 Grapnel.listen({ pushState : true }, routes);
 ```
 
+## Adding HTTP verb support for client-side routers
+You can add HTTP verb (GET, POST, PUT, DELETE) support to a router by adding middleware to a router.verb() method.
+```javascript
+var http = require('http'),
+    Grapnel = require('grapnel'),
+    router = new Grapnel();
+
+// Adds middleware to each router.verb() method
+['GET', 'POST', 'PUT', 'DELETE'].forEach(function(verb){
+    router[verb.toLowerCase()] = function(){
+        var args = Array.prototype.slice.call(arguments);
+    
+        args.splice(1, 0, function(req, res, next){
+            if(req.method === verb) next();
+        });
+
+        return this.add.apply(this, args);
+    }
+});
+
+router.post('/', function(req, event){
+    req.response.end('Hello world!');
+});
+
+http.createServer(function(req, res){
+    router.bind('match', function(event, _req){
+        _req.response = res;
+        for(var prop in req){
+            _req[prop] = req[prop];
+        }
+    }).navigate(req.url);
+}).listen(3000);
+```
+
 &nbsp;
 
 ***
