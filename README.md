@@ -338,7 +338,7 @@ router.navigate('/search/widgets');
 
 ##### `on` An alias of `bind`
 ##### `add` An alias of `get`
-##### `fragment` or `hash` or `anchor` (aliased to reduce confusion in different routing modes)
+##### `fragment`
 * `set` Sets a new absolute URL or Hash
 * `get` Get absolute URL or Hash
 * `clear` Clears the URL or Hash

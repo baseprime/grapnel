@@ -4,7 +4,7 @@
  *
  * @author Greg Sabia Tucker <greg@artificer.io>
  * @link http://artificer.io
- * @version 0.5.4
+ * @version 0.5.5
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -19,55 +19,7 @@
         this.state = null; // Router state object
         this.options = opts || {}; // Options
         this.options.usePushState = !!(self.options.pushState && root.history && root.history.pushState); // Enable pushState?
-        this.version = '0.5.4'; // Version
-        /**
-         * ForEach workaround utility
-         *
-         * @param {Array} to iterate
-         * @param {Function} callback
-        */
-        this._forEach = function(a, callback){
-            if(typeof Array.prototype.forEach === 'function') return Array.prototype.forEach.call(a, callback);
-            // Replicate forEach()
-            return function(c, next){
-                for(var i=0, n = this.length; i<n; ++i){
-                    c.call(next, this[i], i, this);
-                }
-            }.call(a, callback);
-        }
-        // Fragment/Anchor
-        this.fragment = this.anchor = this.hash = {
-            get : function(){
-                var frag;
-
-                if(self.options.usePushState){
-                    frag = root.location.pathname.replace(self.options.root, '');
-                }else{
-                    frag = (root.location.hash) ? root.location.hash.split((self.options.hashBang ? '#!' : '#'))[1] : '';
-                }
-
-                return frag;
-            },
-            set : function(frag){
-                if(self.options.usePushState){
-                    frag = (self.options.root) ? (self.options.root + frag) : frag;
-                    root.history.pushState({}, null, frag);
-                }else{
-                    root.location.hash = (self.options.hashBang ? '!' : '') + frag;
-                }
-
-                return self;
-            },
-            clear : function(){
-                if(self.options.usePushState){
-                    root.history.pushState({}, null, self.options.root || '/');
-                }else{
-                    root.location.hash = (self.options.hashBang) ? '!' : '';
-                }
-
-                return self;
-            }
-        }
+        this.version = '0.5.5'; // Version
 
         if('function' === typeof root.addEventListener){
             root.addEventListener('hashchange', function(){
@@ -80,6 +32,54 @@
                 
                 self.trigger('navigate');
             });
+        }
+        /**
+         * Deprecation warning: this.fragment may eventually be evolved into this.path(pathname) function eventually
+        */
+        this.fragment = {
+            /**
+             * Get pathname relative to root
+             * @return {String} pathname
+            */
+            get : function(){
+                var frag;
+
+                if(self.options.usePushState){
+                    frag = root.location.pathname.replace(self.options.root, '');
+                }else if(!self.options.usePushState && root.location){
+                    frag = (root.location.hash) ? root.location.hash.split((self.options.hashBang ? '#!' : '#'))[1] : '';
+                }else{
+                    frag = root._pathname || '';
+                }
+
+                return frag;
+            },
+            /**
+             * Set pathname relative to root
+             * @param {String} pathname
+             * @return {Object} router
+            */
+            set : function(frag){
+                if(self.options.usePushState){
+                    frag = (self.options.root) ? (self.options.root + frag) : frag;
+                    root.history.pushState({}, null, frag);
+                }else if(root.location){
+                    root.location.hash = (self.options.hashBang ? '!' : '') + frag;
+                }else{
+                    root._pathname = frag || '';
+                }
+
+                return self;
+            },
+            clear : function(){
+                if(self.options.usePushState){
+                    root.history.pushState({}, null, self.options.root || '/');
+                }else if(root.location){
+                    root.location.hash = (self.options.hashBang) ? '!' : '';
+                }
+
+                return self;
+            }
         }
 
         return this;
@@ -113,10 +113,25 @@
         return new RegExp('^' + path + '$', sensitive ? '' : 'i');
     }
     /**
+     * ForEach workaround utility
+     *
+     * @param {Array} to iterate
+     * @param {Function} callback
+    */
+    Grapnel._forEach = function(a, callback){
+        if(typeof Array.prototype.forEach === 'function') return Array.prototype.forEach.call(a, callback);
+        // Replicate forEach()
+        return function(c, next){
+            for(var i=0, n = this.length; i<n; ++i){
+                c.call(next, this[i], i, this);
+            }
+        }.call(a, callback);
+    }
+    /**
      * Add an route and handler
      *
      * @param {String|RegExp} route name
-     * @return self
+     * @return {self} Router
     */
     Grapnel.prototype.get = Grapnel.prototype.add = function(route){
         var self = this,
@@ -133,7 +148,7 @@
                 // Match found
                 var req = { params : {}, keys : keys, matches : match.slice(1) };
                 // Build parameters
-                self._forEach(req.matches, function(value, i){
+                Grapnel._forEach(req.matches, function(value, i){
                     var key = (keys[i] && keys[i].name) ? keys[i].name : i;
                     // Parameter key will be its key or the iteration index. This is useful if a wildcard (*) is matched
                     req.params[key] = (value) ? decodeURIComponent(value) : undefined;
@@ -191,7 +206,7 @@
             return self;
         }
         // Event name
-        var eventName = (self.options.usePushState) ? 'navigate' : 'hashchange';
+        var eventName = (!self.options.usePushState) ? 'hashchange' : 'navigate';
         // Invoke when route is defined, and once again when app navigates
         return invoke().on(eventName, invoke);
     }
@@ -200,13 +215,14 @@
      *
      * @param {String} event name (multiple events can be called when seperated by a space " ")
      * @param {Mixed} [attributes] Parameters that will be applied to event handler
-     * @return self
+     * @return {self} Router
     */
     Grapnel.prototype.trigger = function(event){
-        var params = Array.prototype.slice.call(arguments, 1);
+        var self = this,
+            params = Array.prototype.slice.call(arguments, 1);
         // Call matching events
         if(this.events[event]){
-            this._forEach(this.events[event], function(fn){
+            Grapnel._forEach(this.events[event], function(fn){
                 fn.apply(self, params);
             });
         }
@@ -218,13 +234,13 @@
      *
      * @param {String} event name (multiple events can be called when seperated by a space " ")
      * @param {Function} callback
-     * @return self
+     * @return {self} Router
     */
     Grapnel.prototype.on = Grapnel.prototype.bind = function(event, handler){
         var self = this,
             events = event.split(' ');
 
-        this._forEach(events, function(event){
+        Grapnel._forEach(events, function(event){
             if(self.events[event]){
                 self.events[event].push(handler);
             }else{
@@ -234,12 +250,6 @@
 
         return this;
     }
-    /**
-     * Call Grapnel().router constructor for backwards compatibility
-     *
-     * @return {self} Router
-    */
-    Grapnel.Router = Grapnel.prototype.router = Grapnel;
     /**
      * Allow context
      *
@@ -259,12 +269,11 @@
     /**
      * Navigate through history API
      *
-     * @param {Object} Fragment
+     * @param {String} Pathname
      * @return {self} Router
     */
-    Grapnel.prototype.navigate = function(frag){
-        this.fragment.set(frag);
-        return this.trigger('navigate');
+    Grapnel.prototype.navigate = function(path){
+        return this.fragment.set(path).trigger('navigate');
     }
     /**
      * Create routes based on an object
