@@ -16,7 +16,7 @@
 
         var self = this; // Scope reference
         this.events = {}; // Event Listeners
-        this.state = null; // Event state
+        this.state = null; // Router state object
         this.options = opts || {}; // Options
         this.options.usePushState = !!(self.options.pushState && root.history && root.history.pushState); // Enable pushState?
         this.version = '0.5.3'; // Version
@@ -68,14 +68,19 @@
                 return self;
             }
         }
-        
-        root.addEventListener('hashchange', function(){
-            self.trigger('hashchange');
-        });
 
-        root.addEventListener('popstate', function(){
-            self.trigger('navigate');
-        });
+        if('function' === typeof root.addEventListener){
+            root.addEventListener('hashchange', function(){
+                self.trigger('hashchange');
+            });
+
+            root.addEventListener('popstate', function(e){
+                // Make sure popstate doesn't run on init -- this is a common issue with Safari and old versions of Chrome
+                if(self.state && self.state.previousState === null) return false;
+                
+                self.trigger('navigate');
+            });
+        }
 
         return this;
     }
