@@ -1,5 +1,17 @@
 ## Changelog
 
+##### 0.5.6
+* Minor changes to allow Server-side routing
+
+##### 0.5.5
+* Fragment property clarification as to what it does
+The following deprecated items were removed:
+* Removed duplicate anchor & hash as it was redundant
+* Removed Grapnel().router as it was also redundant
+
+##### 0.5.4
+* Fixes issue with Safari >= 6.1.0 where routes load more than once on init (#24)
+
 ##### 0.5.3
 * Added middleware support
 * Increased AMD compatibility
