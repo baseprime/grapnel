@@ -29,6 +29,7 @@ bower install grapnel
 - RegExp Support
 - RequreJS/AMD and CommonJS Compatibility
 - Supports `#` or `#!` for `hashchange` routing
+- Unobtrusive, supports multiple routers on the same page
 - No dependencies
 
 ## Basic Router
@@ -45,7 +46,7 @@ router.get('products/:category/:id?', function(req){
 });
 ```
 
-## Advanced Routing using pushState
+## Using pushState
 
 ```javascript
 var router = new Grapnel({ pushState : true });
