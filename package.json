@@ -1,0 +1,28 @@
+{
+  "name": "Grapnel-GitHub-Pages",
+  "version": "0.1.0",
+  "description": "...",
+  "repository": {
+    "type": "git",
+    "url": "..."
+  },
+  "browser": {
+    "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.js"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.js"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "backbone": "~1.1.2",
+    "jquery": "~2.1.0",
+    "grapnel": "0.5.6",
+    "bootstrap" : "3.3.2",
+    "browserify-shim" : "3.8.3"
+  }
+}

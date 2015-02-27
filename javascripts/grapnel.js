@@ -4,7 +4,7 @@
  *
  * @author Greg Sabia Tucker <greg@artificer.io>
  * @link http://artificer.io
- * @version 0.5.6
+ * @version 0.5.7
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -18,8 +18,9 @@
         this.events = {}; // Event Listeners
         this.state = null; // Router state object
         this.options = opts || {}; // Options
-        this.options.usePushState = !!(self.options.pushState && root.history && root.history.pushState); // Enable pushState?
-        this.version = '0.5.6'; // Version
+        this.options.usePushState = !!(self.options.pushState && root.history && root.history.pushState);
+        this.options.server = !!(Object.keys(root).length === 0 && process && process.browser !== true);
+        this.version = '0.5.7'; // Version
 
         if('function' === typeof root.addEventListener){
             root.addEventListener('hashchange', function(){
@@ -206,7 +207,7 @@
             return self;
         }
         // Event name
-        var eventName = (!self.options.usePushState && Object.keys(root).length > 0) ? 'hashchange' : 'navigate';
+        var eventName = (!self.options.usePushState && !self.options.server) ? 'hashchange' : 'navigate';
         // Invoke when route is defined, and once again when app navigates
         return invoke().on(eventName, invoke);
     }
@@ -300,7 +301,7 @@
             return this;
         }).call(new Grapnel(opts || {}));
     }
-    // Window or module?
+
     if('function' === typeof root.define && !root.define.amd.grapnel){
         root.define(function(require, exports, module){
             root.define.amd.grapnel = true;
@@ -312,4 +313,4 @@
         root.Grapnel = Grapnel;
     }
 
-}).call({}, this);
+}).call({}, ('object' === typeof window) ? window : this);
