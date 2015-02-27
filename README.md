@@ -27,7 +27,7 @@ bower install grapnel
 - Works on the client or server-side
 - Event Handling Support
 - RegExp Support
-- RequreJS/AMD and CommonJS Compatibility
+- RequreJS/AMD, Browserify, and CommonJS Compatibility
 - Supports `#` or `#!` for `hashchange` routing
 - Unobtrusive, supports multiple routers on the same page
 - No dependencies
@@ -174,7 +174,7 @@ router.navigate('/food/tacos');
 // => This taco thing is getting out of hand.
 ```
 
-## RequireJS/AMD and CommonJS Compatibility
+## RequireJS/AMD, Browserify, and CommonJS Compatibility
 
 ```javascript
 require(['lib/grapnel'], function(Grapnel){

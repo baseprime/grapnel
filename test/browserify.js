@@ -1,7 +1,9 @@
 
 var Grapnel = require('./grapnel'),
-    router = new Grapnel({ pushState : true });
+    router = new Grapnel();
 
-router.get('/browserify.html', function(){
+router.get('*', function(){
     console.log('Hello World!');
 });
+
+console.log(router);

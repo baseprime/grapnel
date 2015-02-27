@@ -1,6 +1,6 @@
 {
   "name": "grapnel",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "description": "The smallest JavaScript Router with PushState & Named Parameter support",
   "main": "dist/grapnel.min.js",
   "scripts": {
@@ -24,7 +24,8 @@
     "middleware",
     "backbone",
     "routie",
-    "pushState"
+    "pushState",
+    "api"
   ],
   "author": "Greg Sabia Tucker <greg@artificer.io>",
   "link": "http://artificer.io",

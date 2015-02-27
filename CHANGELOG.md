@@ -1,5 +1,10 @@
 ## Changelog
 
+##### 0.5.8
+* Added environmnet option
+* Changed option property `usePushState` into `mode`. It was not changeable, so it does not make sense for it to be an 'option'
+* Added tests
+
 ##### 0.5.7
 * Client-side modules no longer assign route event listeners to navigate by default
 

@@ -31,6 +31,13 @@
             });
         });
 
+        test('Environment is correct', function(){
+            ok(router.options.env === 'client' && router.options.mode === 'pushState');
+            ok(hashRouter.options.env === 'client' && hashRouter.options.mode === 'hashchange');
+            ok(routerWithRoot.options.env === 'client' && routerWithRoot.options.mode === 'pushState');
+            ok(hashBangRouter.options.env === 'client' && hashBangRouter.options.mode === 'hashchange');
+        });
+
         module('Routes');
 
         // Detect if second /multi/cancel handler is being called

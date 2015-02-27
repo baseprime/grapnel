@@ -1,9 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 var Grapnel = require('./grapnel'),
-    router = new Grapnel({ pushState : true });
+    router = new Grapnel();
 
-router.get('/browserify.html', function(){
+router.get('*', function(){
     console.log('Hello World!');
 });
 
@@ -16,7 +16,7 @@ console.log(router);
  *
  * @author Greg Sabia Tucker <greg@artificer.io>
  * @link http://artificer.io
- * @version 0.5.7
+ * @version 0.5.8
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -30,9 +30,9 @@ console.log(router);
         this.events = {}; // Event Listeners
         this.state = null; // Router state object
         this.options = opts || {}; // Options
-        this.options.server = this.options.server || !!(Object.keys(root).length === 0 && process && process.browser !== true);
-        this.options.usePushState = !!(!this.options.server && this.options.pushState && root.history && root.history.pushState);
-        this.version = '0.5.7'; // Version
+        this.options.env = this.options.env || (!!(Object.keys(root).length === 0 && process && process.browser !== true) ? 'server' : 'client');
+        this.options.mode = this.options.mode || (!!(this.options.env !== 'server' && this.options.pushState && root.history && root.history.pushState) ? 'pushState' : 'hashchange');
+        this.version = '0.5.8'; // Version
 
         if('function' === typeof root.addEventListener){
             root.addEventListener('hashchange', function(){
@@ -57,9 +57,9 @@ console.log(router);
             get : function(){
                 var frag;
 
-                if(self.options.usePushState){
+                if(self.options.mode === 'pushState'){
                     frag = root.location.pathname.replace(self.options.root, '');
-                }else if(!self.options.usePushState && root.location){
+                }else if(self.options.mode !== 'pushState' && root.location){
                     frag = (root.location.hash) ? root.location.hash.split((self.options.hashBang ? '#!' : '#'))[1] : '';
                 }else{
                     frag = root._pathname || '';
@@ -73,7 +73,7 @@ console.log(router);
              * @return {Object} router
             */
             set : function(frag){
-                if(self.options.usePushState){
+                if(self.options.mode === 'pushState'){
                     frag = (self.options.root) ? (self.options.root + frag) : frag;
                     root.history.pushState({}, null, frag);
                 }else if(root.location){
@@ -85,7 +85,7 @@ console.log(router);
                 return self;
             },
             clear : function(){
-                if(self.options.usePushState){
+                if(self.options.mode === 'pushState'){
                     root.history.pushState({}, null, self.options.root || '/');
                 }else if(root.location){
                     root.location.hash = (self.options.hashBang) ? '!' : '';
@@ -219,7 +219,7 @@ console.log(router);
             return self;
         }
         // Event name
-        var eventName = (!self.options.usePushState && !self.options.server) ? 'hashchange' : 'navigate';
+        var eventName = (self.options.mode !== 'pushState' && self.options.env !== 'server') ? 'hashchange' : 'navigate';
         // Invoke when route is defined, and once again when app navigates
         return invoke().on(eventName, invoke);
     }
