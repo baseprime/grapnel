@@ -1,5 +1,8 @@
 ## Changelog
 
+##### 0.5.7
+* Client-side modules no longer assign route event listeners to navigate by default
+
 ##### 0.5.6
 * Minor changes to allow Server-side routing
 
