@@ -31,6 +31,17 @@
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
 
+/****
+ * Grapnel.js
+ * https://github.com/EngineeringMode/Grapnel.js
+ *
+ * @author Greg Sabia Tucker <greg@artificer.io>
+ * @link http://artificer.io
+ * @version 0.5.8
+ *
+ * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
+*/
+
 ;(function(root){
 
     function Grapnel(opts){
@@ -47,7 +58,7 @@
 
         if('function' === typeof root.addEventListener){
             root.addEventListener('hashchange', function(){
-                if (false === this.shouldTrigger) return false;
+                if (false === self.shouldTrigger) return false;
 
                 self.trigger('hashchange');
             });
@@ -55,7 +66,7 @@
             root.addEventListener('popstate', function(e){
                 // Make sure popstate doesn't run on init -- this is a common issue with Safari and old versions of Chrome
                 if(self.state && self.state.previousState === null) return false;
-                if (false === this.shouldTrigger) return false;
+                if (false === self.shouldTrigger) return false;
 
                 self.trigger('navigate');
             });
