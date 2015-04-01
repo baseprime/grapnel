@@ -214,7 +214,7 @@
     /**
      * Fire an event listener
      *
-     * @param {String} event name (multiple events can be called when seperated by a space " ")
+     * @param {String} event name
      * @param {Mixed} [attributes] Parameters that will be applied to event handler
      * @return {self} Router
     */
@@ -233,7 +233,7 @@
     /**
      * Add an event listener
      *
-     * @param {String} event name (multiple events can be called when seperated by a space " ")
+     * @param {String} event name (multiple events can be called when separated by a space " ")
      * @param {Function} callback
      * @return {self} Router
     */
