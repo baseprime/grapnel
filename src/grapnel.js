@@ -30,7 +30,7 @@
             root.addEventListener('popstate', function(e){
                 // Make sure popstate doesn't run on init -- this is a common issue with Safari and old versions of Chrome
                 if(self.state && self.state.previousState === null) return false;
-                
+
                 self.trigger('navigate');
             });
         }
@@ -214,26 +214,30 @@
     /**
      * Fire an event listener
      *
-     * @param {String} event name (multiple events can be called when seperated by a space " ")
+     * @param {String} event name (multiple events can be called when separated by a space " ")
      * @param {Mixed} [attributes] Parameters that will be applied to event handler
      * @return {self} Router
     */
     Grapnel.prototype.trigger = function(event){
         var self = this,
-            params = Array.prototype.slice.call(arguments, 1);
-        // Call matching events
-        if(this.events[event]){
-            Grapnel._forEach(this.events[event], function(fn){
-                fn.apply(self, params);
-            });
-        }
+            params = Array.prototype.slice.call(arguments, 1),
+            events = event.split(' ');
+
+        Grapnel._forEach(events, function(event){
+            // Call matching events
+            if(self.events[event]){
+                Grapnel._forEach(self.events[event], function(fn){
+                    fn.apply(self, params);
+                });
+            }
+        });
 
         return this;
     }
     /**
      * Add an event listener
      *
-     * @param {String} event name (multiple events can be called when seperated by a space " ")
+     * @param {String} event name (multiple events can be called when separated by a space " ")
      * @param {Function} callback
      * @return {self} Router
     */
