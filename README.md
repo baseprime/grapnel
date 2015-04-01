@@ -358,7 +358,7 @@ router.navigate('/products/123');
 ##### `bind` Adds a new event listener
 ```javascript
 /**
- * @param {String} event name (multiple events can be called when seperated by a space " ")
+ * @param {String} event name (multiple events can be called when separated by a space " ")
  * @param {Function} callback
 */
 router.bind('myevent', function(event){
@@ -369,7 +369,7 @@ router.bind('myevent', function(event){
 ##### `trigger` Triggers an event
 ```javascript
 /**
- * @param {String} event name (multiple events can be called when seperated by a space " ")
+ * @param {String} event name (multiple events can be called when separated by a space " ")
  * @param {Mixed} [attributes] Parameters that will be applied to event handler
 */
 router.trigger('event otherevent', eventArg1, eventArg2);
