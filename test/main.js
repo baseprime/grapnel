@@ -161,7 +161,7 @@
             equal(defaultPreventedFnCalled, false);
         });
 
-        test('Router only fires handler once', function(){ 
+        test('Router only fires handler once', function(){
             router.navigate('/once');
             equal(onceTimesRan, 1);
         });
@@ -250,6 +250,43 @@
                 equal(testObj.fn2, true);
                 equal(testObj.fn3, true);
                 equal(lastInStackCalled, false);
+                done();
+            }, 500);
+        });
+
+        test('Middleware defined in use() works correctly', function(assert) {
+            var done = assert.async(),
+                r = new Grapnel({pushState: true}),
+                testObj = {},
+                lastInStackCalled = false;
+
+            // wildcard middleware, implying `/*`
+            r.use(function(req, event, next) {
+                testObj.fn1 = true;
+                next();
+            });
+
+            // specific route middleware
+            r.use('/a', function(req, event, next) {
+                testObj.fn2 = true;
+                next();
+            });
+
+            // this should not be triggered
+            r.use('/b', function(req, event, next) {
+                testObj.fn3 = true;
+                next();
+            });
+
+            r.get('/a', function(req, event) {
+                lastInStackCalled = true;
+            }).navigate('/a');
+
+            setTimeout(function() {
+                equal(testObj.fn1, true);
+                equal(testObj.fn2, true);
+                equal(testObj.fn3, undefined);
+                equal(lastInStackCalled, true);
                 done();
             }, 500);
         });

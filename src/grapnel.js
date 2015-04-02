@@ -22,6 +22,8 @@
         this.options.mode = this.options.mode || (!!(this.options.env !== 'server' && this.options.pushState && root.history && root.history.pushState) ? 'pushState' : 'hashchange');
         this.version = '0.5.8'; // Version
 
+        this.stack = []; // Keep references of all global middlewares
+
         if('function' === typeof root.addEventListener){
             root.addEventListener('hashchange', function(){
                 self.trigger('hashchange');
@@ -30,7 +32,7 @@
             root.addEventListener('popstate', function(e){
                 // Make sure popstate doesn't run on init -- this is a common issue with Safari and old versions of Chrome
                 if(self.state && self.state.previousState === null) return false;
-                
+
                 self.trigger('navigate');
             });
         }
@@ -140,6 +142,13 @@
             middleware = Array.prototype.slice.call(arguments, 1, -1),
             handler = Array.prototype.slice.call(arguments, -1)[0],
             regex = Grapnel.regexRoute(route, keys);
+
+        // spin through the global stack and append matched middleware to
+        // the defined route
+        for (var i = this.stack.length - 1; i >= 0; i--) {
+            var fn = this.stack[i];
+            if(route.match(fn.route)) middleware.unshift(fn);
+        }
 
         var invoke = function RouteHandler(){
             // If route is instance of RegEx, match the route
@@ -276,6 +285,21 @@
     Grapnel.prototype.navigate = function(path){
         return this.fragment.set(path).trigger('navigate');
     }
+
+    Grapnel.prototype.use = function() {
+        var route, fn;
+        if(arguments[0] && arguments[1]) {
+            route = arguments[0];
+            fn = arguments[1];
+        } else {
+            route = '/*';
+            fn = arguments[0];
+        }
+
+        fn.route = Grapnel.regexRoute(route);
+
+        this.stack.push(fn);
+    };
     /**
      * Create routes based on an object
      *
