@@ -9,6 +9,39 @@
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
 
+/****
+ * Grapnel.js
+ * https://github.com/EngineeringMode/Grapnel.js
+ *
+ * @author Greg Sabia Tucker <greg@artificer.io>
+ * @link http://artificer.io
+ * @version 0.5.8
+ *
+ * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
+*/
+
+/****
+ * Grapnel.js
+ * https://github.com/EngineeringMode/Grapnel.js
+ *
+ * @author Greg Sabia Tucker <greg@artificer.io>
+ * @link http://artificer.io
+ * @version 0.5.8
+ *
+ * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
+*/
+
+/****
+ * Grapnel.js
+ * https://github.com/EngineeringMode/Grapnel.js
+ *
+ * @author Greg Sabia Tucker <greg@artificer.io>
+ * @link http://artificer.io
+ * @version 0.5.8
+ *
+ * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
+*/
+
 ;(function(root){
 
     function Grapnel(opts){
@@ -17,6 +50,7 @@
         var self = this; // Scope reference
         this.events = {}; // Event Listeners
         this.state = null; // Router state object
+        this.shouldTrigger = true; // Triggering state
         this.options = opts || {}; // Options
         this.options.env = this.options.env || (!!(Object.keys(root).length === 0 && process && process.browser !== true) ? 'server' : 'client');
         this.options.mode = this.options.mode || (!!(this.options.env !== 'server' && this.options.pushState && root.history && root.history.pushState) ? 'pushState' : 'hashchange');
@@ -24,13 +58,16 @@
 
         if('function' === typeof root.addEventListener){
             root.addEventListener('hashchange', function(){
+                if (false === self.shouldTrigger) return false;
+
                 self.trigger('hashchange');
             });
 
             root.addEventListener('popstate', function(e){
                 // Make sure popstate doesn't run on init -- this is a common issue with Safari and old versions of Chrome
                 if(self.state && self.state.previousState === null) return false;
-                
+                if (false === self.shouldTrigger) return false;
+
                 self.trigger('navigate');
             });
         }
@@ -142,6 +179,7 @@
             regex = Grapnel.regexRoute(route, keys);
 
         var invoke = function RouteHandler(){
+            if (self.shouldTrigger === false) return false;
             // If route is instance of RegEx, match the route
             var match = self.fragment.get().match(regex);
             // Test matches against current route
@@ -275,6 +313,21 @@
     */
     Grapnel.prototype.navigate = function(path){
         return this.fragment.set(path).trigger('navigate');
+    }
+    /**
+     * Set fragment without triggering route
+     *
+     * @param {String} Pathname
+     * @return {self} Router
+    */
+    Grapnel.prototype.show = function(path){
+        var self = this;
+        this.shouldTrigger = false;
+        var s = this.fragment.set(path);
+        setTimeout(function() {
+            self.shouldTrigger = true;
+        }, 10);
+        return s;
     }
     /**
      * Create routes based on an object
