@@ -264,7 +264,7 @@
             var prefix = (context.slice(-1) !== '/') ? context + '/' : context,
                 pattern = prefix + value;
 
-            return self.get.call(self, pattern, callback);
+            return self.add.call(self, pattern, callback);
         }
     }
     /**
@@ -295,7 +295,7 @@
         return (function(){
             // TODO: Accept multi-level routes
             for(var key in routes){
-                this.get.call(this, key, routes[key]);
+                this.add.call(this, key, routes[key]);
             }
 
             return this;
