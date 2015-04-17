@@ -33,7 +33,7 @@
                 
                 self.trigger('navigate');
             });
-        }else if(typeof root.attachEvent !== 'undefined'){
+        }else if('undefined' !== typeof root.attachEvent){
             root.attachEvent('onhashchange', function(){
                 self.trigger('hashchange');
             });
