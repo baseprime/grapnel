@@ -33,6 +33,10 @@
                 
                 self.trigger('navigate');
             });
+        }else if(typeof root.attachEvent !== 'undefined'){
+            root.attachEvent('onhashchange', function(){
+                self.trigger('hashchange');
+            });
         }
         /**
          * Deprecation warning: this.fragment may eventually be evolved into this.path(pathname) function eventually
