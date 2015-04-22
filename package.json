@@ -33,7 +33,7 @@
   "bugs": {
     "url": "https://github.com/EngineeringMode/Grapnel.js/issues"
   },
-  "homepage": "http://engineeringmode.github.io/Grapnel.js",
+  "homepage": "http://grapnel.js.org",
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-concat": "^0.5.0",
