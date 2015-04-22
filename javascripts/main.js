@@ -1,7 +1,7 @@
 
 $(function(){
 
-    var router = new Grapnel({ pushState : true, root : (window.location.href.match(/github\.io/gi)) ? '/Grapnel.js' : '/' });
+    var router = new Grapnel({ pushState : true, root : (window.location.href.match(/github\.io/gi)) ? '/Grapnel.js' : undefined });
 
     router.get('/docs', function(){
         $('#documentation').show();
