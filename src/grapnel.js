@@ -14,6 +14,7 @@
     function Grapnel(opts) {
         "use strict";
 
+	//ie8 polyfill
         Object.keys = Object.keys || function(o, k, r) {
             r = [];
             for (k in o) r.hasOwnProperty.call(o, k) && r.push(k);
@@ -29,6 +30,7 @@
         this.options.env = this.options.env || (!!(Object.keys(root).length === 0 && process && process.browser !== true) ? 'server' : 'client');
         this.options.mode = this.options.mode || (!!(this.options.env !== 'server' && this.options.pushState && root.history && root.history.pushState) ? 'pushState' : 'hashchange');
         this.version = '0.5.8'; // Version
+		
         if ('function' === typeof root.addEventListener) {
             root.addEventListener('hashchange', function () {
                 self.trigger('hashchange');
@@ -42,6 +44,7 @@
             });
         }
         else if ('object' === typeof root.attachEvent) {
+		//ie8 support
             window.attachEvent('onhashchange', function () {
                 self.trigger('hashchange');
             });
