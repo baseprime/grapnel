@@ -105,6 +105,16 @@ router.get('/*', auth, function(req){
 ```bash
 npm install grapnel-server
 ```
+```javascript
+var http = require('http'),
+    app = require('grapnel-server');
+
+app.get('/', function(req, res, next){
+    res.end('Hello World!', 200);
+});
+
+http.createServer(app.start()).listen(3000);
+```
 
 ## Declaring Multiple Routes
 
