@@ -21,7 +21,7 @@ npm install grapnel-server
 
 ```javascript
 var http = require('http'),
-    app = require('grapnel');
+    app = require('grapnel-server');
 
 app.get('/products/:category/:id?', function(req, res, next){
     var id = req.params.id,
