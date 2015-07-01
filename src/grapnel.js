@@ -1,18 +1,27 @@
 /****
- * Grapnel.js
- * https://github.com/EngineeringMode/Grapnel.js
- *
- * @author Greg Sabia Tucker <greg@artificer.io>
- * @link http://artificer.io
- * @version 0.5.8
- *
- * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
+* Grapnel.js
+* https://github.com/EngineeringMode/Grapnel.js
+*
+* @author Greg Sabia Tucker <greg@artificer.io>
+* @link http://artificer.io
+* @version 0.5.8
+*
+* Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
 
-;(function(root){
+; (function (root) {
 
-    function Grapnel(opts){
+    function Grapnel(opts) {
         "use strict";
+
+	//ie8 polyfill
+        Object.keys = Object.keys || function(o, k, r) {
+            r = [];
+            for (k in o) r.hasOwnProperty.call(o, k) && r.push(k);
+            return r;
+        };
+        Date.now = Date.now || function() { return +new Date; };
+        
 
         var self = this; // Scope reference
         this.events = {}; // Event Listeners
@@ -21,61 +30,67 @@
         this.options.env = this.options.env || (!!(Object.keys(root).length === 0 && process && process.browser !== true) ? 'server' : 'client');
         this.options.mode = this.options.mode || (!!(this.options.env !== 'server' && this.options.pushState && root.history && root.history.pushState) ? 'pushState' : 'hashchange');
         this.version = '0.5.8'; // Version
-
-        if('function' === typeof root.addEventListener){
-            root.addEventListener('hashchange', function(){
+		
+        if ('function' === typeof root.addEventListener) {
+            root.addEventListener('hashchange', function () {
                 self.trigger('hashchange');
             });
 
-            root.addEventListener('popstate', function(e){
+            root.addEventListener('popstate', function (e) {
                 // Make sure popstate doesn't run on init -- this is a common issue with Safari and old versions of Chrome
-                if(self.state && self.state.previousState === null) return false;
-                
+                if (self.state && self.state.previousState === null) return false;
+
                 self.trigger('navigate');
             });
         }
+        else if ('object' === typeof root.attachEvent) {
+		//ie8 support
+            window.attachEvent('onhashchange', function () {
+                self.trigger('hashchange');
+            });
+        }
         /**
-         * Deprecation warning: this.fragment may eventually be evolved into this.path(pathname) function eventually
+        * Deprecation warning: this.fragment may eventually be evolved into this.path(pathname) function eventually
         */
         this.fragment = {
             /**
-             * Get pathname relative to root
-             * @return {String} pathname
+            * Get pathname relative to root
+            * @return {String} pathname
             */
-            get : function(){
+            get: function () {
                 var frag;
 
-                if(self.options.mode === 'pushState'){
+                if (self.options.mode === 'pushState') {
                     frag = root.location.pathname.replace(self.options.root, '');
-                }else if(self.options.mode !== 'pushState' && root.location){
+                } else if (self.options.mode !== 'pushState' && root.location) {
                     frag = (root.location.hash) ? root.location.hash.split((self.options.hashBang ? '#!' : '#'))[1] : '';
-                }else{
+                } else {
                     frag = root._pathname || '';
                 }
 
                 return frag;
             },
             /**
-             * Set pathname relative to root
-             * @param {String} pathname
-             * @return {Object} router
+            * Set pathname relative to root
+            * @param {String} pathname
+            * @return {Object} router
             */
-            set : function(frag){
-                if(self.options.mode === 'pushState'){
+            set: function (frag) {
+                if (self.options.mode === 'pushState') {
                     frag = (self.options.root) ? (self.options.root + frag) : frag;
                     root.history.pushState({}, null, frag);
-                }else if(root.location){
+                } else if (root.location) {
                     root.location.hash = (self.options.hashBang ? '!' : '') + frag;
-                }else{
+                } else {
                     root._pathname = frag || '';
                 }
 
                 return self;
             },
-            clear : function(){
-                if(self.options.mode === 'pushState'){
+            clear: function () {
+                if (self.options.mode === 'pushState') {
                     root.history.pushState({}, null, self.options.root || '/');
-                }else if(root.location){
+                } else if (root.location) {
                     root.location.hash = (self.options.hashBang) ? '!' : '';
                 }
 
@@ -86,23 +101,23 @@
         return this;
     }
     /**
-     * Create a RegExp Route from a string
-     * This is the heart of the router and I've made it as small as possible!
-     *
-     * @param {String} Path of route
-     * @param {Array} Array of keys to fill
-     * @param {Bool} Case sensitive comparison
-     * @param {Bool} Strict mode
+    * Create a RegExp Route from a string
+    * This is the heart of the router and I've made it as small as possible!
+    *
+    * @param {String} Path of route
+    * @param {Array} Array of keys to fill
+    * @param {Bool} Case sensitive comparison
+    * @param {Bool} Strict mode
     */
-    Grapnel.regexRoute = function(path, keys, sensitive, strict){
-        if(path instanceof RegExp) return path;
-        if(path instanceof Array) path = '(' + path.join('|') + ')';
+    Grapnel.regexRoute = function (path, keys, sensitive, strict) {
+        if (path instanceof RegExp) return path;
+        if (path instanceof Array) path = '(' + path.join('|') + ')';
         // Build route RegExp
         path = path.concat(strict ? '' : '/?')
             .replace(/\/\(/g, '(?:/')
             .replace(/\+/g, '__plus__')
-            .replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function(_, slash, format, key, capture, optional){
-                keys.push({ name : key, optional : !!optional });
+            .replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function (_, slash, format, key, capture, optional) {
+                keys.push({ name: key, optional: !!optional });
                 slash = slash || '';
 
                 return '' + (optional ? '' : slash) + '(?:' + (optional ? slash : '') + (format || '') + (capture || (format && '([^/.]+?)' || '([^/]+?)')) + ')' + (optional || '');
@@ -114,72 +129,72 @@
         return new RegExp('^' + path + '$', sensitive ? '' : 'i');
     }
     /**
-     * ForEach workaround utility
-     *
-     * @param {Array} to iterate
-     * @param {Function} callback
+    * ForEach workaround utility
+    *
+    * @param {Array} to iterate
+    * @param {Function} callback
     */
-    Grapnel._forEach = function(a, callback){
-        if(typeof Array.prototype.forEach === 'function') return Array.prototype.forEach.call(a, callback);
+    Grapnel._forEach = function (a, callback) {
+        if (typeof Array.prototype.forEach === 'function') return Array.prototype.forEach.call(a, callback);
         // Replicate forEach()
-        return function(c, next){
-            for(var i=0, n = this.length; i<n; ++i){
+        return function (c, next) {
+            for (var i = 0, n = this.length; i < n; ++i) {
                 c.call(next, this[i], i, this);
             }
-        }.call(a, callback);
+        } .call(a, callback);
     }
     /**
-     * Add an route and handler
-     *
-     * @param {String|RegExp} route name
-     * @return {self} Router
+    * Add an route and handler
+    *
+    * @param {String|RegExp} route name
+    * @return {self} Router
     */
-    Grapnel.prototype.get = Grapnel.prototype.add = function(route){
+    Grapnel.prototype.get = Grapnel.prototype.add = function (route) {
         var self = this,
             keys = [],
             middleware = Array.prototype.slice.call(arguments, 1, -1),
             handler = Array.prototype.slice.call(arguments, -1)[0],
             regex = Grapnel.regexRoute(route, keys);
 
-        var invoke = function RouteHandler(){
+        var invoke = function RouteHandler() {
             // If route is instance of RegEx, match the route
             var match = self.fragment.get().match(regex);
             // Test matches against current route
-            if(match){
+            if (match) {
                 // Match found
-                var req = { params : {}, keys : keys, matches : match.slice(1) };
+                var req = { params: {}, keys: keys, matches: match.slice(1) };
                 // Build parameters
-                Grapnel._forEach(req.matches, function(value, i){
+                Grapnel._forEach(req.matches, function (value, i) {
                     var key = (keys[i] && keys[i].name) ? keys[i].name : i;
                     // Parameter key will be its key or the iteration index. This is useful if a wildcard (*) is matched
                     req.params[key] = (value) ? decodeURIComponent(value) : undefined;
                 });
                 // Route events should have an object detailing the event -- route events also change the state of the router
                 var event = {
-                    route : route,
-                    value : self.fragment.get(),
-                    params : req.params,
-                    regex : match,
-                    stack : [],
-                    runCallback : true,
-                    callbackRan : false,
-                    propagateEvent : true,
-                    next : function(){
-                        return this.stack.shift().call(self, req, event, function(){
+                    route: route,
+                    value: self.fragment.get(),
+                    params: req.params,
+                    regex: match,
+                    stack: [],
+                    runCallback: true,
+                    callbackRan: false,
+                    propagateEvent: true,
+                    next: function () {
+                        return this.stack.shift().call(self, req, event, function () {
                             event.next.call(event);
                         });
                     },
-                    preventDefault : function(){
+                    preventDefault: function () {
                         this.runCallback = false;
                     },
-                    stopPropagation : function(){
+                    stopPropagation: function () {
                         this.propagateEvent = false;
                     },
-                    parent : function(){
+                    parent: function () {
                         var hasParentEvents = !!(this.previousState && this.previousState.value && this.previousState.value == this.value);
                         return (hasParentEvents) ? this.previousState : false;
                     },
-                    callback : function(){
+                    callback: function () {
                         event.callbackRan = true;
                         event.timeStamp = Date.now();
                         event.next();
@@ -190,13 +205,13 @@
                 // Trigger main event
                 self.trigger('match', event, req);
                 // Continue?
-                if(!event.runCallback) return self;
+                if (!event.runCallback) return self;
                 // Previous state becomes current state
                 event.previousState = self.state;
                 // Save new state
                 self.state = event;
                 // Prevent this handler from being called if parent handler in stack has instructed not to propagate any more events
-                if(event.parent() && event.parent().propagateEvent === false){
+                if (event.parent() && event.parent().propagateEvent === false) {
                     event.propagateEvent = false;
                     return self;
                 }
@@ -212,18 +227,18 @@
         return invoke().on(eventName, invoke);
     }
     /**
-     * Fire an event listener
-     *
-     * @param {String} event name
-     * @param {Mixed} [attributes] Parameters that will be applied to event handler
-     * @return {self} Router
+    * Fire an event listener
+    *
+    * @param {String} event name
+    * @param {Mixed} [attributes] Parameters that will be applied to event handler
+    * @return {self} Router
     */
-    Grapnel.prototype.trigger = function(event){
+    Grapnel.prototype.trigger = function (event) {
         var self = this,
             params = Array.prototype.slice.call(arguments, 1);
         // Call matching events
-        if(this.events[event]){
-            Grapnel._forEach(this.events[event], function(fn){
+        if (this.events[event]) {
+            Grapnel._forEach(this.events[event], function (fn) {
                 fn.apply(self, params);
             });
         }
@@ -231,20 +246,20 @@
         return this;
     }
     /**
-     * Add an event listener
-     *
-     * @param {String} event name (multiple events can be called when separated by a space " ")
-     * @param {Function} callback
-     * @return {self} Router
+    * Add an event listener
+    *
+    * @param {String} event name (multiple events can be called when separated by a space " ")
+    * @param {Function} callback
+    * @return {self} Router
     */
-    Grapnel.prototype.on = Grapnel.prototype.bind = function(event, handler){
+    Grapnel.prototype.on = Grapnel.prototype.bind = function (event, handler) {
         var self = this,
             events = event.split(' ');
 
-        Grapnel._forEach(events, function(event){
-            if(self.events[event]){
+        Grapnel._forEach(events, function (event) {
+            if (self.events[event]) {
                 self.events[event].push(handler);
-            }else{
+            } else {
                 self.events[event] = [handler];
             }
         });
@@ -252,15 +267,15 @@
         return this;
     }
     /**
-     * Allow context
-     *
-     * @param {String} Route context
-     * @return {Function} Adds route to context
+    * Allow context
+    *
+    * @param {String} Route context
+    * @return {Function} Adds route to context
     */
-    Grapnel.prototype.context = function(context){
+    Grapnel.prototype.context = function (context) {
         var self = this;
 
-        return function(value, callback){
+        return function (value, callback) {
             var prefix = (context.slice(-1) !== '/') ? context + '/' : context,
                 pattern = prefix + value;
 
@@ -268,33 +283,33 @@
         }
     }
     /**
-     * Navigate through history API
-     *
-     * @param {String} Pathname
-     * @return {self} Router
+    * Navigate through history API
+    *
+    * @param {String} Pathname
+    * @return {self} Router
     */
-    Grapnel.prototype.navigate = function(path){
+    Grapnel.prototype.navigate = function(path) {
         return this.fragment.set(path).trigger('navigate');
-    }
+    };
     /**
-     * Create routes based on an object
-     *
-     * @param {Object} [Options, Routes]
-     * @param {Object Routes}
-     * @return {self} Router
+    * Create routes based on an object
+    *
+    * @param {Object} [Options, Routes]
+    * @param {Object Routes}
+    * @return {self} Router
     */
-    Grapnel.listen = function(){
+    Grapnel.listen = function () {
         var opts, routes;
-        if(arguments[0] && arguments[1]){
+        if (arguments[0] && arguments[1]) {
             opts = arguments[0];
             routes = arguments[1];
-        }else{
+        } else {
             routes = arguments[0];
         }
         // Return a new Grapnel instance
-        return (function(){
+        return (function () {
             // TODO: Accept multi-level routes
-            for(var key in routes){
+            for (var key in routes) {
                 this.add.call(this, key, routes[key]);
             }
 
@@ -302,14 +317,14 @@
         }).call(new Grapnel(opts || {}));
     }
 
-    if('function' === typeof root.define && !root.define.amd.grapnel){
-        root.define(function(require, exports, module){
+    if ('function' === typeof root.define && !root.define.amd.grapnel) {
+        root.define(function (require, exports, module) {
             root.define.amd.grapnel = true;
             return Grapnel;
         });
-    }else if('object' === typeof module && 'object' === typeof module.exports){
+    } else if ('object' === typeof module && 'object' === typeof module.exports) {
         module.exports = exports = Grapnel;
-    }else{
+    } else {
         root.Grapnel = Grapnel;
     }
 
