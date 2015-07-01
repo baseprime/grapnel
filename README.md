@@ -200,7 +200,7 @@ var routes = {
 
 # API Documentation
 
-##### `get` Adds a listeners and middleware for routes
+##### `get`, `post`, `put`, `delete` (HTTP verbs) Adds a listeners and middleware for routes matching its respective HTTP verb
 ```javascript
 /**
  * @param {String|RegExp} path
@@ -211,6 +211,26 @@ app.get('/store/:category/:id?', function(req, res){
         id = req.params.id;
 
     console.log('Product #%s in %s', id, category);
+});
+
+app.post('/store/:category', function(req, res){
+    var category = req.params.category;
+
+    console.log('POST Product %s', category);
+});
+
+app.put('/store/:category', function(req, res){
+    var category = req.params.category,
+        id = req.params.id;
+
+    console.log('PUT Product #%s in %s', id, category);
+});
+
+app.delete('/store/:category/:id', function(req, res){
+    var category = req.params.category,
+        id = req.params.id;
+
+    console.log('DELETE Product #%s in %s', id, category);
 });
 ```
 

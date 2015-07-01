@@ -1,10 +1,10 @@
 /****
  * Grapnel Server
- * https://github.com/EngineeringMode/Grapnel.js
+ * https://github.com/EngineeringMode/Grapnel.js/tree/server-router
  *
  * @author Greg Sabia Tucker <greg@artificer.io>
  * @link http://artificer.io
- * @version 0.1.0
+ * @version 0.1.2
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -16,10 +16,10 @@ function Server(){
 
     var self = this;
 
-    this.version = '0.1.0';
+    this.version = '0.1.2';
     this.req = {};
     this.res = {};
-    // Create HTTP Verbs
+    // HTTP Verbs
     ['GET', 'POST', 'PUT', 'DELETE'].forEach(function(verb){
         self[verb.toLowerCase()] = function(){
             var args = Array.prototype.slice.call(arguments);
