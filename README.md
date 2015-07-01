@@ -1,78 +1,51 @@
-Grapnel.js
+Grapnel Server-Side Router Framework for Node.js
 ==========
 
-#### The smallest (1100 bytes gzipped!) Client/Server-Side JavaScript Router with Named Parameters, HTML5 pushState, and Middleware support.
+#### Quick and Drity JavaScript Router for Node.js with Named Parameters and Middleware support.
 
 ## Download/Installation
 
-**Download Source:**
-
-- [Production](https://raw.githubusercontent.com/EngineeringMode/Grapnel.js/master/dist/grapnel.min.js)
-- [Development](https://raw.githubusercontent.com/EngineeringMode/Grapnel.js/master/src/grapnel.js)
-
 **Install with npm**
 ```bash
-npm install grapnel
-```
-**Or by using bower:**
-```bash
-bower install grapnel
+npm install grapnel-server
 ```
 
-# Grapnel.js Features
+# Grapnel Features
 
-- Supports routing using `pushState` or `hashchange` concurrently
 - Supports Named Parameters similar to Sinatra, Restify, and Express
 - Middleware Support
-- Works on the client or server-side
-- Event Handling Support
 - RegExp Support
-- RequreJS/AMD, Browserify, and CommonJS Compatibility
-- Supports `#` or `#!` for `hashchange` routing
-- Unobtrusive, supports multiple routers on the same page
 - No dependencies
 
-## Basic Router
+## Server-Side Routing
 
 ```javascript
-var router = new Grapnel();
+var http = require('http'),
+    app = require('grapnel');
 
-router.get('products/:category/:id?', function(req){
-    var id = req.params.id,
-        category = req.params.category;
-    // GET http://mysite.com/#products/widgets/134
-    console.log(category, id);
-    // => widgets 134
-});
-```
-
-## Using pushState
-
-```javascript
-var router = new Grapnel({ pushState : true });
-
-router.get('/products/:category/:id?', function(req){
+app.get('/products/:category/:id?', function(req, res, next){
     var id = req.params.id,
         category = req.params.category
 
     console.log(category, id);
+
+    res.end('Hello World!', 200);
 });
 
-router.navigate('/products/widgets/134');
-// => widgets 134
+http.createServer(app.start()).listen(3000);
 ```
 
 ## Named Parameters
 
 Grapnel.js supports regex style routes similar to Sinatra, Restify, and Express. The properties are mapped to the parameters in the request.
 ```javascript
-router.get('products/:id?', function(req){
-    // GET /file.html#products/134
+app.get('products/:id?', function(req, res){
+    // GET /products/134
     req.params.id
     // => 134
 });
 
-router.get('products/*', function(req){
+app.get('products/*', function(req, res){
     // The wildcard/asterisk will match anything after that point in the URL
     // Parameters are provided req.params using req.params[n], where n is the nth capture
 });
@@ -83,46 +56,30 @@ router.get('products/*', function(req){
 Grapnel.js also supports middleware:
 
 ```javascript
-var auth = function(req, event, next){
+var auth = function(req, res, next){
     user.auth(function(err){
         req.user = this;
         next();
     });
 }
 
-router.get('/*', auth, function(req){
+app.get('/*', auth, function(req, res){
     console.log(req.user);
+    res.end('Hello ' + req.user.name, 200);
 });
-```
-
-## Works as a basic server-side router
-
-```javascript
-// Simple "Hello World!" app
-var http = require('http'),
-    Grapnel = require('grapnel'),
-    router = new Grapnel();
-
-router.get('/', function(req, event){
-    req.response.end('Hello world!')
-});
-
-http.createServer(function(req, res){
-    router.bind('match', function(event, _req){
-        _req.response = res;
-    }).navigate(req.url);
-}).listen(3000);
 ```
 
 ## Declaring Multiple Routes
 
 ```javascript
+var Grapnel = require('grapnel-server').Server;
+
 var routes = {
-    'products' : function(req){
-        // GET /file.html#products
+    'products' : function(req, res, next){
+        // GET /products
     },
-    'products/:category/:id?' : function(req){
-        // GET /file.html#products/widgets/35
+    'products/:category/:id?' : function(req, res, next){
+        // GET /products/widgets/35
         req.params.category
         // => widgets
     }
@@ -134,9 +91,9 @@ Grapnel.listen(routes);
 ## Event Handling
 
 ```javascript
-var router = new Grapnel({ pushState : true, root : '/' });
+var app = require('grapnel-server');
 
-router.on('navigate', function(event){
+app.on('navigate', function(){
     // GET /foo/bar
     console.log('URL changed to %s', this.fragment.get());
     // => URL changed to /foo/bar
@@ -148,11 +105,10 @@ router.on('navigate', function(event){
 Grapnel.js allows RegEx when defining a route:
 
 ```javascript
-var expression = /^food\/tacos\/(.*)$/i;
-var router = new Grapnel();
+var expression = /^\/food\/tacos\/(.*)$/i;
 
-router.get(expression, function(req, event){
-    // GET http://mysite.com/page#food/tacos/good
+app.get(expression, function(req, res){
+    // GET /food/tacos/good
     console.log('I think tacos are %s.', req.params[0]);
     // => "He thinks tacos are good."
 });
@@ -163,30 +119,13 @@ router.get(expression, function(req, event){
 You can even add context to a route:
 
 ```javascript
-var router = new Grapnel({ pushState : true });
-var foodRoute = router.context('/food');
+var app = require('grapnel-server');
+var foodRoute = app.context('/food');
 
-foodRoute(':foodname', function(req, event){
+foodRoute(':foodname', function(req, res){
+    // GET /food/tacos
     console.log(req.params.foodname);
-});
-
-router.navigate('/food/tacos');
-// => This taco thing is getting out of hand.
-```
-
-## RequireJS/AMD, Browserify, and CommonJS Compatibility
-
-```javascript
-require(['lib/grapnel'], function(Grapnel){
-
-    var router = new Grapnel({ pushState : true });
-
-    router.bind('navigate', function(){
-        console.log('It works!');
-    });
-
-    router.navigate('/');
-
+    // => This taco thing is getting out of hand.
 });
 ```
 
@@ -196,135 +135,63 @@ require(['lib/grapnel'], function(Grapnel){
 
 # Usage &amp; Tips
 
-## Basic Configuration
-```javascript
-var router = new Grapnel();
-```
-Or you can declare your routes with a literal object:
-
-```javascript
-Grapnel.listen({
-    'products/:id' : function(req){
-        // Handler
-    }
-});
-```
-When declaring routes with a literal object, router options can be passed as the first parameter:
-```javascript
-var opts = { pushState : true };
-
-Grapnel.listen(opts, routes);
-```
-
-## Enabling PushState
-```javascript
-var router = new Grapnel({ pushState : true });
-```
-You can also specify a root URL by setting it as an option:
-
-```javascript
-var router = new Grapnel({ root : '/public/search/', pushState : true });
-```
-The root may require a beginning slash and a trailing slash depending on how your application utilizes the router.
-
 ## Middleware
 Grapnel uses middleware similar to how Express uses middleware. Middleware has access to the `req` object, `event` object, and the next middleware in the call stack (commonly denoted as `next`). Middleware must call `next()` to pass control to the next middleware, otherwise the router will stop.
 
 For more information about how middleware works, see [Using Middleware](http://expressjs.com/guide/using-middleware.html).
 ```javascript
-var user = function(req, event, next){
+var user = function(req, res, next){
     user.get(function(err){
         req.user = this;
         next();
     });
 }
 
-router.get('/user/*', user, function(req){
+app.get('/user/*', user, function(req, res){
     console.log(req.user);
+    res.send(req.user.name);
 });
-```
-
-## Navigation
-If pushState is enabled, you can navigate through your application with `router.navigate`:
-```javascript
-router.navigate('/products/123');
 ```
 
 ## Stopping a Route Event
 ```javascript
-router.on('match', function(event){
-    event.preventDefault(); // Stops event handler
+app.on('match', function(req){
+    req.event.preventDefault(); // Stops event handler
 });
 ```
 
 ## Stopping Event Propagation
 ```javascript
-router.get('/products/:id', function(req, event){
-    event.stopPropagation(); // Stops propagation of the event
+app.get('/products/:id', function(req, res){
+    req.event.stopPropagation(); // Stops propagation of the event
 });
 
-router.get('/products/widgets', function(req, event){
+app.get('/products/widgets', function(req, res){
     // This will not be executed
 });
 
-router.navigate('/products/widgets');
+// GET /products/35
 ```
 
 ## 404 Pages
-You can specify a route that only uses a wildcard `*` as your final route, then use `event.parent()` which returns `false` if the call stack doesn't have any other routes to run.
+You can specify a route that only uses a wildcard `*` as your final route, then use `req.event.parent()` which returns `false` if the call stack doesn't have any other routes to run.
 ```javascript
 var routes = {
-    '/' : function(req, e){
+    '/' : function(req, res){
         // Handle route
     },
-    '/store/products/:id' : function(req, e){
+    '/store/products/:id' : function(req, res){
         // Handle route
     },
-    '/category/:id' : function(req, e){
+    '/category/:id' : function(req, res){
         // Handle route
     },
-    '/*' : function(req, e){
-        if(!e.parent()){
+    '/*' : function(req, res){
+        if(!req.event.parent()){
             // Handle 404
         }
     }
 }
-
-Grapnel.listen({ pushState : true }, routes);
-```
-
-## Adding HTTP verb support for client-side routers
-You can add HTTP verb (GET, POST, PUT, DELETE) support to a router by adding middleware to a router.verb() method.
-```javascript
-var http = require('http'),
-    Grapnel = require('grapnel'),
-    router = new Grapnel();
-
-// Adds middleware to each router.verb() method
-['GET', 'POST', 'PUT', 'DELETE'].forEach(function(verb){
-    router[verb.toLowerCase()] = function(){
-        var args = Array.prototype.slice.call(arguments);
-    
-        args.splice(1, 0, function(req, res, next){
-            if(req.method === verb) next();
-        });
-
-        return this.add.apply(this, args);
-    }
-});
-
-router.post('/', function(req, event){
-    req.response.end('Hello world!');
-});
-
-http.createServer(function(req, res){
-    router.bind('match', function(event, _req){
-        _req.response = res;
-        for(var prop in req){
-            _req[prop] = req[prop];
-        }
-    }).navigate(req.url);
-}).listen(3000);
 ```
 
 &nbsp;
@@ -339,20 +206,12 @@ http.createServer(function(req, res){
  * @param {String|RegExp} path
  * @param {Function} [[middleware], callback]
 */
-router.get('/store/:category/:id?', function(req, event){
+app.get('/store/:category/:id?', function(req, res){
     var category = req.params.category,
         id = req.params.id;
 
     console.log('Product #%s in %s', id, category);
 });
-```
-
-##### `navigate` Navigate through application
-```javascript
-/**
- * @param {String} path relative to root
-*/
-router.navigate('/products/123');
 ```
 
 ##### `bind` Adds a new event listener
@@ -361,8 +220,8 @@ router.navigate('/products/123');
  * @param {String} event name (multiple events can be called when separated by a space " ")
  * @param {Function} callback
 */
-router.bind('myevent', function(event){
-    console.log('Grapnel.js works!');
+app.bind('myevent', function(event){
+    console.log('It works!');
 });
 ```
 
@@ -372,7 +231,7 @@ router.bind('myevent', function(event){
  * @param {String} event name
  * @param {Mixed} [attributes] Parameters that will be applied to event handler
 */
-router.trigger('event', eventArg1, eventArg2, etc);
+app.trigger('event', eventArg1, eventArg2, etc);
 ```
 
 ##### `context` Returns a function that can be called with a specific route in context
@@ -381,14 +240,11 @@ router.trigger('event', eventArg1, eventArg2, etc);
  * @param {String} Route context
  * @return {Function} Adds route to context
 */
-var searchFn = router.context('/search');
+var searchFn = app.context('/search');
 
-searchFn(':keyword', function(req, event){
-    console.log(req.params.keyword);
+searchFn(':keyword', function(req, res){
+    res.end(req.params.keyword, 200);
 });
-
-router.navigate('/search/widgets');
-// => widgets
 ```
 
 ##### `on` An alias of `bind`
@@ -398,15 +254,9 @@ router.navigate('/search/widgets');
 * `get` Get absolute URL or Hash
 * `clear` Clears the URL or Hash
 
-## Options
-* `pushState` Enable pushState, allowing manipulation of browser history instead of using the `#` and `hashchange` event
-* `root` Root of your app, all navigation will be relative to this
-* `hashBang` Enable `#!` as the anchor of a `hashchange` router instead of using just a `#`
-
 ## Events
-* `navigate` Fires when router navigates through history
+* `navigate` Fires when http module initializes a new request
 * `match` Fires when a new match is found, but before the handler is called
-* `hashchange` Fires when hashtag is changed
 
 ## License
 ##### [MIT License](http://opensource.org/licenses/MIT)

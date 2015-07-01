@@ -1,10 +1,13 @@
 {
-  "name": "grapnel",
-  "version": "0.5.8",
-  "description": "The smallest JavaScript Router with PushState & Named Parameter support",
-  "main": "dist/grapnel.min.js",
+  "name": "grapnel-server",
+  "version": "0.1.0",
+  "description": "Node.js Router Framework with Named Parameter & Middleware support",
+  "main": "index.js",
   "scripts": {
-    "test": "pushd ./test; python -m SimpleHTTPServer 3002; popd"
+    "test": "grunt"
+  },
+  "dependencies": {
+    "grapnel": "^0.5.8"
   },
   "repository": {
     "type": "git",
@@ -15,16 +18,9 @@
     "route",
     "routing",
     "router",
-    "hash",
-    "anchor",
-    "tiny",
-    "require",
     "named",
     "parameters",
     "middleware",
-    "backbone",
-    "routie",
-    "pushState",
     "api"
   ],
   "author": "Greg Sabia Tucker <greg@artificer.io>",
