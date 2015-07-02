@@ -281,9 +281,9 @@ searchFn(':keyword', function(req, res){
 ##### `bind` An alias of `on`
 ##### `add` An alias of `get`
 ##### `fragment`
-* `set` Sets a new absolute URL or Hash
-* `get` Get absolute URL or Hash
-* `clear` Clears the URL or Hash
+* `set` Sets a new absolute path
+* `get` Get absolute path
+* `clear` Clears the path
 
 ## Events
 * `navigate` Fires when http module initializes a new request
