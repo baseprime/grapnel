@@ -1,13 +1,13 @@
 {
   "name": "grapnel-server",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Node.js Router Framework with Named Parameter & Middleware support",
   "main": "index.js",
   "scripts": {
     "test": "grunt"
   },
   "dependencies": {
-    "grapnel": "^0.5.8"
+    "grapnel": "^0.5.9"
   },
   "repository": {
     "type": "git",
@@ -18,9 +18,9 @@
     "route",
     "routing",
     "router",
-    "named",
-    "parameters",
+    "named parameters",
     "middleware",
+    "express",
     "api"
   ],
   "author": "Greg Sabia Tucker <greg@artificer.io>",
