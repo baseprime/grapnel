@@ -100,7 +100,7 @@ router.get('/*', auth, function(req){
 
 ## Works as a server-side router
 
-**This is now simplified with a separate package** ([more info](https://github.com/EngineeringMode/Grapnel.js/tree/server-router))
+**This is now simplified as a separate package** ([more info](https://github.com/EngineeringMode/Grapnel.js/tree/server-router))
 ```bash
 npm install grapnel-server
 ```
@@ -372,9 +372,9 @@ router.navigate('/search/widgets');
 ##### `bind` An alias of `on`
 ##### `add` An alias of `get`
 ##### `fragment`
-* `set` Sets a new absolute URL or Hash
-* `get` Get absolute URL or Hash
-* `clear` Clears the URL or Hash
+* `set` Sets a new path or hash
+* `get` Get path or hash
+* `clear` Clears the path or hash
 
 ## Options
 * `pushState` Enable pushState, allowing manipulation of browser history instead of using the `#` and `hashchange` event
