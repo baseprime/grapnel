@@ -264,6 +264,16 @@
             router.trigger('myotherevent', { test : true });
         });
 
+        test('Once event only fires event once', function(){
+            var ran = 0;
+
+            router.once('eventonce', function(){
+                ran++;
+            }).trigger('eventonce').trigger('eventonce').trigger('eventonce');
+
+            equal(ran, 1);
+        });
+
         QUnit.done(function(){
             router.fragment.clear();
             hashRouter.fragment.clear();

@@ -1,6 +1,6 @@
 {
   "name": "Grapnel.js",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "homepage": "https://github.com/EngineeringMode/Grapnel.js",
   "authors": [
     "Greg Sabia Tucker <greg@artificer.io>"
@@ -16,12 +16,13 @@
     "route",
     "routing",
     "router",
+    "server",
+    "express",
     "hash",
     "anchor",
     "tiny",
     "require",
-    "named",
-    "parameters",
+    "named parameters",
     "backbone",
     "routie",
     "pushState"
