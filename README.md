@@ -234,14 +234,25 @@ app.delete('/store/:category/:id', function(req, res){
 });
 ```
 
-##### `bind` Adds a new event listener
+##### `on` Adds a new event listener
 ```javascript
 /**
  * @param {String} event name (multiple events can be called when separated by a space " ")
  * @param {Function} callback
 */
-app.bind('myevent', function(event){
-    console.log('It works!');
+router.on('myevent', function(event){
+    console.log('Grapnel.js works!');
+});
+```
+
+##### `once` A version of `on` except its handler will only be called once
+```javascript
+/**
+ * @param {String} event name (multiple events can be called when separated by a space " ")
+ * @param {Function} callback
+*/
+router.once('init', function(){
+    console.log('This will only be executed once');
 });
 ```
 
@@ -267,7 +278,7 @@ searchFn(':keyword', function(req, res){
 });
 ```
 
-##### `on` An alias of `bind`
+##### `bind` An alias of `on`
 ##### `add` An alias of `get`
 ##### `fragment`
 * `set` Sets a new absolute URL or Hash
