@@ -1,5 +1,8 @@
 ## Changelog
 
+##### 0.5.9
+* Added `router.once` to allow events to be fired only once
+
 ##### 0.5.8
 * Added environmnet option
 * Changed option property `usePushState` into `mode`. It was not changeable, so it does not make sense for it to be an 'option'
