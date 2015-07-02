@@ -252,6 +252,24 @@
         return this;
     }
     /**
+     * Allow event to be called only once
+     *
+     * @param {String} event name(s)
+     * @param {Function} callback
+     * @return {self} Router
+    */
+    Grapnel.prototype.once = function(event, handler){
+        var ran = false;
+
+        return this.on(event, function(){
+            if(ran) return false;
+            ran = true;
+            handler.apply(this, arguments);
+            handler = null;
+            return true;
+        });
+    }
+    /**
      * Allow context
      *
      * @param {String} Route context

@@ -29,7 +29,6 @@ npm install grapnel-server
 - Supports Named Parameters similar to Sinatra, Restify, and Express
 - Middleware Support
 - Works on the client or server-side
-- Event Handling Support
 - RegExp Support
 - RequreJS/AMD, Browserify, and CommonJS Compatibility
 - Supports `#` or `#!` for `hashchange` routing
@@ -323,14 +322,25 @@ router.get('/store/:category/:id?', function(req, event){
 router.navigate('/products/123');
 ```
 
-##### `bind` Adds a new event listener
+##### `on` Adds a new event listener
 ```javascript
 /**
  * @param {String} event name (multiple events can be called when separated by a space " ")
  * @param {Function} callback
 */
-router.bind('myevent', function(event){
+router.on('myevent', function(event){
     console.log('Grapnel.js works!');
+});
+```
+
+##### `once` A version of `on` except its handler will only be called once
+```javascript
+/**
+ * @param {String} event name (multiple events can be called when separated by a space " ")
+ * @param {Function} callback
+*/
+router.once('init', function(){
+    console.log('This will only be executed once');
 });
 ```
 
@@ -359,7 +369,7 @@ router.navigate('/search/widgets');
 // => widgets
 ```
 
-##### `on` An alias of `bind`
+##### `bind` An alias of `on`
 ##### `add` An alias of `get`
 ##### `fragment`
 * `set` Sets a new absolute URL or Hash
