@@ -14,6 +14,22 @@
     function Grapnel(opts){
         "use strict";
 
+        if (!Object.keys) {
+            // IE8 polyfill
+            Object.keys = function(o, k, r) {
+                r = [];
+                for (k in o) {
+                    r.hasOwnProperty.call(o, k) && r.push(k);
+                }
+                return r;
+            };
+        }
+        if (!Date.now) {
+            Date.now = function() {
+                return new Date().getTime();
+            };
+        }
+
         var self = this; // Scope reference
         this.events = {}; // Event Listeners
         this.state = null; // Router state object
@@ -32,6 +48,12 @@
                 if(self.state && self.state.previousState === null) return false;
                 
                 self.trigger('navigate');
+            });
+        }
+        else if ('object' === typeof root.attachEvent) {
+            // IE8 support
+            root.attachEvent('onhashchange', function () {
+                self.trigger('hashchange');
             });
         }
         /**
@@ -293,7 +315,7 @@
     */
     Grapnel.prototype.navigate = function(path){
         return this.fragment.set(path).trigger('navigate');
-    }
+    };
     /**
      * Create routes based on an object
      *
