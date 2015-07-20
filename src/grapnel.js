@@ -342,9 +342,9 @@
         }).call(new Grapnel(opts || {}));
     }
 
-    if('function' === typeof root.define && !root.define.amd.grapnel){
-        root.define(function(require, exports, module){
-            root.define.amd.grapnel = true;
+    if('function' === typeof define && !define.amd.grapnel){
+        define(function(require, exports, module){
+            define.amd.grapnel = true;
             return Grapnel;
         });
     }else if('object' === typeof module && 'object' === typeof module.exports){
