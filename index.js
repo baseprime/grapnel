@@ -4,7 +4,7 @@
  *
  * @author Greg Sabia Tucker <greg@artificer.io>
  * @link http://artificer.io
- * @version 0.1.3
+ * @version 0.1.4
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -16,7 +16,7 @@ function Server(){
 
     var self = this;
 
-    this.version = '0.1.3';
+    this.version = '0.1.4';
     // HTTP Verbs
     ['GET', 'POST', 'PUT', 'DELETE'].forEach(function(verb){
         self[verb.toLowerCase()] = function(){
@@ -34,7 +34,7 @@ function Server(){
     return this;
 }
 
-Server.prototype = Grapnel.prototype;
+Server.prototype = Object.create(Grapnel.prototype);
 
 Server.prototype.constructor = Server;
 
