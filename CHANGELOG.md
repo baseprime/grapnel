@@ -1,5 +1,8 @@
 ## Changelog
 
+##### 0.5.10
+* Added middleware support to router context
+
 ##### 0.5.9
 * Added `router.once` to allow events to be fired only once
 
