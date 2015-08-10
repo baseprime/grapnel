@@ -132,6 +132,28 @@ var routes = {
 Grapnel.listen(routes);
 ```
 
+## Route Context
+
+You can even add context to a route:
+
+```javascript
+var usersRoute = router.context('/user/:id');
+
+usersRoute('/', function(req, event){
+    console.log('Profile', req.params.id);
+});
+
+usersRoute('/followers', function(req, event){
+    console.log('Followers', req.params.id);
+});
+
+router.navigate('/user/13589');
+// => Profile 13589
+
+router.navigate('/user/13589/followers');
+// => Followers 13589
+```
+
 ## Event Handling
 
 ```javascript
@@ -157,22 +179,6 @@ router.get(expression, function(req, event){
     console.log('I think tacos are %s.', req.params[0]);
     // => "He thinks tacos are good."
 });
-```
-
-## Route Context
-
-You can even add context to a route:
-
-```javascript
-var router = new Grapnel({ pushState : true });
-var foodRoute = router.context('/food');
-
-foodRoute(':foodname', function(req, event){
-    console.log(req.params.foodname);
-});
-
-router.navigate('/food/tacos');
-// => This taco thing is getting out of hand.
 ```
 
 ## RequireJS/AMD, Browserify, and CommonJS Compatibility
@@ -353,20 +359,20 @@ router.once('init', function(){
 router.trigger('event', eventArg1, eventArg2, etc);
 ```
 
-##### `context` Returns a function that can be called with a specific route in context
+##### `context` Returns a function that can be called with a specific route in context. Context routes can also accept middleware. Note: when calling `route.context`, you should omit the trailing slash.
 ```javascript
 /**
- * @param {String} Route context
+ * @param {String} Route context (without trailing slash)
  * @return {Function} Adds route to context
 */
-var searchFn = router.context('/search');
+var usersRoute = router.context('/user/:id');
 
-searchFn(':keyword', function(req, event){
-    console.log(req.params.keyword);
+usersRoute('/followers', function(req, event){
+    console.log('Followers', req.params.id);
 });
 
-router.navigate('/search/widgets');
-// => widgets
+router.navigate('/user/13589/followers');
+// => Followers 13589
 ```
 
 ##### `bind` An alias of `on`

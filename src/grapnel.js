@@ -278,11 +278,16 @@
     Grapnel.prototype.context = function(context){
         var self = this;
 
-        return function(value, callback){
-            var prefix = (context.slice(-1) !== '/') ? context + '/' : context,
-                pattern = prefix + value;
+        return function(){
+            var value = arguments[0],
+                prefix = (context.slice(-1) !== '/' && value !== '/' && value !== '') ? context + '/' : context,
+                path = (value.substr(0, 1) !== '/') ? value : value.substr(1),
+                pattern = prefix + path;
 
-            return self.add.call(self, pattern, callback);
+            // Modify original path with new path
+            arguments[0] = pattern;
+
+            return self.add.apply(self, arguments);
         }
     }
     /**
