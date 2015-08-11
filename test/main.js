@@ -207,6 +207,27 @@
             }, 1000);
         });
 
+        test('Routes can be created with context', function(assert){
+            var usersRoute = router.context('/context/users/:id'),
+                timesRan = 0,
+                val = '';
+
+            usersRoute('/test', function(req, e){
+                timesRan++;
+                val = req.params.id;
+            });
+
+            usersRoute('/', function(req, e){
+                // This should not run
+                timesRan++;
+            });
+
+            router.navigate('/context/users/5/test');
+
+            equal(timesRan, 1);
+            equal(val, '5');
+        });
+
         module('Middleware');
 
         test('Middleware is called', function(assert){
@@ -252,6 +273,27 @@
                 equal(lastInStackCalled, false);
                 done();
             }, 500);
+        });
+
+        test('Context route accepts middleware', function(assert){
+
+            var timesRan = 0,
+                val = '';
+
+            function testMiddleWare(req, e, next){
+                timesRan++;
+                next();
+            }
+
+            var mwTestRoute = router.context('/context/middleware', testMiddleWare, testMiddleWare, testMiddleWare, testMiddleWare, testMiddleWare, testMiddleWare, testMiddleWare);
+
+            mwTestRoute('/test', function(req, e){
+                timesRan++;
+            });
+
+            router.navigate('/context/middleware/test');
+
+            equal(timesRan, 8);
         });
 
         module('Events');
