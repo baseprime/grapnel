@@ -276,18 +276,18 @@
      * @return {Function} Adds route to context
     */
     Grapnel.prototype.context = function(context){
-        var self = this;
+        var self = this,
+            middleware = Array.prototype.slice.call(arguments, 1);
 
         return function(){
             var value = arguments[0],
+                submiddleware = (arguments.length > 2) ? Array.prototype.slice.call(arguments, 1, -1) : [],
+                handler = Array.prototype.slice.call(arguments, -1)[0],
                 prefix = (context.slice(-1) !== '/' && value !== '/' && value !== '') ? context + '/' : context,
                 path = (value.substr(0, 1) !== '/') ? value : value.substr(1),
                 pattern = prefix + path;
 
-            // Modify original path with new path
-            arguments[0] = pattern;
-
-            return self.add.apply(self, arguments);
+            return self.add.apply(self, [pattern].concat(middleware).concat(submiddleware).concat([handler]));
         }
     }
     /**
