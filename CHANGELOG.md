@@ -1,6 +1,10 @@
 ## Changelog
 
+##### 0.5.11
+* Added middleware support to main router context method
+
 ##### 0.5.10
+* Routes inherit params from context
 * Added middleware support to router context
 
 ##### 0.5.9
