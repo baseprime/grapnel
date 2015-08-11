@@ -4,7 +4,7 @@
  *
  * @author Greg Sabia Tucker <greg@artificer.io>
  * @link http://artificer.io
- * @version 0.5.10
+ * @version 0.5.11
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -20,7 +20,7 @@
         this.options = opts || {}; // Options
         this.options.env = this.options.env || (!!(Object.keys(root).length === 0 && process && process.browser !== true) ? 'server' : 'client');
         this.options.mode = this.options.mode || (!!(this.options.env !== 'server' && this.options.pushState && root.history && root.history.pushState) ? 'pushState' : 'hashchange');
-        this.version = '0.5.10'; // Version
+        this.version = '0.5.11'; // Version
 
         if('function' === typeof root.addEventListener){
             root.addEventListener('hashchange', function(){
@@ -270,9 +270,8 @@
         });
     }
     /**
-     * Allow context
-     *
-     * @param {String} Route context
+     * @param {String} Route context (without trailing slash)
+     * @param {[Function]} Middleware (optional)
      * @return {Function} Adds route to context
     */
     Grapnel.prototype.context = function(context){

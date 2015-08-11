@@ -98,6 +98,28 @@ router.get('/*', auth, function(req){
 });
 ```
 
+## Route Context
+
+You can add context to a route and even use it with middleware:
+
+```javascript
+var usersRoute = router.context('/user/:id', getUser, getFollowers); // Middleware can be used here
+
+usersRoute('/', function(req, event){
+    console.log('Profile', req.params.id);
+});
+
+usersRoute('/followers', otherMiddleware, function(req, event){ // Middleware can be used here too
+    console.log('Followers', req.params.id);
+});
+
+router.navigate('/user/13589');
+// => Profile 13589
+
+router.navigate('/user/13589/followers');
+// => Followers 13589
+```
+
 ## Works as a server-side router
 
 **This is now simplified as a separate package** ([more info](https://github.com/EngineeringMode/Grapnel.js/tree/server-router))
@@ -130,28 +152,6 @@ var routes = {
 }
 
 Grapnel.listen(routes);
-```
-
-## Route Context
-
-You can even add context to a route:
-
-```javascript
-var usersRoute = router.context('/user/:id');
-
-usersRoute('/', function(req, event){
-    console.log('Profile', req.params.id);
-});
-
-usersRoute('/followers', function(req, event){
-    console.log('Followers', req.params.id);
-});
-
-router.navigate('/user/13589');
-// => Profile 13589
-
-router.navigate('/user/13589/followers');
-// => Followers 13589
 ```
 
 ## Event Handling
@@ -359,10 +359,11 @@ router.once('init', function(){
 router.trigger('event', eventArg1, eventArg2, etc);
 ```
 
-##### `context` Returns a function that can be called with a specific route in context. Context routes can also accept middleware. Note: when calling `route.context`, you should omit the trailing slash.
+##### `context` Returns a function that can be called with a specific route in context. Both the `router.context` method and the function it returns can accept middleware. Note: when calling `route.context`, you should omit the trailing slash.
 ```javascript
 /**
  * @param {String} Route context (without trailing slash)
+ * @param {[Function]} Middleware (optional)
  * @return {Function} Adds route to context
 */
 var usersRoute = router.context('/user/:id');
