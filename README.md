@@ -359,7 +359,8 @@ router.once('init', function(){
 router.trigger('event', eventArg1, eventArg2, etc);
 ```
 
-##### `context` Returns a function that can be called with a specific route in context. Both the `router.context` method and the function it returns can accept middleware. Note: when calling `route.context`, you should omit the trailing slash.
+##### `context` Returns a function that can be called with a specific route in context.
+Both the `router.context` method and the function it returns can accept middleware. **Note: when calling `route.context`, you should omit the trailing slash.**
 ```javascript
 /**
  * @param {String} Route context (without trailing slash)
