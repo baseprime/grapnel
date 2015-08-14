@@ -1,5 +1,12 @@
 ## Changelog
 
+##### 0.6.0
+Various changes to enable more functionality but at a cost to library size. Many changes were made because they made sense to the longevity of the project, as library size doesn't seem to be a huge deciding factor for developers who use it.
+
+* Separated `CallStack` and `Request` from within `invoke` and added extra functionality
+* Deprecated: `router.fragment` -- Use `router.path()`
+* Added `path()`
+
 ##### 0.5.11
 * Added middleware support to main router context method
 

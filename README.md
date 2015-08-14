@@ -161,7 +161,7 @@ var router = new Grapnel({ pushState : true, root : '/' });
 
 router.on('navigate', function(event){
     // GET /foo/bar
-    console.log('URL changed to %s', this.fragment.get());
+    console.log('URL changed to %s', this.path());
     // => URL changed to /foo/bar
 });
 ```
@@ -376,12 +376,14 @@ router.navigate('/user/13589/followers');
 // => Followers 13589
 ```
 
+##### `path`
+* `router.path('string')` Sets a new path or hash
+* `router.path()` Gets path or hash
+* `router.path(false)` Clears the path or hash
+
 ##### `bind` An alias of `on`
 ##### `add` An alias of `get`
-##### `fragment`
-* `set` Sets a new path or hash
-* `get` Get path or hash
-* `clear` Clears the path or hash
+##### `fragment` (Deprecated)
 
 ## Options
 * `pushState` Enable pushState, allowing manipulation of browser history instead of using the `#` and `hashchange` event

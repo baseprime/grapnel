@@ -4,7 +4,7 @@
  *
  * @author Greg Sabia Tucker <greg@artificer.io>
  * @link http://artificer.io
- * @version 0.5.11
+ * @version 0.6.0
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -20,7 +20,7 @@
         this.options = opts || {}; // Options
         this.options.env = this.options.env || (!!(Object.keys(root).length === 0 && process && process.browser !== true) ? 'server' : 'client');
         this.options.mode = this.options.mode || (!!(this.options.env !== 'server' && this.options.pushState && root.history && root.history.pushState) ? 'pushState' : 'hashchange');
-        this.version = '0.5.11'; // Version
+        this.version = '0.6.0'; // Version
 
         if('function' === typeof root.addEventListener){
             root.addEventListener('hashchange', function(){
@@ -33,54 +33,6 @@
                 
                 self.trigger('navigate');
             });
-        }
-        /**
-         * Deprecation warning: this.fragment may eventually be evolved into this.path(pathname) function eventually
-        */
-        this.fragment = {
-            /**
-             * Get pathname relative to root
-             * @return {String} pathname
-            */
-            get : function(){
-                var frag;
-
-                if(self.options.mode === 'pushState'){
-                    frag = root.location.pathname.replace(self.options.root, '');
-                }else if(self.options.mode !== 'pushState' && root.location){
-                    frag = (root.location.hash) ? root.location.hash.split((self.options.hashBang ? '#!' : '#'))[1] : '';
-                }else{
-                    frag = root._pathname || '';
-                }
-
-                return frag;
-            },
-            /**
-             * Set pathname relative to root
-             * @param {String} pathname
-             * @return {Object} router
-            */
-            set : function(frag){
-                if(self.options.mode === 'pushState'){
-                    frag = (self.options.root) ? (self.options.root + frag) : frag;
-                    root.history.pushState({}, null, frag);
-                }else if(root.location){
-                    root.location.hash = (self.options.hashBang ? '!' : '') + frag;
-                }else{
-                    root._pathname = frag || '';
-                }
-
-                return self;
-            },
-            clear : function(){
-                if(self.options.mode === 'pushState'){
-                    root.history.pushState({}, null, self.options.root || '/');
-                }else if(root.location){
-                    root.location.hash = (self.options.hashBang) ? '!' : '';
-                }
-
-                return self;
-            }
         }
 
         return this;
@@ -136,72 +88,39 @@
     */
     Grapnel.prototype.get = Grapnel.prototype.add = function(route){
         var self = this,
-            keys = [],
             middleware = Array.prototype.slice.call(arguments, 1, -1),
             handler = Array.prototype.slice.call(arguments, -1)[0],
-            regex = Grapnel.regexRoute(route, keys);
+            request = new Request(route);
 
         var invoke = function RouteHandler(){
-            // If route is instance of RegEx, match the route
-            var match = self.fragment.get().match(regex);
-            // Test matches against current route
-            if(match){
+            // Build request parameters
+            var req = request.parse(self.path());
+            // Check if matches are found
+            if(req.match){
                 // Match found
-                var req = { params : {}, keys : keys, matches : match.slice(1) };
-                // Build parameters
-                Grapnel._forEach(req.matches, function(value, i){
-                    var key = (keys[i] && keys[i].name) ? keys[i].name : i;
-                    // Parameter key will be its key or the iteration index. This is useful if a wildcard (*) is matched
-                    req.params[key] = (value) ? decodeURIComponent(value) : undefined;
-                });
-                // Route events should have an object detailing the event -- route events also change the state of the router
-                var event = {
+                var extra = {
                     route : route,
-                    value : self.fragment.get(),
                     params : req.params,
-                    regex : match,
-                    stack : [],
-                    runCallback : true,
-                    callbackRan : false,
-                    propagateEvent : true,
-                    next : function(){
-                        return this.stack.shift().call(self, req, event, function(){
-                            event.next.call(event);
-                        });
-                    },
-                    preventDefault : function(){
-                        this.runCallback = false;
-                    },
-                    stopPropagation : function(){
-                        this.propagateEvent = false;
-                    },
-                    parent : function(){
-                        var hasParentEvents = !!(this.previousState && this.previousState.value && this.previousState.value == this.value);
-                        return (hasParentEvents) ? this.previousState : false;
-                    },
-                    callback : function(){
-                        event.callbackRan = true;
-                        event.timeStamp = Date.now();
-                        event.next();
-                    }
+                    req : req,
+                    regex : req.match
                 }
-                // Middleware
-                event.stack = middleware.concat(handler);
+                // Create call stack -- add middleware first, then handler
+                var stack = new CallStack(self, extra).enqueue(middleware.concat(handler));
                 // Trigger main event
-                self.trigger('match', event, req);
+                self.trigger('match', stack, req);
                 // Continue?
-                if(!event.runCallback) return self;
+                if(!stack.runCallback) return self;
                 // Previous state becomes current state
-                event.previousState = self.state;
+                stack.previousState = self.state;
                 // Save new state
-                self.state = event;
+                self.state = stack;
                 // Prevent this handler from being called if parent handler in stack has instructed not to propagate any more events
-                if(event.parent() && event.parent().propagateEvent === false){
-                    event.propagateEvent = false;
+                if(stack.parent() && stack.parent().propagateEvent === false){
+                    stack.propagateEvent = false;
                     return self;
                 }
                 // Call handler
-                event.callback();
+                stack.callback();
             }
             // Returns self
             return self;
@@ -296,7 +215,46 @@
      * @return {self} Router
     */
     Grapnel.prototype.navigate = function(path){
-        return this.fragment.set(path).trigger('navigate');
+        return this.path(path).trigger('navigate');
+    }
+
+    Grapnel.prototype.path = function(pathname){
+        var self = this,
+            frag;
+
+        if('string' === typeof pathname){
+            // Set path
+            if(self.options.mode === 'pushState'){
+                frag = (self.options.root) ? (self.options.root + pathname) : pathname;
+                root.history.pushState({}, null, frag);
+            }else if(root.location){
+                root.location.hash = (self.options.hashBang ? '!' : '') + pathname;
+            }else{
+                root._pathname = pathname || '';
+            }
+
+            return this;
+        }else if('undefined' === typeof pathname){
+            // Get path
+            if(self.options.mode === 'pushState'){
+                frag = root.location.pathname.replace(self.options.root, '');
+            }else if(self.options.mode !== 'pushState' && root.location){
+                frag = (root.location.hash) ? root.location.hash.split((self.options.hashBang ? '#!' : '#'))[1] : '';
+            }else{
+                frag = root._pathname || '';
+            }
+
+            return frag;
+        }else if(pathname === false){
+            // Clear path
+            if(self.options.mode === 'pushState'){
+                root.history.pushState({}, null, self.options.root || '/');
+            }else if(root.location){
+                root.location.hash = (self.options.hashBang) ? '!' : '';
+            }
+
+            return self;
+        }
     }
     /**
      * Create routes based on an object
@@ -323,6 +281,124 @@
             return this;
         }).call(new Grapnel(opts || {}));
     }
+    /**
+     * Create a call stack that can be enqueued by handlers and middleware
+     *
+     * @param {Object} Router
+     * @param {Object} Extend
+     * @return {self} CallStack
+    */
+    function CallStack(router, extendObj){
+        this.stack = [];
+        this.router = router;
+        this.runCallback = true;
+        this.callbackRan = false;
+        this.propagateEvent = true;
+        this.value = router.path();
+
+        for(var key in extendObj){
+            this[key] = extendObj[key];
+        }
+
+        return this;
+    }
+    /**
+     * Build request parameters and allow them to be checked against a string (usually the current path)
+     *
+     * @param {String} Route
+     * @return {self} Request 
+    */
+    function Request(route){
+        this.route = route;
+        this.keys = [];
+        this.regex = Grapnel.regexRoute(route, this.keys);
+    }
+    /**
+     * Prevent a callback from being called
+     *
+     * @return {self} CallStack 
+    */
+    CallStack.prototype.preventDefault = function(){
+        this.runCallback = false;
+    }
+    /**
+     * Prevent any future callbacks from being called
+     *
+     * @return {self} CallStack 
+    */
+    CallStack.prototype.stopPropagation = function(){
+        this.propagateEvent = false;
+    }
+    /**
+     * Get parent state
+     *
+     * @return {Object} Previous state 
+    */
+    CallStack.prototype.parent = function(){
+        var hasParentEvents = !!(this.previousState && this.previousState.value && this.previousState.value == this.value);
+        return (hasParentEvents) ? this.previousState : false;
+    }
+    /**
+     * Run a callback (calls to next)
+     *
+     * @return {self} CallStack 
+    */
+    CallStack.prototype.callback = function(){
+        this.callbackRan = true;
+        this.timeStamp = Date.now();
+        this.next();
+    }
+    /**
+     * Add handler or middleware to the stack
+     *
+     * @param {Function|Array} Handler or a array of handlers
+     * @param {Int} Index to start inserting
+     * @return {self} CallStack 
+    */
+    CallStack.prototype.enqueue = function(handler, atIndex){
+        var handlers = (!Array.isArray(handler)) ? [handler] : ((atIndex < handler.length) ? handler.reverse() : handler);
+        
+        while(handlers.length){
+            this.stack.splice(atIndex || this.stack.length + 1, 0, handlers.shift());
+        }
+
+        return this;
+    }
+    /**
+     * Call to next item in stack -- this adds the `req`, `event`, and `next()` arguments to all middleware
+     *
+     * @return {self} CallStack 
+    */
+    CallStack.prototype.next = function(){
+        var self = this;
+
+        return this.stack.shift().call(this.router, this.req, this, function next(){
+            self.next.call(self);
+        });
+    }
+    /**
+     * Match a path string -- returns a request object if there is a match -- returns false otherwise
+     *
+     * @return {Object} req
+    */
+    Request.prototype.parse = function(path){
+        var match = path.match(this.regex),
+            self = this;
+
+        var req = { params : {}, keys : this.keys, matches : (match || []).slice(1), match : match };
+        // Build parameters
+        Grapnel._forEach(req.matches, function(value, i){
+            var key = (self.keys[i] && self.keys[i].name) ? self.keys[i].name : i;
+            // Parameter key will be its key or the iteration index. This is useful if a wildcard (*) is matched
+            req.params[key] = (value) ? decodeURIComponent(value) : undefined;
+        });
+
+        return req;
+    }
+
+    // Append utility constructors to Grapnel
+    Grapnel.CallStack = CallStack;
+    Grapnel.Request = Request;
 
     if('function' === typeof root.define && !root.define.amd.grapnel){
         root.define(function(require, exports, module){
