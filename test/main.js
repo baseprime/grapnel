@@ -46,7 +46,9 @@
             multiFnCalled = false,
             hashMultiFnCalled = false,
             defaultPreventedFnCalled = false,
-            onceTimesRan = 0;
+            onceTimesRan = 0,
+            routeHandlerContextIsSelf = false,
+            contextHandlerContextIsSelf = false;
 
         router.get('/settings/regexp/:named1/:named2/:named3/:not_required?', function(req, e){
             equal(req.params.named1, 'one');
@@ -116,6 +118,14 @@
             defaultPreventedFnCalled = true;
         });
 
+        router.get('/routes/context', function(){
+            routeHandlerContextIsSelf = (this === router);
+        });
+
+        router.context('/routes/context')('/context', function(){
+            contextHandlerContextIsSelf = (this === router);
+        });
+
         routerWithRoot.get('/testroot', function(req, e){
             equal(window.location.pathname, '/myroot/testroot');
         });
@@ -173,9 +183,9 @@
         test('hashChange router can use #! instead of #', function(){
             hashBangRouter.navigate('hashbang/test');
             equal(window.location.hash, '#!hashbang/test');
-            hashBangRouter.fragment.set('test2');
+            hashBangRouter.path('test2');
             equal(window.location.hash, '#!test2');
-            hashBangRouter.fragment.clear();
+            hashBangRouter.path(false);
             equal(window.location.hash, '#!');
         });
 
@@ -228,16 +238,29 @@
             equal(val, '5');
         });
 
+        test('Route handler is bound to router', function(){
+            router.navigate('/routes/context');
+            equal(routeHandlerContextIsSelf, true);
+            router.navigate('/routes/context/context');
+            equal(contextHandlerContextIsSelf, true);
+        });
+
         module('Middleware');
 
         test('Middleware is called', function(assert){
 
             var middleware = function(req, event, next){
+                console.log('mw1');
                 req.fn1 = true;
                 next();
             }
 
-            router.get('/middleware', middleware, function(req, event){
+            var middleware2 = function(req, event, next){
+                console.log('mw2');
+                next();
+            }
+
+            router.get('/middleware', middleware, middleware2, function(req, event){
                 equal(req.fn1, true);
             }).navigate('/middleware');
         });
@@ -317,8 +340,8 @@
         });
 
         QUnit.done(function(){
-            router.fragment.clear();
-            hashRouter.fragment.clear();
+            router.path(false);
+            hashRouter.path(false);
         });
     });
 
