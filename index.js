@@ -9,7 +9,7 @@
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
 
-var Grapnel = require('grapnel')
+var Grapnel = require('grapnel');
 
 function Server(){
     Grapnel.apply(this, arguments);
