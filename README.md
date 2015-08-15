@@ -69,6 +69,36 @@ app.get('/*', auth, function(req, res){
 });
 ```
 
+## Route Context
+
+You can add context to a route and even use it with middleware:
+
+```javascript
+var usersRoute = router.context('/user/:id', getUser, getFollowers); // Middleware can be used here
+
+usersRoute.get('/', function(req, res, next){
+    console.log('Profile', req.params.id);
+});
+
+usersRoute.get('/followers', otherMiddleware, function(req, res, next){ // Middleware can be used here too
+    console.log('Followers', req.params.id);
+});
+
+usersRoute.post('/', function(req, res, next){ // Middleware can be used here too
+    console.log('POSTED to /user/:id', req.params.id);
+});
+
+// GET /user/13589
+// => Profile 13589
+
+// GET /user/13589/followers
+// => Followers 13589
+
+// POST /user/13589
+// => PSOTED to 13589
+```
+
+
 ## Declaring Multiple Routes
 
 ```javascript
@@ -111,21 +141,6 @@ app.get(expression, function(req, res){
     // GET /food/tacos/good
     console.log('I think tacos are %s.', req.params[0]);
     // => "He thinks tacos are good."
-});
-```
-
-## Route Context
-
-You can even add context to a route:
-
-```javascript
-var app = require('grapnel-server');
-var foodRoute = app.context('/food');
-
-foodRoute(':foodname', function(req, res){
-    // GET /food/tacos
-    console.log(req.params.foodname);
-    // => This taco thing is getting out of hand.
 });
 ```
 
@@ -200,7 +215,7 @@ var routes = {
 
 # API Documentation
 
-##### `get`, `post`, `put`, `delete` (HTTP verbs) Adds a listeners and middleware for routes matching its respective HTTP verb
+##### `get`, `post`, `put`, `delete` (HTTP Method) Adds a listeners and middleware for routes matching its respective HTTP method
 ```javascript
 /**
  * @param {String|RegExp} path
@@ -231,6 +246,10 @@ app.delete('/store/:category/:id', function(req, res){
         id = req.params.id;
 
     console.log('DELETE Product #%s in %s', id, category);
+});
+
+app.any('/store/', function(req, res){
+    // This will be called with any HTTP method
 });
 ```
 
@@ -265,17 +284,32 @@ router.once('init', function(){
 app.trigger('event', eventArg1, eventArg2, etc);
 ```
 
-##### `context` Returns a function that can be called with a specific route in context
+##### `context` Returns a function that can be called with a specific route in context.
+Both the `router.context` method and the function it returns can accept middleware. Additionally, you can specify which HTTP method (GET, POST, PUT, DELETE) should be routed by the callback. Not specifying an HTTP method will assume GET.
+
+**Note: when calling `route.context`, you should omit the trailing slash.**
 ```javascript
 /**
- * @param {String} Route context
+ * @param {String} Route context (without trailing slash)
+ * @param {[Function]} Middleware (optional)
  * @return {Function} Adds route to context
 */
-var searchFn = app.context('/search');
+var usersRoute = router.context('/user/:id');
 
-searchFn(':keyword', function(req, res){
-    res.end(req.params.keyword, 200);
+usersRoute.post('/', function(req, res, next){
+    console.log('POSTED to', req.params.id);
 });
+
+// Not specifying an HTTP method assumes GET
+usersRoute('/followers', function(req, res, next){
+    console.log('Followers', req.params.id);
+});
+
+// GET /user/13589/followers
+// => Followers 13589
+
+// POST /user/13589
+// => Followers 13589
 ```
 
 ##### `bind` An alias of `on`
