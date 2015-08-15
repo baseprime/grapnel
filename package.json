@@ -1,13 +1,13 @@
 {
   "name": "grapnel-server",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Node.js Router Framework with Named Parameter & Middleware support",
   "main": "index.js",
   "scripts": {
     "test": "grunt"
   },
   "dependencies": {
-    "grapnel": "^0.5.9"
+    "grapnel": "^0.6.0"
   },
   "repository": {
     "type": "git",
