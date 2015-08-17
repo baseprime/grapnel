@@ -95,7 +95,7 @@ usersRoute.post('/', function(req, res, next){ // Middleware can be used here to
 // => Followers 13589
 
 // POST /user/13589
-// => PSOTED to 13589
+// => POSTED to 13589
 ```
 
 
