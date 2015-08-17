@@ -1,7 +1,7 @@
 Grapnel Server-Side Router Framework for Node.js
 ==========
 
-#### Quick and Drity JavaScript Router for Node.js with Named Parameters and Middleware support.
+#### Simple JavaScript Router for Node.js with Named Parameters and Middleware support.
 
 ## Download/Installation
 
