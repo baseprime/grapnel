@@ -289,7 +289,7 @@
      * @return {self} CallStack
     */
     function CallStack(router, extendObj){
-        this.stack = [];
+        this.stack = CallStack.constructor.globalStack.slice(0);
         this.router = router;
         this.runCallback = true;
         this.callbackRan = false;
@@ -313,6 +313,8 @@
         this.keys = [];
         this.regex = Grapnel.regexRoute(route, this.keys);
     }
+    // This allows global middleware
+    CallStack.constructor.globalStack = [];
     /**
      * Prevent a callback from being called
      *
