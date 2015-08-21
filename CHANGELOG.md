@@ -1,5 +1,11 @@
 ## Changelog
 
+##### 0.6.1
+CallStack now allows global middleware
+
+* CallStack: Allow middleware to inherit a global stack
+* Added tests
+
 ##### 0.6.0
 Various changes to enable more functionality but at a cost to library size. Many changes were made because they made sense to the longevity of the project, as library size doesn't seem to be a huge deciding factor for developers who use it.
 

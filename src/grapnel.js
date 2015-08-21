@@ -4,7 +4,7 @@
  *
  * @author Greg Sabia Tucker <greg@artificer.io>
  * @link http://artificer.io
- * @version 0.6.0
+ * @version 0.6.1
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -20,7 +20,7 @@
         this.options = opts || {}; // Options
         this.options.env = this.options.env || (!!(Object.keys(root).length === 0 && process && process.browser !== true) ? 'server' : 'client');
         this.options.mode = this.options.mode || (!!(this.options.env !== 'server' && this.options.pushState && root.history && root.history.pushState) ? 'pushState' : 'hashchange');
-        this.version = '0.6.0'; // Version
+        this.version = '0.6.1'; // Version
 
         if('function' === typeof root.addEventListener){
             root.addEventListener('hashchange', function(){
@@ -289,7 +289,7 @@
      * @return {self} CallStack
     */
     function CallStack(router, extendObj){
-        this.stack = [];
+        this.stack = CallStack.constructor.globalStack.slice(0);
         this.router = router;
         this.runCallback = true;
         this.callbackRan = false;
@@ -313,6 +313,8 @@
         this.keys = [];
         this.regex = Grapnel.regexRoute(route, this.keys);
     }
+    // This allows global middleware
+    CallStack.constructor.globalStack = [];
     /**
      * Prevent a callback from being called
      *

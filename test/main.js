@@ -298,6 +298,24 @@
             }, 500);
         });
 
+        test('Global middleware works correctly', function(){
+
+            var gmsTimesRan = 0;
+
+            Grapnel.CallStack.constructor.globalStack.push(function(req, e, next){
+                gmsTimesRan++;
+                next();
+            });
+
+            router.get('/middleware/global/test', function(req, e){
+                gmsTimesRan++;
+            });
+
+            router.navigate('/middleware/global/test');
+
+            equal(gmsTimesRan, 2);
+        });
+
         test('Context route accepts middleware', function(assert){
 
             var timesRan = 0,
