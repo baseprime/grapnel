@@ -189,24 +189,15 @@ app.get('/products/widgets', function(req, res){
 ```
 
 ## 404 Pages
-You can specify a route that only uses a wildcard `*` as your final route, then use `req.event.parent()` which returns `false` if the call stack doesn't have any other routes to run.
+You can specify a route that only uses a wildcard `*` as your **final route**, then use `req.event.parent()` which returns `false` if the call stack didn't run any route handlers.
 ```javascript
-var routes = {
-    '/' : function(req, res){
-        // Handle route
-    },
-    '/store/products/:id' : function(req, res){
-        // Handle route
-    },
-    '/category/:id' : function(req, res){
-        // Handle route
-    },
-    '/*' : function(req, res){
-        if(!req.event.parent()){
-            // Handle 404
-        }
+// This should be your last route
+app.all('*', function(req, res){
+    if(!this.state.parent()){
+        res.writeHead(404);
+        res.end('404');
     }
-}
+});
 ```
 
 &nbsp;
