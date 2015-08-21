@@ -239,7 +239,7 @@ app.delete('/store/:category/:id', function(req, res){
     console.log('DELETE Product #%s in %s', id, category);
 });
 
-app.any('/store/', function(req, res){
+app.all('/store/', function(req, res){
     // This will be called with any HTTP method
 });
 ```
