@@ -309,6 +309,7 @@ usersRoute('/followers', function(req, res, next){
 * `router.path('string')` Sets a new path or hash
 * `router.path()` Gets path or hash
 * `router.path(false)` Clears the path or hash
+
 ##### `fragment` (Deprecated)
 
 ## Events
