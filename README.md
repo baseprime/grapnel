@@ -125,7 +125,7 @@ var app = require('grapnel-server');
 
 app.on('navigate', function(){
     // GET /foo/bar
-    console.log('URL changed to %s', this.fragment.get());
+    console.log('URL changed to %s', this.path());
     // => URL changed to /foo/bar
 });
 ```
@@ -305,10 +305,11 @@ usersRoute('/followers', function(req, res, next){
 
 ##### `bind` An alias of `on`
 ##### `add` An alias of `get`
-##### `fragment`
-* `set` Sets a new absolute path
-* `get` Get absolute path
-* `clear` Clears the path
+##### `path`
+* `router.path('string')` Sets a new path or hash
+* `router.path()` Gets path or hash
+* `router.path(false)` Clears the path or hash
+##### `fragment` (Deprecated)
 
 ## Events
 * `navigate` Fires when http module initializes a new request
