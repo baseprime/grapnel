@@ -1,6 +1,6 @@
 {
   "name": "grapnel",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "The smallest JavaScript Router with PushState & Named Parameter support",
   "main": "src/grapnel.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/EngineeringMode/Grapnel.js.git"
+    "url": "https://github.com/bytecipher/grapnel.git"
   },
   "keywords": [
     "grapnel",
@@ -28,11 +28,11 @@
     "pushState",
     "api"
   ],
-  "author": "Greg Sabia Tucker <greg@artificer.io>",
-  "link": "http://artificer.io",
+  "author": "Greg Sabia Tucker <greg@bytecipher.io>",
+  "link": "http://bytecipher.io",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/EngineeringMode/Grapnel.js/issues"
+    "url": "https://github.com/bytecipher/grapnel/issues"
   },
   "homepage": "http://grapnel.js.org",
   "devDependencies": {

@@ -5,8 +5,8 @@ module.exports = function(grunt){
         pkg: grunt.file.readJSON('package.json'),
         info : {
             banner : "/****\n"+
-                    " * Grapnel.js\n"+
-                    " * https://github.com/EngineeringMode/Grapnel.js\n"+
+                    " * Grapnel\n"+
+                    " * https://github.com/bytecipher/grapnel\n"+
                     " *\n"+
                     " * @author <%= pkg.author %>\n"+
                     " * @link <%= pkg.link %>\n"+

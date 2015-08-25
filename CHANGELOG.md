@@ -1,7 +1,7 @@
 ## Changelog
 
 ##### 0.6.1
-CallStack now allows global middleware
+* CallStack now allows global middleware
 
 * CallStack: Allow middleware to inherit a global stack
 * Added tests

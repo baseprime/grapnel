@@ -1,4 +1,4 @@
-Grapnel.js
+Grapnel
 ==========
 
 #### The smallest (1100 bytes gzipped!) Client/Server-Side JavaScript Router with Named Parameters, HTML5 pushState, and Middleware support.
@@ -7,8 +7,8 @@ Grapnel.js
 
 **Download Source:**
 
-- [Production](https://raw.githubusercontent.com/EngineeringMode/Grapnel.js/master/dist/grapnel.min.js)
-- [Development](https://raw.githubusercontent.com/EngineeringMode/Grapnel.js/master/src/grapnel.js)
+- [Production](https://raw.githubusercontent.com/bytecipher/grapnel/master/dist/grapnel.min.js)
+- [Development](https://raw.githubusercontent.com/bytecipher/grapnel/master/src/grapnel.js)
 
 **Install with npm**
 ```bash
@@ -18,12 +18,12 @@ npm install grapnel
 ```bash
 bower install grapnel
 ```
-**Server only:** (with HTTP methods added, [more info](https://github.com/EngineeringMode/Grapnel.js/tree/server-router))
+**Server only:** (with HTTP methods added, [more info](https://github.com/bytecipher/grapnel/tree/server-router))
 ```bash
 npm install grapnel-server
 ```
 
-# Grapnel.js Features
+# Grapnel Features
 
 - Supports routing using `pushState` or `hashchange` concurrently
 - Supports Named Parameters similar to Sinatra, Restify, and Express
@@ -67,7 +67,7 @@ router.navigate('/products/widgets/134');
 
 ## Named Parameters
 
-Grapnel.js supports regex style routes similar to Sinatra, Restify, and Express. The properties are mapped to the parameters in the request.
+Grapnel supports regex style routes similar to Sinatra, Restify, and Express. The properties are mapped to the parameters in the request.
 ```javascript
 router.get('products/:id?', function(req){
     // GET /file.html#products/134
@@ -83,7 +83,7 @@ router.get('products/*', function(req){
 
 ## Middleware Support
 
-Grapnel.js also supports middleware:
+Grapnel also supports middleware:
 
 ```javascript
 var auth = function(req, event, next){
@@ -122,7 +122,7 @@ router.navigate('/user/13589/followers');
 
 ## Works as a server-side router
 
-**This is now simplified as a separate package** ([more info](https://github.com/EngineeringMode/Grapnel.js/tree/server-router))
+**This is now simplified as a separate package** ([more info](https://github.com/bytecipher/bytecipher/tree/server-router))
 ```bash
 npm install grapnel-server
 ```
@@ -168,7 +168,7 @@ router.on('navigate', function(event){
 
 ## RegExp Support
 
-Grapnel.js allows RegEx when defining a route:
+Grapnel allows RegEx when defining a route:
 
 ```javascript
 var expression = /^food\/tacos\/(.*)$/i;
@@ -335,7 +335,7 @@ router.navigate('/products/123');
  * @param {Function} callback
 */
 router.on('myevent', function(event){
-    console.log('Grapnel.js works!');
+    console.log('Grapnel works!');
 });
 ```
 
