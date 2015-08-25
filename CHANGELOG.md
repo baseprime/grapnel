@@ -1,5 +1,10 @@
 ## Changelog
 
+##### 0.6.2
+* Singular code style now enforced (bracket styles, line endings, etc.)
+* Changes to repo name (now Grapnel instead of Grapnel.js)
+* Wrapper function should be evaluated as expression
+
 ##### 0.6.1
 CallStack now allows global middleware
 
