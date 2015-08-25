@@ -1,6 +1,6 @@
 {
   "name": "grapnel-server",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Node.js Router Framework with Named Parameter & Middleware support",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/EngineeringMode/Grapnel.js.git"
+    "url": "https://github.com/bytecipher/grapnel.git"
   },
   "keywords": [
     "grapnel",
@@ -23,11 +23,11 @@
     "express",
     "api"
   ],
-  "author": "Greg Sabia Tucker <greg@artificer.io>",
-  "link": "http://artificer.io",
+  "author": "Greg Sabia Tucker <greg@bytecipher.io>",
+  "link": "http://bytecipher.io",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/EngineeringMode/Grapnel.js/issues"
+    "url": "https://github.com/bytecipher/grapnel/issues"
   },
   "homepage": "http://grapnel.js.org",
   "devDependencies": {
