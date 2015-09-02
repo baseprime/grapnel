@@ -7,7 +7,7 @@
  * @version 0.6.2
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
-*/
+ */
 
 !(function(root) {
 
@@ -96,39 +96,39 @@
             request = new Request(route);
 
         var invoke = function RouteHandler() {
-                // Build request parameters
-                var req = request.parse(self.path());
-                // Check if matches are found
-                if (req.match) {
-                    // Match found
-                    var extra = {
-                        route: route,
-                        params: req.params,
-                        req: req,
-                        regex: req.match
-                    };
-                    // Create call stack -- add middleware first, then handler
-                    var stack = new CallStack(self, extra).enqueue(middleware.concat(handler));
-                    // Trigger main event
-                    self.trigger('match', stack, req);
-                    // Continue?
-                    if (!stack.runCallback) return self;
-                    // Previous state becomes current state
-                    stack.previousState = self.state;
-                    // Save new state
-                    self.state = stack;
-                    // Prevent this handler from being called if parent handler in stack has instructed not to propagate any more events
-                    if (stack.parent() && stack.parent().propagateEvent === false) {
-                        stack.propagateEvent = false;
-                        return self;
-                    }
-                    // Call handler
-                    stack.callback();
+            // Build request parameters
+            var req = request.parse(self.path());
+            // Check if matches are found
+            if (req.match) {
+                // Match found
+                var extra = {
+                    route: route,
+                    params: req.params,
+                    req: req,
+                    regex: req.match
+                };
+                // Create call stack -- add middleware first, then handler
+                var stack = new CallStack(self, extra).enqueue(middleware.concat(handler));
+                // Trigger main event
+                self.trigger('match', stack, req);
+                // Continue?
+                if (!stack.runCallback) return self;
+                // Previous state becomes current state
+                stack.previousState = self.state;
+                // Save new state
+                self.state = stack;
+                // Prevent this handler from being called if parent handler in stack has instructed not to propagate any more events
+                if (stack.parent() && stack.parent().propagateEvent === false) {
+                    stack.propagateEvent = false;
+                    return self;
                 }
-                // Returns self
-                return self;
+                // Call handler
+                stack.callback();
             }
-            // Event name
+            // Returns self
+            return self;
+        };
+        // Event name
         var eventName = (self.options.mode !== 'pushState' && self.options.env !== 'server') ? 'hashchange' : 'navigate';
         // Invoke when route is defined, and once again when app navigates
         return invoke().on(eventName, invoke);
