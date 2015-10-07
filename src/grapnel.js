@@ -240,9 +240,10 @@
         } else if ('undefined' === typeof pathname) {
             // Get path
             if (self.options.mode === 'pushState') {
-                frag = root.location.pathname.replace(self.options.root, '');
+                frag = root.location.pathname.replace(self.options.root, '') + root.location.search;
             } else if (self.options.mode !== 'pushState' && root.location) {
                 frag = (root.location.hash) ? root.location.hash.split((self.options.hashBang ? '#!' : '#'))[1] : '';
+                frag += root.location.search;
             } else {
                 frag = root._pathname || '';
             }
@@ -309,7 +310,7 @@
      * Build request parameters and allow them to be checked against a string (usually the current path)
      *
      * @param {String} Route
-     * @return {self} Request 
+     * @return {self} Request
      */
     function Request(route) {
         this.route = route;
@@ -321,7 +322,7 @@
     /**
      * Prevent a callback from being called
      *
-     * @return {self} CallStack 
+     * @return {self} CallStack
      */
     CallStack.prototype.preventDefault = function() {
         this.runCallback = false;
@@ -329,7 +330,7 @@
     /**
      * Prevent any future callbacks from being called
      *
-     * @return {self} CallStack 
+     * @return {self} CallStack
      */
     CallStack.prototype.stopPropagation = function() {
         this.propagateEvent = false;
@@ -337,7 +338,7 @@
     /**
      * Get parent state
      *
-     * @return {Object} Previous state 
+     * @return {Object} Previous state
      */
     CallStack.prototype.parent = function() {
         var hasParentEvents = !!(this.previousState && this.previousState.value && this.previousState.value == this.value);
@@ -346,7 +347,7 @@
     /**
      * Run a callback (calls to next)
      *
-     * @return {self} CallStack 
+     * @return {self} CallStack
      */
     CallStack.prototype.callback = function() {
         this.callbackRan = true;
@@ -358,7 +359,7 @@
      *
      * @param {Function|Array} Handler or a array of handlers
      * @param {Int} Index to start inserting
-     * @return {self} CallStack 
+     * @return {self} CallStack
      */
     CallStack.prototype.enqueue = function(handler, atIndex) {
         var handlers = (!Array.isArray(handler)) ? [handler] : ((atIndex < handler.length) ? handler.reverse() : handler);
@@ -372,7 +373,7 @@
     /**
      * Call to next item in stack -- this adds the `req`, `event`, and `next()` arguments to all middleware
      *
-     * @return {self} CallStack 
+     * @return {self} CallStack
      */
     CallStack.prototype.next = function() {
         var self = this;
@@ -387,6 +388,11 @@
      * @return {Object} req
      */
     Request.prototype.parse = function(path) {
+        var result = /\?([\w-]+(=[\w-]*)?(&[\w-]+(=[\w-]*)?)*)?$/.exec(path);
+        if (result) {
+          var queryString = path.substr(result.index + 1);
+          path = path.substr(0,result.index);
+        }
         var match = path.match(this.regex),
             self = this;
 
@@ -394,7 +400,8 @@
             params: {},
             keys: this.keys,
             matches: (match || []).slice(1),
-            match: match
+            match: match,
+            query:{}
         };
         // Build parameters
         Grapnel._forEach(req.matches, function(value, i) {
@@ -402,7 +409,14 @@
             // Parameter key will be its key or the iteration index. This is useful if a wildcard (*) is matched
             req.params[key] = (value) ? decodeURIComponent(value) : undefined;
         });
-
+        // Build query string
+        if (queryString) {
+            var queryParams = queryString.split('&');
+            Grapnel._forEach(queryParams,function(tuple) {
+                var pair=tuple.split('=');
+                req.query[pair[0]] = (pair.length > 1) ? pair[1] : null;
+            });
+        }
         return req;
     };
 
