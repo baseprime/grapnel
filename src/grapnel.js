@@ -4,7 +4,7 @@
  *
  * @author Greg Sabia Tucker <greg@bytecipher.io>
  * @link http://bytecipher.io
- * @version 0.6.2
+ * @version 0.6.3
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -20,7 +20,7 @@
         this.options = opts || {}; // Options
         this.options.env = this.options.env || (!!(Object.keys(root).length === 0 && process && process.browser !== true) ? 'server' : 'client');
         this.options.mode = this.options.mode || (!!(this.options.env !== 'server' && this.options.pushState && root.history && root.history.pushState) ? 'pushState' : 'hashchange');
-        this.version = '0.6.2'; // Version
+        this.version = '0.6.3'; // Version
 
         if ('function' === typeof root.addEventListener) {
             root.addEventListener('hashchange', function() {
@@ -96,39 +96,39 @@
             request = new Request(route);
 
         var invoke = function RouteHandler() {
-                // Build request parameters
-                var req = request.parse(self.path());
-                // Check if matches are found
-                if (req.match) {
-                    // Match found
-                    var extra = {
-                        route: route,
-                        params: req.params,
-                        req: req,
-                        regex: req.match
-                    };
-                    // Create call stack -- add middleware first, then handler
-                    var stack = new CallStack(self, extra).enqueue(middleware.concat(handler));
-                    // Trigger main event
-                    self.trigger('match', stack, req);
-                    // Continue?
-                    if (!stack.runCallback) return self;
-                    // Previous state becomes current state
-                    stack.previousState = self.state;
-                    // Save new state
-                    self.state = stack;
-                    // Prevent this handler from being called if parent handler in stack has instructed not to propagate any more events
-                    if (stack.parent() && stack.parent().propagateEvent === false) {
-                        stack.propagateEvent = false;
-                        return self;
-                    }
-                    // Call handler
-                    stack.callback();
+            // Build request parameters
+            var req = request.parse(self.path());
+            // Check if matches are found
+            if (req.match) {
+                // Match found
+                var extra = {
+                    route: route,
+                    params: req.params,
+                    req: req,
+                    regex: req.match
+                };
+                // Create call stack -- add middleware first, then handler
+                var stack = new CallStack(self, extra).enqueue(middleware.concat(handler));
+                // Trigger main event
+                self.trigger('match', stack, req);
+                // Continue?
+                if (!stack.runCallback) return self;
+                // Previous state becomes current state
+                stack.previousState = self.state;
+                // Save new state
+                self.state = stack;
+                // Prevent this handler from being called if parent handler in stack has instructed not to propagate any more events
+                if (stack.parent() && stack.parent().propagateEvent === false) {
+                    stack.propagateEvent = false;
+                    return self;
                 }
-                // Returns self
-                return self;
+                // Call handler
+                stack.callback();
             }
-            // Event name
+            // Returns self
+            return self;
+        };
+        // Event name
         var eventName = (self.options.mode !== 'pushState' && self.options.env !== 'server') ? 'hashchange' : 'navigate';
         // Invoke when route is defined, and once again when app navigates
         return invoke().on(eventName, invoke);
@@ -292,7 +292,7 @@
      * @return {self} CallStack
      */
     function CallStack(router, extendObj) {
-        this.stack = CallStack.constructor.globalStack.slice(0);
+        this.stack = CallStack.global.slice(0);
         this.router = router;
         this.runCallback = true;
         this.callbackRan = false;
@@ -317,7 +317,7 @@
         this.regex = Grapnel.regexRoute(route, this.keys);
     };
     // This allows global middleware
-    CallStack.constructor.globalStack = [];
+    CallStack.global = [];
     /**
      * Prevent a callback from being called
      *
