@@ -103,9 +103,13 @@ function serverMiddleware(req, res, router) {
         req.event = event;
         // Override next -- this is the same as default event.next() functionality except the arguments are now `req`, `res`, and `next()`
         req.event.next = function() {
-            return event.stack.shift().call(router, req, res, function() {
-                event.next.call(event);
-            });
+            var firstMiddleware = event.stack.shift();
+
+            if (firstMiddleware) {
+                return firstMiddleware.call(router, req, res, function() {
+                    event.next.call(event);
+                });
+            }
         }
 
         next();
