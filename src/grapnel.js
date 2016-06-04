@@ -379,9 +379,9 @@
             firstMiddleware = this.stack.shift();
 
         if (firstMiddleware) {
-          return firstMiddleware.call(this.router, this.req, this, function next() {
-              self.next.call(self);
-          });
+            return firstMiddleware.call(this.router, this.req, this, function next() {
+                self.next.call(self);
+            });
         }
     };
     /**
