@@ -375,11 +375,14 @@
      * @return {self} CallStack 
      */
     CallStack.prototype.next = function() {
-        var self = this;
+        var self = this,
+            firstMiddleware = this.stack.shift();
 
-        return this.stack.shift().call(this.router, this.req, this, function next() {
-            self.next.call(self);
-        });
+        if (firstMiddleware) {
+            return firstMiddleware.call(this.router, this.req, this, function next() {
+                self.next.call(self);
+            });
+        }
     };
     /**
      * Match a path string -- returns a request object if there is a match -- returns false otherwise
