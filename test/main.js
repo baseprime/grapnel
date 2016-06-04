@@ -308,6 +308,29 @@
             }, 500);
         });
 
+        test('next() can be called from the last middleware', function(assert) {
+
+            var done = assert.async(),
+                testObj = {},
+                lastInStackCalled = false;
+
+            var fn1 = function(req, event, next) {
+                testObj.fn1 = true;
+                next();
+            }
+
+            router.get('/middleware/next', fn1, function(req, event, next) {
+                next();
+                lastInStackCalled = true;
+            }).navigate('/middleware/next');
+
+            setTimeout(function() {
+                equal(testObj.fn1, true);
+                equal(lastInStackCalled, true);
+                done();
+            }, 500);
+        });
+
         test('Global middleware works correctly', function() {
 
             var gmsTimesRan = 0;
