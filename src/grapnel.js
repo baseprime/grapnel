@@ -227,13 +227,13 @@
 
         if ('string' === typeof pathname) {
             // Set path
+            frag = (self.options.root) ? (self.options.root + pathname) : pathname;
             if (self.options.mode === 'pushState') {
-                frag = (self.options.root) ? (self.options.root + pathname) : pathname;
                 root.history.pushState({}, null, frag);
             } else if (root.location) {
                 root.location.hash = (self.options.hashBang ? '!' : '') + pathname;
             } else {
-                root._pathname = pathname || '';
+                root._pathname = frag || '';
             }
 
             return this;
@@ -244,7 +244,7 @@
             } else if (self.options.mode !== 'pushState' && root.location) {
                 frag = (root.location.hash) ? root.location.hash.split((self.options.hashBang ? '#!' : '#'))[1] : '';
             } else {
-                frag = root._pathname || '';
+                frag = root._pathname ? root._pathname.replace(self.options.root, '') : '';
             }
 
             return frag;
