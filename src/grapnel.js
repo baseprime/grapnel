@@ -16,9 +16,10 @@
 
         var self = this; // Scope reference
         this.events = {}; // Event Listeners
+        this.rootStack = []; // Stack of middlewares that will be applied for all pages
         this.state = null; // Router state object
         this.options = opts || {}; // Options
-        this.options.env = this.options.env || (!!(Object.keys(root).length === 0 && process && process.browser !== true) ? 'server' : 'client');
+        this.options.env = this.options.env || typeof window !== 'undefined' && window === root && window.document ? 'client' : 'server';
         this.options.mode = this.options.mode || (!!(this.options.env !== 'server' && this.options.pushState && root.history && root.history.pushState) ? 'pushState' : 'hashchange');
         this.version = '0.6.3'; // Version
 
@@ -292,7 +293,7 @@
      * @return {self} CallStack
      */
     function CallStack(router, extendObj) {
-        this.stack = CallStack.global.slice(0);
+        this.stack = CallStack.global.concat(router.rootStack);
         this.router = router;
         this.runCallback = true;
         this.callbackRan = false;
