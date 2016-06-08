@@ -71,7 +71,7 @@ Server.prototype.start = function() {
     // Return server middleware to HTTP createServer()
     return function(req, res) {
         // For every inbound request, we want to map node's req and res to middleware
-        Grapnel.CallStack.global = [serverMiddleware(req, res, router)];
+        router.rootStack = [serverMiddleware(req, res, router)];
         // Finally, navigate router
         router.navigate(req.url);
     }
