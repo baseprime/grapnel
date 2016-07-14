@@ -1,10 +1,10 @@
 /****
  * Grapnel
- * https://github.com/bytecipher/grapnel
+ * https://github.com/baseprime/grapnel
  *
- * @author Greg Sabia Tucker <greg@bytecipher.io>
- * @link http://bytecipher.io
- * @version 0.6.3
+ * @author Greg Sabia Tucker <greg@narrowlabs.com>
+ * @link http://basepri.me
+ * @version 0.6.4
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
@@ -20,7 +20,7 @@
         this.options = opts || {}; // Options
         this.options.env = this.options.env || (!!(Object.keys(root).length === 0 && process && process.browser !== true) ? 'server' : 'client');
         this.options.mode = this.options.mode || (!!(this.options.env !== 'server' && this.options.pushState && root.history && root.history.pushState) ? 'pushState' : 'hashchange');
-        this.version = '0.6.3'; // Version
+        this.version = '0.6.4'; // Version
 
         if ('function' === typeof root.addEventListener) {
             root.addEventListener('hashchange', function() {
