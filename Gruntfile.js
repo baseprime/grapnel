@@ -6,7 +6,7 @@ module.exports = function(grunt){
         info : {
             banner : "/****\n"+
                     " * Grapnel\n"+
-                    " * https://github.com/bytecipher/grapnel\n"+
+                    " * https://github.com/baseprime/grapnel\n"+
                     " *\n"+
                     " * @author <%= pkg.author %>\n"+
                     " * @link <%= pkg.link %>\n"+
