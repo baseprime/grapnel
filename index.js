@@ -1,10 +1,10 @@
 /****
  * Grapnel Server
- * https://github.com/bytecipher/grapnel/tree/server-router
+ * https://github.com/baseprime/grapnel/tree/server-router
  *
- * @author Greg Sabia Tucker <greg@bytecipher.io>
- * @link http://bytecipher.io
- * @version 0.2.2
+ * @author Greg Sabia Tucker <greg@narrowlabs.com>
+ * @link http://basepri.me
+ * @version 0.2.3
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
