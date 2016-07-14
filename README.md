@@ -7,8 +7,8 @@ Grapnel
 
 **Download Source:**
 
-- [Production](https://raw.githubusercontent.com/bytecipher/grapnel/master/dist/grapnel.min.js)
-- [Development](https://raw.githubusercontent.com/bytecipher/grapnel/master/src/grapnel.js)
+- [Production](https://raw.githubusercontent.com/baseprime/grapnel/master/dist/grapnel.min.js)
+- [Development](https://raw.githubusercontent.com/baseprime/grapnel/master/src/grapnel.js)
 
 **Install with npm**
 ```bash
@@ -18,7 +18,7 @@ npm install grapnel
 ```bash
 bower install grapnel
 ```
-**Server only:** (with HTTP methods added, [more info](https://github.com/bytecipher/grapnel/tree/server-router))
+**Server only:** (with HTTP methods added, [more info](https://github.com/baseprime/grapnel/tree/server-router))
 ```bash
 npm install grapnel-server
 ```
@@ -122,7 +122,7 @@ router.navigate('/user/13589/followers');
 
 ## Works as a server-side router
 
-**This is now simplified as a separate package** ([more info](https://github.com/bytecipher/bytecipher/tree/server-router))
+**This is now simplified as a separate package** ([more info](https://github.com/baseprime/grapnel/tree/server-router))
 ```bash
 npm install grapnel-server
 ```
