@@ -4,7 +4,6 @@
  *
  * @author Greg Sabia Tucker <greg@narrowlabs.com>
  * @link http://basepri.me
- * @version 0.6.4
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
