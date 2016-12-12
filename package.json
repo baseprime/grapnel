@@ -4,7 +4,8 @@
   "description": "The smallest JavaScript Router with PushState & Named Parameter support",
   "main": "src/grapnel.js",
   "scripts": {
-    "test": "pushd ./test; python -m SimpleHTTPServer 3002; popd"
+    "test": "grunt",
+    "serve-tests": "grunt serve-tests"
   },
   "repository": {
     "type": "git",
@@ -36,9 +37,10 @@
   },
   "homepage": "http://grapnel.js.org",
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-concat": "^0.5.0",
-    "grunt-contrib-qunit": "^0.5.2",
-    "grunt-contrib-uglify": "^0.7.0"
+    "grunt": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-connect": "^1.0.2",
+    "grunt-contrib-qunit": "^1.2.0",
+    "grunt-contrib-uglify": "^2.0.0"
   }
 }
