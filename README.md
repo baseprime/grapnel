@@ -197,6 +197,12 @@ require(['lib/grapnel'], function(Grapnel){
 });
 ```
 
+## Silent
+Enable silent mode to prevent Grapnel from modifying browser history and window.location: 
+```javascript
+var router = new Grapnel({ mode : 'silent' });
+```
+
 &nbsp;
 
 ***

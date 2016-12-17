@@ -229,6 +229,8 @@
             if (self.options.mode === 'pushState') {
                 frag = (self.options.root) ? (self.options.root + pathname) : pathname;
                 root.history.pushState({}, null, frag);
+            } else if (self.options.mode == 'silent') {
+                frag = (self.options.root) ? (self.options.root + pathname) : pathname;
             } else if (root.location) {
                 root.location.hash = (self.options.hashBang ? '!' : '') + pathname;
             } else {
@@ -238,7 +240,7 @@
             return this;
         } else if ('undefined' === typeof pathname) {
             // Get path
-            if (self.options.mode === 'pushState') {
+            if (self.options.mode === 'pushState' || self.options.mode === 'silent') {
                 frag = root.location.pathname.replace(self.options.root, '');
             } else if (self.options.mode !== 'pushState' && root.location) {
                 frag = (root.location.hash) ? root.location.hash.split((self.options.hashBang ? '#!' : '#'))[1] : '';
