@@ -15,9 +15,10 @@
 
         var self = this; // Scope reference
         this.events = {}; // Event Listeners
+        this.rootStack = []; // Stack of middlewares that will be applied for all pages
         this.state = null; // Router state object
         this.options = opts || {}; // Options
-        this.options.env = this.options.env || (!!(Object.keys(root).length === 0 && process && process.browser !== true) ? 'server' : 'client');
+        this.options.env = this.options.env || typeof window !== 'undefined' && window === root && window.document ? 'client' : 'server';
         this.options.mode = this.options.mode || (!!(this.options.env !== 'server' && this.options.pushState && root.history && root.history.pushState) ? 'pushState' : 'hashchange');
         this.version = '0.6.4'; // Version
 
@@ -226,13 +227,13 @@
 
         if ('string' === typeof pathname) {
             // Set path
+            frag = (self.options.root) ? (self.options.root + pathname) : pathname;
             if (self.options.mode === 'pushState') {
-                frag = (self.options.root) ? (self.options.root + pathname) : pathname;
                 root.history.pushState({}, null, frag);
             } else if (root.location) {
                 root.location.hash = (self.options.hashBang ? '!' : '') + pathname;
             } else {
-                root._pathname = pathname || '';
+                root._pathname = frag || '';
             }
 
             return this;
@@ -243,7 +244,7 @@
             } else if (self.options.mode !== 'pushState' && root.location) {
                 frag = (root.location.hash) ? root.location.hash.split((self.options.hashBang ? '#!' : '#'))[1] : '';
             } else {
-                frag = root._pathname || '';
+                frag = root._pathname ? root._pathname.replace(self.options.root, '') : '';
             }
 
             return frag;
@@ -291,7 +292,7 @@
      * @return {self} CallStack
      */
     function CallStack(router, extendObj) {
-        this.stack = CallStack.global.slice(0);
+        this.stack = CallStack.global.concat(router.rootStack);
         this.router = router;
         this.runCallback = true;
         this.callbackRan = false;
