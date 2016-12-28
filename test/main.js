@@ -2,43 +2,33 @@ QUnit.config.autostart = false;
 
 ;(function() {
 
-    QUnit.start()
+    QUnit.start();
 
+    var initPath = window.location.pathname;
     var router = new Grapnel({ pushState: true });
     var hashRouter = new Grapnel();
     var routerWithRoot = new Grapnel({ pushState: true, root: '/myroot' });
     var hashBangRouter = new Grapnel({ hashBang: true });
 
-    module('Initialization');
+    console.log(Grapnel)
 
-    test('Grapnel initializes', function() {
+    QUnit.module('Initialization');
+
+    QUnit.test('Grapnel initializes', function() {
         ok(router);
         ok(hashRouter);
         ok(routerWithRoot);
         ok(hashBangRouter);
     });
 
-    test('Loads into globals', function(assert) {
-        var done = assert.async();
-
-        $(function() {
-            $(document.createElement('script')).attr({
-                type: 'text/javascript',
-                src: './grapnel.js'
-            }).appendTo('body');
-            ok('function' === typeof window.Grapnel);
-            done();
-        });
+    QUnit.test('Environment is correct', function() {
+        ok(router.options.env === 'client' && router.options.pushState === true);
+        ok(hashRouter.options.env === 'client' && hashRouter.options.pushState === false);
+        ok(routerWithRoot.options.env === 'client' && routerWithRoot.options.pushState === true);
+        ok(hashBangRouter.options.env === 'client' && hashBangRouter.options.pushState === false);
     });
 
-    test('Environment is correct', function() {
-        ok(router.options.env === 'client' && router.options.mode === 'pushState');
-        ok(hashRouter.options.env === 'client' && hashRouter.options.mode === 'hashchange');
-        ok(routerWithRoot.options.env === 'client' && routerWithRoot.options.mode === 'pushState');
-        ok(hashBangRouter.options.env === 'client' && hashBangRouter.options.mode === 'hashchange');
-    });
-
-    module('Routes');
+    QUnit.module('Routes');
 
     // Detect if second /multi/cancel handler is being called
     var paramNotRequired,
@@ -130,15 +120,15 @@ QUnit.config.autostart = false;
         equal(window.location.pathname, '/myroot/testroot');
     });
 
-    router.bind('myevent', function() {
+    router.on('myevent', function() {
         ok(true);
     });
 
-    router.bind('myotherevent', function(obj) {
+    router.on('myotherevent', function(obj) {
         ok(obj.test);
     });
 
-    test('Named parameters functions correctly', function(assert) {
+    QUnit.test('Named parameters functions correctly', function(assert) {
         var done = assert.async();
         router.navigate('/settings/regexp/one/two/three');
         setTimeout(function() {
@@ -152,35 +142,35 @@ QUnit.config.autostart = false;
         }, 30);
     });
 
-    test('Multiple routes can be called', function() {
+    QUnit.test('Multiple routes can be called', function() {
         router.navigate('/multi');
     });
 
-    test('Prevent propagation (pushState)', function(assert) {
+    QUnit.test('Prevent propagation (pushState)', function(assert) {
         router.navigate('/multi/cancel');
         equal(multiFnCalled, false);
     });
 
-    test('Prevent propagation (hashChange)', function(assert) {
+    QUnit.test('Prevent propagation (hashChange)', function(assert) {
         hashRouter.navigate('/multi/cancel');
         equal(hashMultiFnCalled, false);
     });
 
-    test('Prevent default handler', function(assert) {
+    QUnit.test('Prevent default handler', function(assert) {
         router.navigate('/default/prevent');
         equal(defaultPreventedFnCalled, false);
     });
 
-    test('Router only fires handler once', function() {
+    QUnit.test('Router only fires handler once', function() {
         router.navigate('/once');
         equal(onceTimesRan, 1);
     });
 
-    test('Root is valid', function() {
+    QUnit.test('Root is valid', function() {
         routerWithRoot.navigate('/testroot');
     });
 
-    test('hashChange router can use #! instead of #', function() {
+    QUnit.test('hashChange router can use #! instead of #', function() {
         hashBangRouter.navigate('hashbang/test');
         equal(window.location.hash, '#!hashbang/test');
         hashBangRouter.path('test2');
@@ -189,7 +179,7 @@ QUnit.config.autostart = false;
         equal(window.location.hash, '#!');
     });
 
-    test('Calls routes in correct order on window navigation', function(assert) {
+    QUnit.test('Calls routes in correct order on window navigation', function(assert) {
         var count = 0,
             done = assert.async();
 
@@ -217,7 +207,7 @@ QUnit.config.autostart = false;
         }, 1000);
     });
 
-    test('Routes can be created with context', function(assert) {
+    QUnit.test('Routes can be created with context', function(assert) {
         var usersRoute = router.context('/context/users/:id'),
             timesRan = 0,
             val = '';
@@ -238,16 +228,16 @@ QUnit.config.autostart = false;
         equal(val, '5');
     });
 
-    test('Route handler is bound to router', function() {
+    QUnit.test('Route handler is bound to router', function() {
         router.navigate('/routes/context');
         equal(routeHandlerContextIsSelf, true);
         router.navigate('/routes/context/context');
         equal(contextHandlerContextIsSelf, true);
     });
 
-    module('Middleware');
+    QUnit.module('Middleware');
 
-    test('Middleware is called', function(assert) {
+    QUnit.test('Middleware is called', function(assert) {
 
         var middleware = function(req, event, next) {
             req.fn1 = true;
@@ -263,7 +253,7 @@ QUnit.config.autostart = false;
         }).navigate('/middleware');
     });
 
-    test('Middleware next() works correctly', function(assert) {
+    QUnit.test('Middleware next() works correctly', function(assert) {
 
         var done = assert.async(),
             testObj = {},
@@ -296,25 +286,7 @@ QUnit.config.autostart = false;
         }, 500);
     });
 
-    test('Global middleware works correctly', function() {
-
-        var gmsTimesRan = 0;
-
-        Grapnel.CallStack.global.push(function(req, e, next) {
-            gmsTimesRan++;
-            next();
-        });
-
-        router.get('/middleware/global/test', function(req, e) {
-            gmsTimesRan++;
-        });
-
-        router.navigate('/middleware/global/test');
-
-        equal(gmsTimesRan, 1);
-    });
-
-    test('Context route accepts middleware', function(assert) {
+    QUnit.test('Context route accepts middleware', function(assert) {
 
         var timesRan = 0,
             val = '';
@@ -335,30 +307,34 @@ QUnit.config.autostart = false;
         equal(timesRan, 8);
     });
 
-    module('Events');
+    QUnit.module('Events');
 
-    test('Custom events fire', function() {
-        router.trigger('myevent');
+    QUnit.test('Custom events fire', function() {
+        router.emit('myevent');
     });
 
-    test('Custom events accept objects', function() {
-        router.trigger('myotherevent', {
+    QUnit.test('Custom events accept objects', function() {
+        router.emit('myotherevent', {
             test: true
         });
     });
 
-    test('Once event only fires event once', function() {
+    QUnit.test('Once event only fires event once', function() {
         var ran = 0;
 
         router.once('eventonce', function() {
             ran++;
-        }).trigger('eventonce').trigger('eventonce').trigger('eventonce');
+        });
+        
+        router.emit('eventonce');
+        router.emit('eventonce');
+        router.emit('eventonce');
 
         equal(ran, 1);
     });
 
     QUnit.done(function() {
-        router.path(false);
+        router.path(initPath);
         hashRouter.path(false);
     });
 

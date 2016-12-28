@@ -16,11 +16,11 @@ module.exports = function (grunt) {
         },
         uglify: {
             options: {
-                banner: '<%= info.banner %>',
+                banner: '<%= info.banner %>'
             },
             dist: {
                 files: {
-                    'dist/grapnel.min.js': ['src/grapnel.js']
+                    'dist/grapnel.min.js': ['dist/grapnel.min.js']
                 }
             }
         },
@@ -43,6 +43,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-qunit');
 
     grunt.registerTask('default', ['uglify', 'qunit']);
+    grunt.registerTask('build', ['uglify', 'qunit']);
     grunt.registerTask('test', ['qunit']);
     grunt.registerTask('serve-tests', ['connect:server:keepalive']);
 
