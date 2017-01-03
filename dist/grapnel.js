@@ -24,7 +24,7 @@ var Grapnel = (function (_super) {
             env: 'client',
             pushState: false
         };
-        _this.options = Object.assign({}, _this.defaults, opts);
+        _this.options = Grapnel.assign({}, _this.defaults, opts);
         if ('object' === typeof window && 'function' === typeof window.addEventListener) {
             window.addEventListener('hashchange', function () {
                 _this.emit('hashchange');
@@ -78,6 +78,27 @@ var Grapnel = (function (_super) {
             }
             return this;
         }).call(new Grapnel(opts || {}));
+    };
+    // Polyfill Object.assign
+    Grapnel.assign = function (target, varArgs) {
+        if ('function' === typeof Object.assign)
+            return Object.assign.apply(this, arguments);
+        if (target == null) {
+            throw new TypeError('Cannot convert undefined or null to object');
+        }
+        var to = Object(target);
+        for (var index = 1; index < arguments.length; index++) {
+            var nextSource = arguments[index];
+            if (nextSource != null) {
+                for (var nextKey in nextSource) {
+                    // Avoid bugs when hasOwnProperty is shadowed
+                    if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                        to[nextKey] = nextSource[nextKey];
+                    }
+                }
+            }
+        }
+        return to;
     };
     Grapnel.prototype.add = function (route) {
         var self = this, middleware = Array.prototype.slice.call(arguments, 1, -1), handler = Array.prototype.slice.call(arguments, -1)[0], request = new Request(route);
@@ -193,7 +214,7 @@ var CallStack = (function () {
         this.callbackRan = false;
         this.propagateEvent = true;
         this.value = router.path();
-        Object.assign(this, extendObj);
+        Grapnel.assign(this, extendObj);
         return this;
     }
     CallStack.prototype.preventDefault = function () {
