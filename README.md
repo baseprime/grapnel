@@ -177,7 +177,7 @@ var router = new Grapnel();
 router.get(expression, function(req, event){
     // GET http://mysite.com/page#food/tacos/good
     console.log('I think tacos are %s.', req.params[0]);
-    // => "He thinks tacos are good."
+    // => "I thinks tacos are good."
 });
 ```
 
