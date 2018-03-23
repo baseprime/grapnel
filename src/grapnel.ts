@@ -8,12 +8,10 @@
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
 */
 
-import * as events from 'events';
-import { deprecate } from 'util';
+import { EventEmitter } from 'events';
 
-export const root = window || { history: {}, location: {} };
-
-export default class Grapnel extends events.EventEmitter {
+export default class Grapnel extends EventEmitter {
+    static _rootTarget: any = (window || { history: {}, location: {} });
     state: any;
     version: string;
     _maxListeners: number = Infinity;
@@ -22,11 +20,11 @@ export default class Grapnel extends events.EventEmitter {
         env: 'client',
         pushState: false
     }
-    
-    constructor(opts:any) {
+
+    constructor(opts?: any) {
         super();
-        this.options = Grapnel.assign({}, this.defaults, opts);
-        
+        this.options = Object.assign({}, this.defaults, opts);
+
         if ('object' === typeof window && 'function' === typeof window.addEventListener) {
             window.addEventListener('hashchange', () => {
                 this.emit('hashchange');
@@ -41,14 +39,14 @@ export default class Grapnel extends events.EventEmitter {
         }
     }
 
-    static regexRoute(path: any, keys: any[], sensitive: boolean, strict: boolean) {
+    static regexRoute(path: any, keys: any[], sensitive?: boolean, strict?: boolean): RegExp {
         if (path instanceof RegExp) return path;
         if (path instanceof Array) path = '(' + path.join('|') + ')';
         // Build route RegExp
         let newPath = path.concat(strict ? '' : '/?')
             .replace(/\/\(/g, '(?:/')
             .replace(/\+/g, '__plus__')
-            .replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function(_: any, slash: any, format: any, key: any, capture: any, optional: any) {
+            .replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, function (_: any, slash: any, format: any, key: any, capture: any, optional: any) {
                 keys.push({
                     name: key,
                     optional: !!optional
@@ -64,17 +62,17 @@ export default class Grapnel extends events.EventEmitter {
         return new RegExp('^' + newPath + '$', sensitive ? '' : 'i');
     }
 
-    static listen() {
+    static listen(...args: any[]): Grapnel {
         var opts: any;
         var routes: any;
-        if (arguments[0] && arguments[1]) {
-            opts = arguments[0];
-            routes = arguments[1];
+        if (args[0] && args[1]) {
+            opts = args[0];
+            routes = args[1];
         } else {
-            routes = arguments[0];
+            routes = args[0];
         }
         // Return a new Grapnel instance
-        return (function() {
+        return (function () {
             // TODO: Accept multi-level routes
             for (var key in routes) {
                 this.add.call(this, key, routes[key]);
@@ -84,32 +82,7 @@ export default class Grapnel extends events.EventEmitter {
         }).call(new Grapnel(opts || {}));
     }
 
-    // Polyfill Object.assign
-    static assign(target: any, varArgs: any) {
-        if ('function' === typeof Object.assign) return Object.assign.apply(this, arguments);
-        if (target == null) { // TypeError if undefined or null
-            throw new TypeError('Cannot convert undefined or null to object');
-        }
-
-        var to = Object(target);
-
-        for (var index = 1; index < arguments.length; index++) {
-            var nextSource = arguments[index];
-
-            if (nextSource != null) { // Skip over if undefined or null
-                for (var nextKey in nextSource) {
-                    // Avoid bugs when hasOwnProperty is shadowed
-                    if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-                        to[nextKey] = nextSource[nextKey];
-                    }
-                }
-            }
-        }
-
-        return to;
-    }
-
-    add(route: string & RegExp) {
+    add(route: string & RegExp): Grapnel {
         var self = this,
             middleware: Function[] = Array.prototype.slice.call(arguments, 1, -1),
             handler: Function = Array.prototype.slice.call(arguments, -1)[0],
@@ -154,15 +127,15 @@ export default class Grapnel extends events.EventEmitter {
         return invoke().on(eventName, invoke);
     }
 
-    get() {
+    get(): Grapnel {
         return this.add.apply(this, arguments);
     }
 
-    trigger() {
+    trigger(): Grapnel {
         return this.emit.apply(this, arguments);
     }
 
-    bind() {
+    bind(): Grapnel {
         return this.on.apply(this, arguments);
     }
 
@@ -170,7 +143,7 @@ export default class Grapnel extends events.EventEmitter {
         var self = this,
             middleware = Array.prototype.slice.call(arguments, 1);
 
-        return function() {
+        return function () {
             var value = arguments[0],
                 submiddleware = (arguments.length > 2) ? Array.prototype.slice.call(arguments, 1, -1) : [],
                 handler = Array.prototype.slice.call(arguments, -1)[0],
@@ -187,8 +160,9 @@ export default class Grapnel extends events.EventEmitter {
     }
 
     path(pathname?: string) {
-        var self = this,
-            frag;
+        let self = this;
+        let root = (<typeof Grapnel>this.constructor)._rootTarget;
+        let frag;
 
         if ('string' === typeof pathname) {
             // Set path
@@ -233,6 +207,7 @@ export class CallStack {
     callbackRan: boolean = true;
     propagateEvent: boolean = true;
     value: string;
+    req: any;
     previousState: any;
     timeStamp: Number;
 
@@ -246,7 +221,7 @@ export class CallStack {
         this.propagateEvent = true;
         this.value = router.path();
 
-        Grapnel.assign(this, extendObj);
+        Object.assign(this, extendObj);
 
         return this;
     }
@@ -291,7 +266,7 @@ export class CallStack {
 
 export class Request {
     route: string;
-    keys: string[];
+    keys: { name: string; optional: boolean; }[];
     regex: RegExp;
 
     constructor(route: string) {
@@ -301,26 +276,20 @@ export class Request {
     }
 
     parse(path: string) {
-        var match = path.match(this.regex),
-            self = this;
-
-        var req = {
-            params: {},
+        let match = path.match(this.regex);
+        let req = {
+            params: <any>{},
             keys: this.keys,
             matches: (match || []).slice(1),
             match: match
         };
         // Build parameters
-        req.matches.forEach(function(value, i) {
-            var key = (self.keys[i] && self.keys[i].name) ? self.keys[i].name : i;
+        req.matches.forEach((value, i) => {
+            var key = (this.keys[i] && this.keys[i].name) ? this.keys[i].name : i;
             // Parameter key will be its key or the iteration index. This is useful if a wildcard (*) is matched
             req.params[key] = (value) ? decodeURIComponent(value) : undefined;
         });
 
         return req;
     }
-}
-
-if('object' === typeof window) {
-    window.Grapnel = Grapnel;
 }

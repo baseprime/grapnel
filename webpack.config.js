@@ -2,10 +2,12 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-    entry: './dist/grapnel.js',
+    entry: './build/grapnel.js',
     output: {
         path: './dist',
-        filename: 'grapnel.min.js'
+        filename: 'grapnel.min.js',
+        library: 'Grapnel',
+        libraryTarget: 'var'
     },
     devtool: 'source-map',
     module: {
