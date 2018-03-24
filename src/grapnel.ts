@@ -11,10 +11,10 @@
 import { EventEmitter } from 'events';
 
 export default class Grapnel extends EventEmitter {
-    static _rootTarget: any = (window || { history: {}, location: {} });
+    static _target: any;
+    _maxListeners: number = Infinity;
     state: any;
     version: string;
-    _maxListeners: number = Infinity;
     options: any = {};
     defaults: any = {
         env: 'client',
@@ -25,12 +25,12 @@ export default class Grapnel extends EventEmitter {
         super();
         this.options = Object.assign({}, this.defaults, opts);
 
-        if ('object' === typeof window && 'function' === typeof window.addEventListener) {
-            window.addEventListener('hashchange', () => {
+        if ('object' === typeof Grapnel.target && 'function' === typeof Grapnel.target.addEventListener) {
+            Grapnel.target.addEventListener('hashchange', () => {
                 this.emit('hashchange');
             });
 
-            window.addEventListener('popstate', (e) => {
+            Grapnel.target.addEventListener('popstate', (e: any) => {
                 // Make sure popstate doesn't run on init -- this is a common issue with Safari and old versions of Chrome
                 if (this.state && this.state.previousState === null) return false;
 
@@ -60,6 +60,15 @@ export default class Grapnel extends EventEmitter {
             .replace(/\*/g, '(.*)');
 
         return new RegExp('^' + newPath + '$', sensitive ? '' : 'i');
+    }
+
+    static get target() {
+        if (this._target) return this._target;
+        return this._target = (window || { history: {}, location: {} })
+    }
+
+    static set target(target: any) {
+        this._target = target;
     }
 
     static listen(...args: any[]): Grapnel {
@@ -161,7 +170,7 @@ export default class Grapnel extends EventEmitter {
 
     path(pathname?: string) {
         let self = this;
-        let root = (<typeof Grapnel>this.constructor)._rootTarget;
+        let root = (<typeof Grapnel>this.constructor).target;
         let frag;
 
         if ('string' === typeof pathname) {

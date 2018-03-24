@@ -20,11 +20,11 @@ class Grapnel extends events_1.EventEmitter {
             pushState: false
         };
         this.options = Object.assign({}, this.defaults, opts);
-        if ('object' === typeof window && 'function' === typeof window.addEventListener) {
-            window.addEventListener('hashchange', () => {
+        if ('object' === typeof Grapnel.target && 'function' === typeof Grapnel.target.addEventListener) {
+            Grapnel.target.addEventListener('hashchange', () => {
                 this.emit('hashchange');
             });
-            window.addEventListener('popstate', (e) => {
+            Grapnel.target.addEventListener('popstate', (e) => {
                 // Make sure popstate doesn't run on init -- this is a common issue with Safari and old versions of Chrome
                 if (this.state && this.state.previousState === null)
                     return false;
@@ -53,6 +53,14 @@ class Grapnel extends events_1.EventEmitter {
             .replace(/__plus__/g, '(.+)')
             .replace(/\*/g, '(.*)');
         return new RegExp('^' + newPath + '$', sensitive ? '' : 'i');
+    }
+    static get target() {
+        if (this._target)
+            return this._target;
+        return this._target = (window || { history: {}, location: {} });
+    }
+    static set target(target) {
+        this._target = target;
     }
     static listen(...args) {
         var opts;
@@ -135,7 +143,7 @@ class Grapnel extends events_1.EventEmitter {
     }
     path(pathname) {
         let self = this;
-        let root = this.constructor._rootTarget;
+        let root = this.constructor.target;
         let frag;
         if ('string' === typeof pathname) {
             // Set path
@@ -176,7 +184,6 @@ class Grapnel extends events_1.EventEmitter {
         }
     }
 }
-Grapnel._rootTarget = (window || { history: {}, location: {} });
 exports.default = Grapnel;
 class CallStack {
     constructor(router, extendObj) {
