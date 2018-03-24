@@ -10,8 +10,10 @@
 
 import { EventEmitter } from 'events';
 
-export default class Grapnel extends EventEmitter {
+class Grapnel extends EventEmitter {
     static _target: any;
+    static CallStack: typeof CallStack;
+    static Request: typeof Request;
     _maxListeners: number = Infinity;
     state: any;
     version: string;
@@ -209,7 +211,7 @@ export default class Grapnel extends EventEmitter {
     }
 }
 
-export class CallStack {
+class CallStack {
     stack: any[];
     router: Grapnel;
     runCallback: boolean = true;
@@ -273,7 +275,7 @@ export class CallStack {
     }
 }
 
-export class Request {
+class Request {
     route: string;
     keys: { name: string; optional: boolean; }[];
     regex: RegExp;
@@ -302,3 +304,7 @@ export class Request {
         return req;
     }
 }
+
+Grapnel.CallStack = CallStack;
+Grapnel.Request = Request;
+exports = module.exports = Grapnel;

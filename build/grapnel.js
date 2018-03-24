@@ -184,7 +184,6 @@ class Grapnel extends events_1.EventEmitter {
         }
     }
 }
-exports.default = Grapnel;
 class CallStack {
     constructor(router, extendObj) {
         this.runCallback = true;
@@ -229,7 +228,6 @@ class CallStack {
     }
 }
 CallStack.global = [];
-exports.CallStack = CallStack;
 class Request {
     constructor(route) {
         this.route = route;
@@ -253,5 +251,7 @@ class Request {
         return req;
     }
 }
-exports.Request = Request;
+Grapnel.CallStack = CallStack;
+Grapnel.Request = Request;
+exports = module.exports = Grapnel;
 //# sourceMappingURL=grapnel.js.map
