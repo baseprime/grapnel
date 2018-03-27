@@ -2,10 +2,13 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-    entry: './build/grapnel.js',
+    entry: {
+        'grapnel': './build/index.js',
+        'grapnel.min': './build/index.js'
+    },
     output: {
         path: './dist',
-        filename: 'grapnel.min.js',
+        filename: '[name].js',
         library: 'Grapnel',
         libraryTarget: 'var'
     },
@@ -23,6 +26,7 @@ module.exports = {
     },
     plugins: [
         new webpack.optimize.UglifyJsPlugin({
+            include: /\.min\.js$/,
             compress: { warnings: false }
         })
     ]
