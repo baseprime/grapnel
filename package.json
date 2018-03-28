@@ -2,7 +2,7 @@
   "name": "grapnel",
   "version": "0.6.4",
   "description": "The smallest JavaScript Router with PushState & Named Parameter support",
-  "main": "dist/grapnel.js",
+  "main": "build/index.js",
   "scripts": {
     "test": "grunt test",
     "serve-tests": "grunt serve-tests",

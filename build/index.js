@@ -15,19 +15,21 @@ class Grapnel extends events_1.EventEmitter {
     constructor(options) {
         super();
         this._maxListeners = Infinity;
-        this.state = null;
         this.version = '0.6.4';
         this.options = {};
         this.defaults = {
-            env: 'client',
-            pushState: false
+            root: '',
+            target: ('object' === typeof window) ? window : {},
+            isWindow: ('object' === typeof window),
+            pushState: false,
+            hashBang: false
         };
         this.options = Object.assign({}, this.defaults, options);
-        if ('object' === typeof Grapnel.target && 'function' === typeof Grapnel.target.addEventListener) {
-            Grapnel.target.addEventListener('hashchange', () => {
+        if ('object' === typeof this.options.target && 'function' === typeof this.options.target.addEventListener) {
+            this.options.target.addEventListener('hashchange', () => {
                 this.emit('hashchange');
             });
-            Grapnel.target.addEventListener('popstate', (e) => {
+            this.options.target.addEventListener('popstate', (e) => {
                 // Make sure popstate doesn't run on init -- this is a common issue with Safari and old versions of Chrome
                 if (this.state && this.state.previousState === null)
                     return false;
@@ -35,37 +37,11 @@ class Grapnel extends events_1.EventEmitter {
             });
         }
     }
-    static get target() {
-        if (this._target)
-            return this._target;
-        return this._target = (window || { history: {}, location: {} });
-    }
-    static set target(target) {
-        this._target = target;
-    }
-    static listen(...args) {
-        let opts;
-        let routes;
-        if (args[0] && args[1]) {
-            opts = args[0];
-            routes = args[1];
-        }
-        else {
-            routes = args[0];
-        }
-        // Return a new Grapnel instance
-        return (function () {
-            // TODO: Accept multi-level routes
-            for (let key in routes) {
-                this.add.call(this, key, routes[key]);
-            }
-            return this;
-        }).call(new Grapnel(opts || {}));
-    }
     add(routePath) {
         let middleware = Array.prototype.slice.call(arguments, 1, -1);
         let handler = Array.prototype.slice.call(arguments, -1)[0];
-        let route = new route_1.default(routePath);
+        let fullPath = this.options.root + routePath;
+        let route = new route_1.default(fullPath);
         let routeHandler = (function () {
             // Build request parameters
             let req = route.parse(this.path());
@@ -74,7 +50,7 @@ class Grapnel extends events_1.EventEmitter {
                 // Match found
                 let extra = {
                     req,
-                    route: routePath,
+                    route: fullPath,
                     params: req.params,
                     regex: req.match
                 };
@@ -101,7 +77,7 @@ class Grapnel extends events_1.EventEmitter {
             return this;
         }).bind(this);
         // Event name
-        let eventName = (!this.options.pushState && this.options.env !== 'server') ? 'hashchange' : 'navigate';
+        let eventName = (!this.options.pushState && this.options.isWindow) ? 'hashchange' : 'navigate';
         // Invoke when route is defined, and once again when app navigates
         return routeHandler().on(eventName, routeHandler);
     }
@@ -112,7 +88,7 @@ class Grapnel extends events_1.EventEmitter {
         return this.emit.apply(this, arguments);
     }
     bind() {
-        // Backwards compatibility with older versions which mocked jQuery's bind()
+        // Backwards compatibility with older versions which mimed jQuery's bind()
         return this.on.apply(this, arguments);
     }
     context(context) {
@@ -127,49 +103,67 @@ class Grapnel extends events_1.EventEmitter {
             return this.add.apply(this, [pattern].concat(middleware).concat(subMiddleware).concat([handler]));
         };
     }
-    navigate(path) {
-        return this.path(path).emit('navigate');
+    navigate(path, options) {
+        this.path(path, options).emit('navigate');
+        return this;
     }
-    path(pathname) {
-        let root = this.constructor.target;
+    path(pathname, options = {}) {
+        let root = this.options.target;
         let frag = undefined;
+        let pageName = options.title;
         if ('string' === typeof pathname) {
             // Set path
-            if (this.options.pushState) {
+            if (this.options.pushState && 'function' === typeof root.history.pushState) {
+                let state = options.state || root.history.state;
                 frag = (this.options.root) ? (this.options.root + pathname) : pathname;
-                root.history.pushState({}, null, frag);
+                root.history.pushState(state, pageName, frag);
             }
             else if (root.location) {
-                root.location.hash = (this.options.hashBang ? '!' : '') + pathname;
+                let _frag = (this.options.root) ? (this.options.root + pathname) : pathname;
+                root.location.hash = (this.options.hashBang ? '!' : '') + _frag;
             }
             else {
-                root._pathname = pathname || '';
+                root.pathname = pathname || '';
             }
             return this;
         }
         else if ('undefined' === typeof pathname) {
             // Get path
-            if (this.options.pushState) {
-                frag = root.location.pathname.replace(this.options.root, '');
-            }
-            else if (!this.options.pushState && root.location) {
-                frag = (root.location.hash) ? root.location.hash.split((this.options.hashBang ? '#!' : '#'))[1] : '';
-            }
-            else {
-                frag = root._pathname || '';
-            }
-            return frag;
+            return (root.location && root.location.pathname) ? root.location.pathname : (root.pathname || '');
         }
         else if (pathname === false) {
             // Clear path
-            if (this.options.pushState) {
-                root.history.pushState({}, null, this.options.root || '/');
+            if (this.options.pushState && 'function' === typeof root.history.pushState) {
+                let state = options.state || root.history.state;
+                root.history.pushState(state, pageName, this.options.root || '/');
             }
             else if (root.location) {
                 root.location.hash = (this.options.hashBang) ? '!' : '';
             }
             return this;
         }
+    }
+    static listen(...args) {
+        let opts;
+        let routes;
+        if (args[0] && args[1]) {
+            opts = args[0];
+            routes = args[1];
+        }
+        else {
+            routes = args[0];
+        }
+        // Return a new Grapnel instance
+        return (function () {
+            // TODO: Accept multi-level routes
+            for (let key in routes) {
+                this.add.call(this, key, routes[key]);
+            }
+            return this;
+        }).call(new Grapnel(opts || {}));
+    }
+    static toString() {
+        return this.name;
     }
 }
 class MiddlewareStack {

@@ -8,8 +8,8 @@ class Route {
         this.path = pathname;
         this.regex = this.create();
     }
-    parse(path) {
-        let match = path.match(this.regex);
+    parse(pathname) {
+        let match = pathname.match(this.regex);
         let req = {
             match,
             params: {},
