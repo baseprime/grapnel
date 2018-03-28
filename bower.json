@@ -1,14 +1,15 @@
 {
   "name": "grapnel",
-  "version": "0.6.3",
+  "version": "0.7.0",
   "homepage": "https://github.com/baseprime/grapnel",
   "authors": [
     "Greg Sabia Tucker <greg@narrowlabs.com>"
   ],
-  "description": "The smallest (1100 bytes gzipped!) JavaScript Router with PushState & Named Parameters",
+  "description": "The first (and smallest!) JavaScript Router with PushState, Middleware, and Named Parameter support",
   "main": "dist/grapnel.min.js",
   "moduleType": [
-    "amd",
+    "node",
+    "es6",
     "globals"
   ],
   "keywords": [

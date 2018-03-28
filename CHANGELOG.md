@@ -1,5 +1,16 @@
 ## Changelog
 
+##### 0.7.0
+* Rewrote source in TypeScript
+* Remove unnecessary `env` from options (this was never in the documentation so it shouldn't have been used)
+* Move target out of constructor and into instance options so user can override
+* Use isWindow on options to check if window is present
+* Changed `Request()` constructor to `Route()` so we don't override native `Request`
+* Added tests
+* Bugfixes:
+  * Fix router root issues
+  * Navigate correctly returns self
+
 ##### 0.6.2
 * Singular code style now enforced (bracket styles, line endings, etc.)
 * Changes to repo name (now Grapnel instead of Grapnel.js)
