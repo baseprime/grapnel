@@ -11,8 +11,8 @@ export default class Route {
         this.regex = this.create();
     }
 
-    parse(path: string) {
-        let match = path.match(this.regex);
+    parse(pathname: string) {
+        let match = pathname.match(this.regex);
         let req: ParsedRoute = {
             match,
             params: <any>{},
