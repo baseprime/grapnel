@@ -1,11 +1,13 @@
 {
   "name": "grapnel",
-  "version": "0.6.4",
-  "description": "The smallest JavaScript Router with PushState & Named Parameter support",
-  "main": "src/grapnel.js",
+  "version": "0.7.0",
+  "description": "The first (and smallest!) JavaScript Router with PushState, Middleware, and Named Parameter support",
+  "main": "build/index.js",
   "scripts": {
-    "test": "grunt",
-    "serve-tests": "grunt serve-tests"
+    "test": "grunt test",
+    "serve-tests": "grunt serve-tests",
+    "watch": "tsc & webpack --watch",
+    "build": "grunt build"
   },
   "repository": {
     "type": "git",
@@ -37,10 +39,15 @@
   },
   "homepage": "http://grapnel.js.org",
   "devDependencies": {
+    "@types/node": "~9.4.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-es2015": "^6.24.1",
     "grunt": "^1.0.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-connect": "^1.0.2",
     "grunt-contrib-qunit": "^1.2.0",
-    "grunt-contrib-uglify": "^2.0.0"
+    "grunt-contrib-uglify": "^2.0.0",
+    "webpack": "^1.15.0"
   }
 }

@@ -1,1 +1,1 @@
-../src/grapnel.js
+../dist/grapnel.js
