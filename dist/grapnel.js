@@ -89,7 +89,6 @@ var Grapnel =
 	        var _this = _possibleConstructorReturn(this, (Grapnel.__proto__ || Object.getPrototypeOf(Grapnel)).call(this));
 	
 	        _this._maxListeners = Infinity;
-	        _this.version = '0.6.4';
 	        _this.options = {};
 	        _this.defaults = {
 	            root: '',

@@ -16,7 +16,6 @@ class Grapnel extends EventEmitter {
     static Route: typeof Route;
     _maxListeners: number = Infinity;
     state: MiddlewareStack;
-    version: string = '0.6.4';
     options: GrapnelOptions = {};
     defaults: any = {
         root: '',

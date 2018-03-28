@@ -15,7 +15,6 @@ class Grapnel extends events_1.EventEmitter {
     constructor(options) {
         super();
         this._maxListeners = Infinity;
-        this.version = '0.6.4';
         this.options = {};
         this.defaults = {
             root: '',
