@@ -1,16 +1,31 @@
 QUnit.config.autostart = false;
-
 ;(function() {
 
     QUnit.start();
 
     var initPath = window.location.pathname;
-    var router = new Grapnel({ pushState: true });
-    var hashRouter = new Grapnel();
-    var routerWithRoot = new Grapnel({ pushState: true, root: '/myroot' });
-    var hashBangRouter = new Grapnel({ hashBang: true });
+    var router = new Grapnel({
+        pushState: true
+    });
 
-    console.log(Grapnel)
+    var hashRouter = new Grapnel();
+    var routerWithRoot = new Grapnel({
+        pushState: true,
+        root: '/myroot'
+    });
+
+    var hashBangRouter = new Grapnel({
+        hashBang: true
+    });
+
+    var detachedRouterObject = {};
+    var detachedRouter = new Grapnel({
+        target: detachedRouterObject
+    });
+
+    var finalStateRouter = new Grapnel({ pushState: true });
+
+    window.Grapnel = Grapnel;
 
     QUnit.module('Initialization');
 
@@ -19,13 +34,43 @@ QUnit.config.autostart = false;
         ok(hashRouter);
         ok(routerWithRoot);
         ok(hashBangRouter);
+        ok('function' === typeof Grapnel);
+        ok('function' === typeof Grapnel.Route);
+        ok('function' === typeof Grapnel.MiddlewareStack);
     });
 
+    QUnit.module('Units');
+
+    QUnit.test('Instance methods return correct values', function() {
+        ok(router.navigate('/') instanceof Grapnel, 'Router#navigate instance of Grapnel');
+        ok(router.bind('bind', function() {}) instanceof Grapnel, 'Router#bind instance of Grapnel');
+        ok(router.emit('nothing') === false, 'Router#emit returns false');
+        ok(typeof router.path() === 'string', 'Router#path with no params returns string');
+        ok(router.path('/') instanceof Grapnel, 'Router#path with params returns instance of Grapnel');
+        ok(typeof router.context('/') === 'function', 'Router#context returns function');
+        ok(router.add('/', function() {}) instanceof Grapnel, 'Router#add instance of Grapnel');
+    });
+
+    QUnit.test('Route methods return correct values', function() {
+        ok((new Grapnel.Route('/')).regex instanceof RegExp, 'Route#create instance of Grapnel');
+    });
+
+    QUnit.module('Environment');
+
     QUnit.test('Environment is correct', function() {
-        ok(router.options.env === 'client' && router.options.pushState === true);
-        ok(hashRouter.options.env === 'client' && hashRouter.options.pushState === false);
-        ok(routerWithRoot.options.env === 'client' && routerWithRoot.options.pushState === true);
-        ok(hashBangRouter.options.env === 'client' && hashBangRouter.options.pushState === false);
+        ok(router.options.isWindow === true && router.options.pushState === true);
+        ok(hashRouter.options.isWindow === true && hashRouter.options.pushState === false);
+        ok(routerWithRoot.options.isWindow === true && routerWithRoot.options.pushState === true);
+        ok(hashBangRouter.options.isWindow === true && hashBangRouter.options.pushState === false);
+    });
+
+    QUnit.test('Router loads with window as target', function() {
+        ok(!!router.options.target);
+        ok(router.options.target === window);
+    });
+
+    QUnit.test('Detached router pointing to correct target', function() {
+        ok(detachedRouter.options.target === detachedRouterObject);
     });
 
     QUnit.module('Routes');
@@ -38,7 +83,8 @@ QUnit.config.autostart = false;
         defaultPreventedFnCalled = false,
         onceTimesRan = 0,
         routeHandlerContextIsSelf = false,
-        contextHandlerContextIsSelf = false;
+        contextHandlerContextIsSelf = false,
+        detachedRoute = false;
 
     router.get('/settings/regexp/:named1/:named2/:named3/:not_required?', function(req, e) {
         equal(req.params.named1, 'one');
@@ -53,6 +99,14 @@ QUnit.config.autostart = false;
     });
 
     router.get('/once', function(req, e) {
+        onceTimesRan++;
+    });
+
+    routerWithRoot.get('/once', function(req, e) {
+        onceTimesRan++;
+    });
+
+    hashRouter.get('/once', function() {
         onceTimesRan++;
     });
 
@@ -100,8 +154,8 @@ QUnit.config.autostart = false;
         hashMultiFnCalled = true;
     });
 
-    router.bind('match', function(e) {
-        if (e.route === '/default/prevent') e.preventDefault();
+    router.on('match', function(e) {
+        if(e.route === '/default/prevent') e.preventDefault();
     });
 
     router.get('/default/prevent', function(req, e) {
@@ -116,10 +170,6 @@ QUnit.config.autostart = false;
         contextHandlerContextIsSelf = (this === router);
     });
 
-    routerWithRoot.get('/testroot', function(req, e) {
-        equal(window.location.pathname, '/myroot/testroot');
-    });
-
     router.on('myevent', function() {
         ok(true);
     });
@@ -127,6 +177,8 @@ QUnit.config.autostart = false;
     router.on('myotherevent', function(obj) {
         ok(obj.test);
     });
+
+    // Tests for routes
 
     QUnit.test('Named parameters functions correctly', function(assert) {
         var done = assert.async();
@@ -163,11 +215,25 @@ QUnit.config.autostart = false;
 
     QUnit.test('Router only fires handler once', function() {
         router.navigate('/once');
-        equal(onceTimesRan, 1);
+        routerWithRoot.navigate('/once');
+        hashRouter.navigate('/once');
+
+        equal(onceTimesRan, 3);
     });
 
     QUnit.test('Root is valid', function() {
         routerWithRoot.navigate('/testroot');
+        equal(window.location.pathname, '/myroot/testroot');
+    });
+
+    QUnit.test('Root fires routes', function() {
+        var routerWithRootRan = false;
+        routerWithRoot.get('/test', function() {
+            routerWithRootRan = true;
+        });
+        
+        routerWithRoot.navigate('/test');
+        ok(routerWithRootRan === true);
     });
 
     QUnit.test('hashChange router can use #! instead of #', function() {
@@ -235,6 +301,12 @@ QUnit.config.autostart = false;
         equal(contextHandlerContextIsSelf, true);
     });
 
+    QUnit.test('Detached Router fires routes', function() {
+        detachedRouter.navigate('/testdetached/123');
+        ok(detachedRouterObject.pathname);
+        equal(detachedRouterObject.pathname, '/testdetached/123');
+    });
+
     QUnit.module('Middleware');
 
     QUnit.test('Middleware is called', function(assert) {
@@ -296,7 +368,8 @@ QUnit.config.autostart = false;
             next();
         }
 
-        var mwTestRoute = router.context('/context/middleware', testMiddleWare, testMiddleWare, testMiddleWare, testMiddleWare, testMiddleWare, testMiddleWare, testMiddleWare);
+        var mwTestRoute = router.context('/context/middleware', testMiddleWare, testMiddleWare, testMiddleWare, testMiddleWare,
+            testMiddleWare, testMiddleWare, testMiddleWare);
 
         mwTestRoute('/test', function(req, e) {
             timesRan++;
@@ -325,12 +398,28 @@ QUnit.config.autostart = false;
         router.once('eventonce', function() {
             ran++;
         });
-        
+
         router.emit('eventonce');
         router.emit('eventonce');
         router.emit('eventonce');
 
         equal(ran, 1);
+    });
+
+    QUnit.module('State');
+
+    QUnit.test('State is null after initial tests', function() {
+        ok(history.state === null);
+    });
+
+    QUnit.test('State object changes with router', function() {
+        finalStateRouter.navigate('/', {
+            state: {
+                stateChanged: '123' 
+            }
+        });
+        
+        equal(history.state.stateChanged, '123');
     });
 
     QUnit.done(function() {
