@@ -1,5 +1,6 @@
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
+const package = require('./package');
 
 module.exports = {
     entry: {
@@ -28,6 +29,7 @@ module.exports = {
         new webpack.optimize.UglifyJsPlugin({
             include: /\.min\.js$/,
             compress: { warnings: false }
-        })
+        }),
+        new webpack.BannerPlugin(`Grapnel\n${package.repository.url}\n\n@author ${package.author}\n@link ${package.link}\n@version ${package.version}\n\nReleased under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT`)
     ]
 }
