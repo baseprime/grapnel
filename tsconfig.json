@@ -3,11 +3,11 @@
         "target": "es2016",
         "module": "commonjs",
         "watch": true,
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "removeComments": false,
         "preserveConstEnums": true,
         "sourceMap": true,
-        "outDir": "build"
+        "outDir": "es"
     },
     "include": [
         "src/*.ts"

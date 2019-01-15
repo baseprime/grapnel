@@ -7,23 +7,17 @@
  * @link http://basepri.me
  *
  * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
-*/
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = require("events");
 const route_1 = require("./route");
+const stack_1 = require("./stack");
 class Grapnel extends events_1.EventEmitter {
     constructor(options) {
         super();
         this._maxListeners = Infinity;
         this.options = {};
-        this.defaults = {
-            root: '',
-            target: ('object' === typeof window) ? window : {},
-            isWindow: ('object' === typeof window),
-            pushState: false,
-            hashBang: false
-        };
-        this.options = Object.assign({}, this.defaults, options);
+        this.options = Object.assign({}, Grapnel.defaults, options);
         if ('object' === typeof this.options.target && 'function' === typeof this.options.target.addEventListener) {
             this.options.target.addEventListener('hashchange', () => {
                 this.emit('hashchange');
@@ -41,7 +35,7 @@ class Grapnel extends events_1.EventEmitter {
         let handler = Array.prototype.slice.call(arguments, -1)[0];
         let fullPath = this.options.root + routePath;
         let route = new route_1.default(fullPath);
-        let routeHandler = (function () {
+        let routeHandler = function () {
             // Build request parameters
             let req = route.parse(this.path());
             // Check if matches are found
@@ -51,10 +45,10 @@ class Grapnel extends events_1.EventEmitter {
                     req,
                     route: fullPath,
                     params: req.params,
-                    regex: req.match
+                    regex: req.match,
                 };
                 // Create call stack -- add middleware first, then handler
-                let stack = new MiddlewareStack(this, extra).enqueue(middleware.concat(handler));
+                let stack = new stack_1.default(this, extra).enqueue(middleware.concat(handler));
                 // emit main event
                 this.emit('match', stack, req);
                 // Continue?
@@ -74,9 +68,9 @@ class Grapnel extends events_1.EventEmitter {
             }
             // Returns self
             return this;
-        }).bind(this);
+        }.bind(this);
         // Event name
-        let eventName = (!this.options.pushState && this.options.isWindow) ? 'hashchange' : 'navigate';
+        let eventName = !this.options.pushState && this.options.isWindow ? 'hashchange' : 'navigate';
         // Invoke when route is defined, and once again when app navigates
         return routeHandler().on(eventName, routeHandler);
     }
@@ -94,12 +88,15 @@ class Grapnel extends events_1.EventEmitter {
         let middleware = Array.prototype.slice.call(arguments, 1);
         return (...args) => {
             let value = args[0];
-            let subMiddleware = (args.length > 2) ? Array.prototype.slice.call(args, 1, -1) : [];
+            let subMiddleware = args.length > 2 ? Array.prototype.slice.call(args, 1, -1) : [];
             let handler = Array.prototype.slice.call(args, -1)[0];
-            let prefix = (context.slice(-1) !== '/' && value !== '/' && value !== '') ? context + '/' : context;
-            let path = (value.substr(0, 1) !== '/') ? value : value.substr(1);
+            let prefix = context.slice(-1) !== '/' && value !== '/' && value !== '' ? context + '/' : context;
+            let path = value.substr(0, 1) !== '/' ? value : value.substr(1);
             let pattern = prefix + path;
-            return this.add.apply(this, [pattern].concat(middleware).concat(subMiddleware).concat([handler]));
+            return this.add.apply(this, [pattern]
+                .concat(middleware)
+                .concat(subMiddleware)
+                .concat([handler]));
         };
     }
     navigate(path, options) {
@@ -114,11 +111,11 @@ class Grapnel extends events_1.EventEmitter {
             // Set path
             if (this.options.pushState && 'function' === typeof root.history.pushState) {
                 let state = options.state || root.history.state;
-                frag = (this.options.root) ? (this.options.root + pathname) : pathname;
+                frag = this.options.root ? this.options.root + pathname : pathname;
                 root.history.pushState(state, pageName, frag);
             }
             else if (root.location) {
-                let _frag = (this.options.root) ? (this.options.root + pathname) : pathname;
+                let _frag = this.options.root ? this.options.root + pathname : pathname;
                 root.location.hash = (this.options.hashBang ? '!' : '') + _frag;
             }
             else {
@@ -128,7 +125,7 @@ class Grapnel extends events_1.EventEmitter {
         }
         else if ('undefined' === typeof pathname) {
             // Get path
-            return (root.location && root.location.pathname) ? root.location.pathname : (root.pathname || '');
+            return root.location && root.location.pathname ? root.location.pathname : root.pathname || '';
         }
         else if (pathname === false) {
             // Clear path
@@ -137,7 +134,7 @@ class Grapnel extends events_1.EventEmitter {
                 root.history.pushState(state, pageName, this.options.root || '/');
             }
             else if (root.location) {
-                root.location.hash = (this.options.hashBang) ? '!' : '';
+                root.location.hash = this.options.hashBang ? '!' : '';
             }
             return this;
         }
@@ -153,57 +150,24 @@ class Grapnel extends events_1.EventEmitter {
             routes = args[0];
         }
         // Return a new Grapnel instance
-        return (function () {
+        return function () {
             // TODO: Accept multi-level routes
             for (let key in routes) {
                 this.add.call(this, key, routes[key]);
             }
             return this;
-        }).call(new Grapnel(opts || {}));
+        }.call(new Grapnel(opts || {}));
     }
     static toString() {
         return this.name;
     }
 }
-class MiddlewareStack {
-    constructor(router, extendObj) {
-        this.runCallback = true;
-        this.callbackRan = true;
-        this.propagateEvent = true;
-        this.stack = MiddlewareStack.global.slice(0);
-        this.router = router;
-        this.value = router.path();
-        Object.assign(this, extendObj);
-        return this;
-    }
-    preventDefault() {
-        this.runCallback = false;
-    }
-    stopPropagation() {
-        this.propagateEvent = false;
-    }
-    parent() {
-        let hasParentEvents = !!(this.previousState && this.previousState.value && this.previousState.value == this.value);
-        return (hasParentEvents) ? this.previousState : false;
-    }
-    callback() {
-        this.callbackRan = true;
-        this.timeStamp = Date.now();
-        this.next();
-    }
-    enqueue(handler, atIndex) {
-        let handlers = (!Array.isArray(handler)) ? [handler] : ((atIndex < handler.length) ? handler.reverse() : handler);
-        while (handlers.length) {
-            this.stack.splice(atIndex || this.stack.length + 1, 0, handlers.shift());
-        }
-        return this;
-    }
-    next() {
-        return this.stack.shift().call(this.router, this.req, this, () => this.next());
-    }
-}
-MiddlewareStack.global = [];
-Grapnel.MiddlewareStack = MiddlewareStack;
-Grapnel.Route = route_1.default;
-exports = module.exports = Grapnel;
-//# sourceMappingURL=index.js.map
+Grapnel.defaults = {
+    root: '',
+    target: 'object' === typeof window ? window : {},
+    isWindow: 'object' === typeof window,
+    pushState: false,
+    hashBang: false,
+};
+exports.default = Grapnel;
+//# sourceMappingURL=grapnel.js.map
