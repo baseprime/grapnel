@@ -4,8 +4,8 @@ const package = require('./package');
 
 module.exports = {
     entry: {
-        'grapnel': './build/index.js',
-        'grapnel.min': './build/index.js'
+        'grapnel': './es/index.js',
+        'grapnel.min': './es/index.js'
     },
     output: {
         path: './dist',

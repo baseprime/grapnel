@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Route {
-    constructor(pathname, keys, sensitive, strict) {
+    constructor(pathname) {
         this.keys = [];
         this.strict = false;
         this.sensitive = false;
@@ -18,9 +18,9 @@ class Route {
         };
         // Build parameters
         req.matches.forEach((value, i) => {
-            var key = (this.keys[i] && this.keys[i].name) ? this.keys[i].name : i;
+            var key = this.keys[i] && this.keys[i].name ? this.keys[i].name : i;
             // Parameter key will be its key or the iteration index. This is useful if a wildcard (*) is matched
-            req.params[key] = (value) ? decodeURIComponent(value) : undefined;
+            req.params[key] = value ? decodeURIComponent(value) : undefined;
         });
         return req;
     }
@@ -30,16 +30,17 @@ class Route {
         if (this.path instanceof Array)
             this.path = '(' + this.path.join('|') + ')';
         // Build route RegExp
-        let newPath = this.path.concat(this.strict ? '' : '/?')
+        let newPath = this.path
+            .concat(this.strict ? '' : '/?')
             .replace(/\/\(/g, '(?:/')
             .replace(/\+/g, '__plus__')
             .replace(/(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, (_, slash, format, key, capture, optional) => {
             this.keys.push({
                 name: key,
-                optional: !!optional
+                optional: !!optional,
             });
             slash = slash || '';
-            return '' + (optional ? '' : slash) + '(?:' + (optional ? slash : '') + (format || '') + (capture || (format && '([^/.]+?)' || '([^/]+?)')) + ')' + (optional || '');
+            return '' + (optional ? '' : slash) + '(?:' + (optional ? slash : '') + (format || '') + (capture || ((format && '([^/.]+?)') || '([^/]+?)')) + ')' + (optional || '');
         })
             .replace(/([\/.])/g, '\\$1')
             .replace(/__plus__/g, '(.+)')

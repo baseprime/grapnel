@@ -55,6 +55,20 @@ var Grapnel =
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
+	var Grapnel = __webpack_require__(1).default;
+	var Route = __webpack_require__(3).default;
+	var MiddlewareStack = __webpack_require__(4).default;
+	
+	Grapnel.MiddlewareStack = MiddlewareStack;
+	Grapnel.Route = Route;
+	exports = module.exports = Grapnel;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
 	"use strict";
 	/****
 	 * Grapnel
@@ -64,7 +78,7 @@ var Grapnel =
 	 * @link http://basepri.me
 	 *
 	 * Released under MIT License. See LICENSE.txt or http://opensource.org/licenses/MIT
-	*/
+	 */
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
@@ -77,8 +91,9 @@ var Grapnel =
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var events_1 = __webpack_require__(1);
-	var route_1 = __webpack_require__(2);
+	var events_1 = __webpack_require__(2);
+	var route_1 = __webpack_require__(3);
+	var stack_1 = __webpack_require__(4);
 	
 	var Grapnel = function (_events_1$EventEmitte) {
 	    _inherits(Grapnel, _events_1$EventEmitte);
@@ -90,14 +105,7 @@ var Grapnel =
 	
 	        _this._maxListeners = Infinity;
 	        _this.options = {};
-	        _this.defaults = {
-	            root: '',
-	            target: 'object' === (typeof window === "undefined" ? "undefined" : _typeof(window)) ? window : {},
-	            isWindow: 'object' === (typeof window === "undefined" ? "undefined" : _typeof(window)),
-	            pushState: false,
-	            hashBang: false
-	        };
-	        _this.options = Object.assign({}, _this.defaults, options);
+	        _this.options = Object.assign({}, Grapnel.defaults, options);
 	        if ('object' === _typeof(_this.options.target) && 'function' === typeof _this.options.target.addEventListener) {
 	            _this.options.target.addEventListener('hashchange', function () {
 	                _this.emit('hashchange');
@@ -131,7 +139,7 @@ var Grapnel =
 	                        regex: req.match
 	                    };
 	                    // Create call stack -- add middleware first, then handler
-	                    var stack = new MiddlewareStack(this, extra).enqueue(middleware.concat(handler));
+	                    var stack = new stack_1.default(this, extra).enqueue(middleware.concat(handler));
 	                    // emit main event
 	                    this.emit('match', stack, req);
 	                    // Continue?
@@ -263,74 +271,18 @@ var Grapnel =
 	    return Grapnel;
 	}(events_1.EventEmitter);
 	
-	var MiddlewareStack = function () {
-	    function MiddlewareStack(router, extendObj) {
-	        _classCallCheck(this, MiddlewareStack);
-	
-	        this.runCallback = true;
-	        this.callbackRan = true;
-	        this.propagateEvent = true;
-	        this.stack = MiddlewareStack.global.slice(0);
-	        this.router = router;
-	        this.value = router.path();
-	        Object.assign(this, extendObj);
-	        return this;
-	    }
-	
-	    _createClass(MiddlewareStack, [{
-	        key: "preventDefault",
-	        value: function preventDefault() {
-	            this.runCallback = false;
-	        }
-	    }, {
-	        key: "stopPropagation",
-	        value: function stopPropagation() {
-	            this.propagateEvent = false;
-	        }
-	    }, {
-	        key: "parent",
-	        value: function parent() {
-	            var hasParentEvents = !!(this.previousState && this.previousState.value && this.previousState.value == this.value);
-	            return hasParentEvents ? this.previousState : false;
-	        }
-	    }, {
-	        key: "callback",
-	        value: function callback() {
-	            this.callbackRan = true;
-	            this.timeStamp = Date.now();
-	            this.next();
-	        }
-	    }, {
-	        key: "enqueue",
-	        value: function enqueue(handler, atIndex) {
-	            var handlers = !Array.isArray(handler) ? [handler] : atIndex < handler.length ? handler.reverse() : handler;
-	            while (handlers.length) {
-	                this.stack.splice(atIndex || this.stack.length + 1, 0, handlers.shift());
-	            }
-	            return this;
-	        }
-	    }, {
-	        key: "next",
-	        value: function next() {
-	            var _this3 = this;
-	
-	            return this.stack.shift().call(this.router, this.req, this, function () {
-	                return _this3.next();
-	            });
-	        }
-	    }]);
-	
-	    return MiddlewareStack;
-	}();
-	
-	MiddlewareStack.global = [];
-	Grapnel.MiddlewareStack = MiddlewareStack;
-	Grapnel.Route = route_1.default;
-	exports = module.exports = Grapnel;
-	//# sourceMappingURL=index.js.map
+	Grapnel.defaults = {
+	    root: '',
+	    target: 'object' === (typeof window === "undefined" ? "undefined" : _typeof(window)) ? window : {},
+	    isWindow: 'object' === (typeof window === "undefined" ? "undefined" : _typeof(window)),
+	    pushState: false,
+	    hashBang: false
+	};
+	exports.default = Grapnel;
+	//# sourceMappingURL=grapnel.js.map
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -608,7 +560,7 @@ var Grapnel =
 	}
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -620,7 +572,7 @@ var Grapnel =
 	Object.defineProperty(exports, "__esModule", { value: true });
 	
 	var Route = function () {
-	    function Route(pathname, keys, sensitive, strict) {
+	    function Route(pathname) {
 	        _classCallCheck(this, Route);
 	
 	        this.keys = [];
@@ -675,6 +627,82 @@ var Grapnel =
 	
 	exports.default = Route;
 	//# sourceMappingURL=route.js.map
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	Object.defineProperty(exports, "__esModule", { value: true });
+	
+	var MiddlewareStack = function () {
+	    function MiddlewareStack(router, extendObj) {
+	        _classCallCheck(this, MiddlewareStack);
+	
+	        this.runCallback = true;
+	        this.callbackRan = true;
+	        this.propagateEvent = true;
+	        this.stack = MiddlewareStack.global.slice(0);
+	        this.router = router;
+	        this.value = router.path();
+	        Object.assign(this, extendObj);
+	        return this;
+	    }
+	
+	    _createClass(MiddlewareStack, [{
+	        key: "preventDefault",
+	        value: function preventDefault() {
+	            this.runCallback = false;
+	        }
+	    }, {
+	        key: "stopPropagation",
+	        value: function stopPropagation() {
+	            this.propagateEvent = false;
+	        }
+	    }, {
+	        key: "parent",
+	        value: function parent() {
+	            var hasParentEvents = !!(this.previousState && this.previousState.value && this.previousState.value == this.value);
+	            return hasParentEvents ? this.previousState : false;
+	        }
+	    }, {
+	        key: "callback",
+	        value: function callback() {
+	            this.callbackRan = true;
+	            this.timeStamp = Date.now();
+	            this.next();
+	        }
+	    }, {
+	        key: "enqueue",
+	        value: function enqueue(handler, atIndex) {
+	            var handlers = !Array.isArray(handler) ? [handler] : atIndex < handler.length ? handler.reverse() : handler;
+	            while (handlers.length) {
+	                this.stack.splice(atIndex || this.stack.length + 1, 0, handlers.shift());
+	            }
+	            return this;
+	        }
+	    }, {
+	        key: "next",
+	        value: function next() {
+	            var _this = this;
+	
+	            return this.stack.shift().call(this.router, this.req, this, function () {
+	                return _this.next();
+	            });
+	        }
+	    }]);
+	
+	    return MiddlewareStack;
+	}();
+	
+	MiddlewareStack.global = [];
+	exports.default = MiddlewareStack;
+	//# sourceMappingURL=stack.js.map
 
 /***/ })
 /******/ ]);

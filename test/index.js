@@ -1,4 +1,4 @@
+// const Grapnel = require('..')
 
-//var Grapnel = require('../dist/grapnel');
-
-console.log('Grapnel')
+// console.log(Grapnel)
+// console.log(new Grapnel())
