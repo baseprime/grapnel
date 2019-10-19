@@ -149,7 +149,15 @@ export default class Grapnel extends EventEmitter {
             return this
         } else if ('undefined' === typeof pathname) {
             // Get path
-            return root.location && root.location.pathname ? root.location.pathname : root.pathname || ''
+            if (this.options.pushState) {
+                frag = root.location.pathname.replace(this.options.root, '');
+            } else if (!this.options.pushState && root.location) {
+                frag = (root.location.hash) ? root.location.hash.split((this.options.hashBang ? '#!' : '#'))[1] : '';
+            } else {
+                frag = root._pathname || '';
+            }
+
+            return frag;
         } else if (pathname === false) {
             // Clear path
             if (this.options.pushState && 'function' === typeof root.history.pushState) {
