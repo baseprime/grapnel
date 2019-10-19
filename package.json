@@ -1,6 +1,6 @@
 {
   "name": "grapnel",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "The first (and smallest!) JavaScript Router with PushState, Middleware, and Named Parameter support",
   "main": "es/index.js",
   "scripts": {
