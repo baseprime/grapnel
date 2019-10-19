@@ -125,7 +125,16 @@ class Grapnel extends events_1.EventEmitter {
         }
         else if ('undefined' === typeof pathname) {
             // Get path
-            return root.location && root.location.pathname ? root.location.pathname : root.pathname || '';
+            if (this.options.pushState) {
+                frag = root.location.pathname.replace(this.options.root, '');
+            }
+            else if (!this.options.pushState && root.location) {
+                frag = (root.location.hash) ? root.location.hash.split((this.options.hashBang ? '#!' : '#'))[1] : '';
+            }
+            else {
+                frag = root._pathname || '';
+            }
+            return frag;
         }
         else if (pathname === false) {
             // Clear path
