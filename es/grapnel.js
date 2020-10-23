@@ -34,7 +34,7 @@ class Grapnel extends events_1.EventEmitter {
         let middleware = Array.prototype.slice.call(arguments, 1, -1);
         let handler = Array.prototype.slice.call(arguments, -1)[0];
         let fullPath = this.options.root + routePath;
-        let route = new route_1.default(fullPath);
+        let route = new route_1.default(routePath);
         let routeHandler = function () {
             // Build request parameters
             let req = route.parse(this.path());
