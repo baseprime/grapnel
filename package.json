@@ -3,6 +3,7 @@
   "version": "0.7.5",
   "description": "The first (and smallest!) JavaScript Router with PushState, Middleware, and Named Parameter support",
   "main": "dist/grapnel.js",
+  "unpkg": "dist/grapnel.js",
   "scripts": {
     "build": "npm run prettier && bin/build",
     "serve-tests": "pushd ./test; python -m SimpleHTTPServer 8997; popd",
